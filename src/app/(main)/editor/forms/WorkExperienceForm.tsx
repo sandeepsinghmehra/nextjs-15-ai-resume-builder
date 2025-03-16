@@ -20,7 +20,10 @@ export default function WorkExperienceForm({resumeData, setResumeData}: EditorFo
     const form = useForm<WorkExperienceValues>({
         resolver: zodResolver(workExperienceSchema),
         defaultValues: {
-            workExperiences: resumeData.workExperiences || []
+            // workExperiences: resumeData.workExperiences || []
+            workExperiences: resumeData.workExperiences?.length
+            ? resumeData.workExperiences
+            : [{ position: "", company: "", startDate: "", endDate: "", description: "" }]
         }
     });
 
@@ -30,10 +33,21 @@ export default function WorkExperienceForm({resumeData, setResumeData}: EditorFo
             if(!isValid) return;
     
             //Update resume data
-            setResumeData({
-                ...resumeData, 
-                workExperiences: values.workExperiences?.filter(exp => exp !== undefined) || [],
-            })
+            // setResumeData({
+            //     ...resumeData, 
+            //     workExperiences: values.workExperiences?.filter(exp => exp !== undefined) || [],
+            // })
+            if (values?.workExperiences?.length === 0) {
+                setResumeData({
+                    ...resumeData,
+                    workExperiences: [{ position: "", company: "", startDate: "", endDate: "", description: "" }],
+                });
+            } else {
+                setResumeData({
+                    ...resumeData,
+                    workExperiences: values?.workExperiences?.filter(exp => exp !== undefined),
+                });
+            }
         });
         return unsubscribe
     }, [form, resumeData, setResumeData]);
@@ -64,13 +78,13 @@ export default function WorkExperienceForm({resumeData, setResumeData}: EditorFo
         }
     }
     return (
-        <div className="max-w-xl mx-auto space-y-6">
-            <div className="space-y-1.5 text-center">
+        <div className="max-w-xl w-full mx-auto space-y-3">
+            {/* <div className="space-y-1.5 text-center">
                 <h2 className="text-2xl font-semibold">Work Experiences</h2>
                 <p className="text-sm text-muted-foreground">Add as many work experiences as you like.</p>
-            </div>
+            </div> */}
             <Form {...form}>
-                <form className="space-y-3">
+                <form className="max-w-xl w-full space-y-2 overflow-y-auto h-96">
                     <DndContext
                         sensors={sensors}
                         collisionDetection={closestCenter}
@@ -88,11 +102,14 @@ export default function WorkExperienceForm({resumeData, setResumeData}: EditorFo
                                     index={index}
                                     form={form}
                                     remove={remove}
+                                    length={fields.length}
                                 />
                             ))}
                         </SortableContext>
                     </DndContext>
-                    <div className="flex justify-center">
+                    
+                </form>
+                    <div className="flex justify-center py-2">
                         <Button 
                             type="button"
                             onClick={()=> append({
@@ -106,7 +123,6 @@ export default function WorkExperienceForm({resumeData, setResumeData}: EditorFo
                             Add work experience
                         </Button>
                     </div>
-                </form>
             </Form>
         </div>
     );
@@ -118,9 +134,10 @@ interface WorkExperienceItemProps {
     form: UseFormReturn<WorkExperienceValues>;
     index: number;
     remove: (index: number) => void;
+    length: number;
 }
 
-function WorkExperienceItem({id, form, index, remove}: WorkExperienceItemProps){
+function WorkExperienceItem({id, form, index, remove, length}: WorkExperienceItemProps){
 
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
 
@@ -224,6 +241,7 @@ function WorkExperienceItem({id, form, index, remove}: WorkExperienceItemProps){
                         <FormLabel>Description</FormLabel>
                         <FormControl>
                             <Textarea 
+                                className="min-h-32"
                                 {...field} 
                             />
                         </FormControl>
@@ -231,9 +249,11 @@ function WorkExperienceItem({id, form, index, remove}: WorkExperienceItemProps){
                     </FormItem>
                 )}
             />
-            <Button variant={'destructive'} type="button" onClick={()=>remove(index)}>
-                Remove
-            </Button>
+            { length > 1 && (
+                <Button variant={'destructive'} type="button" onClick={()=>remove(index)}>
+                    Remove
+                </Button>
+            )}
     </div>
     )
 }

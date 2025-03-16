@@ -29,15 +29,15 @@ export default function SummaryForm({resumeData, setResumeData}: EditorFormProps
     }, [form, resumeData, setResumeData]);
     
     return (
-        <div className="max-w-xl mx-auto space-y-6">
+        <div className="max-w-xl mx-auto space-y-3">
             <div className="space-y-1.5 text-center">
-                <h2 className="text-2xl font-semibold">Professional Summary</h2>
+                {/* <h2 className="text-2xl font-semibold">Professional Summary</h2>
                 <p className="text-sm text-muted-foreground">
                     write a short introduction for your resume or let the AI gererate one from your entered data.
-                </p>
+                </p> */}
             </div>
             <Form {...form}>
-                <form className="space-y-3">
+                <form className="space-y-2">
                     <FormField
                         control={form.control}
                         name="summary"
@@ -48,6 +48,7 @@ export default function SummaryForm({resumeData, setResumeData}: EditorFormProps
                                     <Textarea
                                         {...field}
                                         placeholder="A brief, engaging text about yourself"
+                                        className="min-h-32"
                                     />
                                 </FormControl>
                                 <FormMessage />

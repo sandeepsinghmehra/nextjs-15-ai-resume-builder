@@ -40,13 +40,13 @@ export default function PersonalInfoForm({resumeData, setResumeData}: EditorForm
 
 
     return (
-        <div className="max-w-xl mx-auto space-y-6">
-            <div className="space-y-1.5 text-center">
+        <div className="max-w-xl mx-auto space-y-3">
+            {/* <div className="space-y-1.5 text-center">
                 <h2 className="text-2xl font-semibold">Personal Information</h2>
                 <p className="text-sm text-muted-foreground">Tell us about yourself.</p>
-            </div>
+            </div> */}
             <Form {...form}>
-                <form className="space-y-3">
+                <form className="space-y-2">
                     <FormField 
                         control={form.control}
                         name="photo"

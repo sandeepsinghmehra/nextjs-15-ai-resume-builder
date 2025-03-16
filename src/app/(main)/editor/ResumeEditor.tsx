@@ -48,19 +48,24 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
     <div className='flex grow flex-col'>
         <header className='space-y-1.5 border-b px-3 py-5 text-center'>
             <h1 className='text-2xl font-bold'>Design your resume</h1>
-            <p className='text-sm text-muted-foreground'>Follow the steps below to create your resume. Your progress will be saved automatically.</p>
+            {/*<p className='text-sm text-muted-foreground'>Follow the steps below to create your resume. Your progress will be saved automatically.</p>*/}
         </header>
         <main className='relative grow'>
             <div className='absolute bottom-0 top-0 flex w-full'>
-                <div className={cn('w-full p-3 md:w-1/2 overflow-y-auto space-y-6 md:block', 
+                <div className={cn('w-full px-3 md:w-1/2 overflow-y-auto space-y-6 md:block', 
                     showSmResumePreview && "hidden"
                 )}>
+                    
                     <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
-                    {FormComponent && 
-                        <FormComponent
-                            resumeData={resumeData}
-                            setResumeData={setResumeData}
-                        />}
+                    
+                    <div className='pt-3 '>
+                        {FormComponent && 
+                            <FormComponent
+                                resumeData={resumeData}
+                                setResumeData={setResumeData}
+                            />
+                        }
+                    </div>
                 </div>
                 <div className='grow md:border-r' />
                 {/* <div className='hidden w-1/2 md:flex'>

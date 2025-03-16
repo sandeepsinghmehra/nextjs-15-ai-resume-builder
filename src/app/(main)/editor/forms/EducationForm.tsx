@@ -19,7 +19,10 @@ export default function EducationForm({resumeData, setResumeData}: EditorFormPro
     const form = useForm<EducationValues>({
         resolver: zodResolver(educationSchema),
         defaultValues: {
-            educations: resumeData.educations || []
+            // educations: resumeData.educations || []
+            educations: resumeData.educations?.length
+            ? resumeData.educations
+            : [{ degree: "", school: "", startDate: "", endDate: "", }]
         }
     });
 
@@ -29,10 +32,21 @@ export default function EducationForm({resumeData, setResumeData}: EditorFormPro
             if(!isValid) return;
     
             //Update resume data
-            setResumeData({
-                ...resumeData, 
-                educations: values.educations?.filter(edu => edu !== undefined) || [],
-            })
+            // setResumeData({
+            //     ...resumeData, 
+            //     educations: values.educations?.filter(edu => edu !== undefined) || [],
+            // })
+            if (values?.educations?.length === 0) {
+                setResumeData({
+                    ...resumeData,
+                    educations: [{ degree: "", school: "", startDate: "", endDate: "" }],
+                });
+            } else {
+                setResumeData({
+                    ...resumeData,
+                    educations: values?.educations?.filter(exp => exp !== undefined),
+                });
+            }
         });
         return unsubscribe
     }, [form, resumeData, setResumeData]);
@@ -63,13 +77,13 @@ export default function EducationForm({resumeData, setResumeData}: EditorFormPro
         }
     }
     return (
-        <div className="max-w-xl mx-auto space-y-6">
-            <div className="space-y-1.5 text-center">
+        <div className="max-w-xl mx-auto space-y-3">
+            {/* <div className="space-y-1.5 text-center">
                 <h2 className="text-2xl font-semibold">Education</h2>
                 <p className="text-sm text-muted-foreground">Add as many educations as you like.</p>
-            </div>
+            </div> */}
             <Form {...form}>
-                <form className="space-y-3">
+                <form className="max-w-xl w-full space-y-2 overflow-y-auto h-96">
                     <DndContext
                         sensors={sensors}
                         collisionDetection={closestCenter}
@@ -87,24 +101,26 @@ export default function EducationForm({resumeData, setResumeData}: EditorFormPro
                                     index={index}
                                     form={form}
                                     remove={remove}
+                                    length={fields.length}
                                 />
                             ))}
                         </SortableContext>
                     </DndContext>
-                    <div className="flex justify-center">
-                        <Button 
-                            type="button"
-                            onClick={()=> append({
-                                degree: "",
-                                school: "",
-                                startDate: "",
-                                endDate: "",
-                            })}
-                        >
-                            Add education
-                        </Button>
-                    </div>
+                    
                 </form>
+                <div className="flex justify-center">
+                    <Button 
+                        type="button"
+                        onClick={()=> append({
+                            degree: "",
+                            school: "",
+                            startDate: "",
+                            endDate: "",
+                        })}
+                    >
+                        Add education
+                    </Button>
+                </div>
             </Form>
         </div>
     );
@@ -116,13 +132,15 @@ interface EducationItemProps {
     form: UseFormReturn<EducationValues>;
     index: number;
     remove: (index: number) => void;
+    length: number;
 }
 
 function EducationItem({
     id, 
     form, 
     index, 
-    remove
+    remove, 
+    length
 }: EducationItemProps){
 
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
@@ -211,8 +229,10 @@ function EducationItem({
                 )}
             />
         </div>
-        <Button variant={'destructive'} type="button" onClick={()=>remove(index)}>
-            Remove
-        </Button>
+        {length > 1 && (
+            <Button variant={'destructive'} type="button" onClick={()=>remove(index)}>
+                Remove
+            </Button>
+        )}
     </div>
 )}

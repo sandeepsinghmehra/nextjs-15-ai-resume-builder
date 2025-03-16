@@ -15,8 +15,8 @@ interface BreadcrumbsProps {
 }
 export default function Breadcrumbs({currentStep, setCurrentStep}: BreadcrumbsProps) {
     return (
-        <div className="flex justify-center">
-            <Breadcrumb>
+        <div className="flex justify-center bg-white dark:bg-gray-800 h-10 z-10 m-auto">
+            <Breadcrumb className="flex justify-center">
                 <BreadcrumbList>
                 {steps.map((step: any) => (
                     <React.Fragment key={step.key}>

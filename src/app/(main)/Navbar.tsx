@@ -13,7 +13,7 @@ export default function Navbar() {
     const { theme } = useTheme();
 
     return (
-        <header className="shadow-sm">
+        <header className="shadow-sm fixed top-0 ">
             <div className="max-w-7xl mx-auto p-3 flex items-center justify-between gap-3">
                 <Link href="/resumes" className="flex items-center gap-2">
                     <Image 

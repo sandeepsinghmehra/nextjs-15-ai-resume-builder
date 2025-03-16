@@ -19,18 +19,22 @@ export const personalInfoSchema = z.object({
     .refine(
         (file) => !file || file.size <= 4 * 1024 * 1024, "File size must be less than 4MB",
     ),
-    firstName: optionalString,
+    firstName: z.string().trim().max(50, "Name must be at most 50 characters").optional().or(z.literal("")),
     lastName: optionalString,
-    email: optionalString,
-    phone: optionalString,  
-    city: optionalString,
-    jobTitle: optionalString,
-    country: optionalString,
+    email: z.string().trim().max(100, "Email must be at most 100 characters").optional().or(z.literal("")),
+    phone: z.string().trim().max(16, "Phone must be at most 16 characters").optional().or(z.literal("")),  
+    city: z.string().trim().max(30, "City name must be at most 30 characters").optional().or(z.literal("")),
+    jobTitle:  z.string().trim().max(30, "Job role must be at most 30 characters").optional().or(z.literal("")),
+    country:  z.string().trim().max(20, "Country name must be at most 20 characters").optional().or(z.literal("")),
+    linkedin: z.string().trim().url().optional().or(z.literal("")),
+    github: z.string().trim().url().optional().or(z.literal("")),       
+    website: z.string().trim().url().optional().or(z.literal("")),     
 });
 
 export type PersonalInfoValues = z.infer<typeof personalInfoSchema>;
-
+  
 export const workExperienceSchema = z.object({
+    workExperienceSectionName: optionalString,
     workExperiences: z.array(
         z.object({
             position: optionalString,
@@ -48,6 +52,7 @@ export type WorkExperienceValues = z.infer<typeof workExperienceSchema>;
 export type WorkExperience = NonNullable<z.infer<typeof workExperienceSchema>["workExperiences"]>[number];
 
 export const educationSchema = z.object({
+    educationSectionName: optionalString,
     educations: z.array(
         z.object({
             degree: optionalString,
@@ -62,10 +67,38 @@ export const educationSchema = z.object({
 export type EducationValues = z.infer<typeof educationSchema>;
 
 export const skillsSchema = z.object({
-    skills: z.array(z.string().trim()).optional(),
+    skillsSectionName: optionalString,
+    skills: z.array(
+        z.object({
+            name: optionalString,
+        })
+    ).optional(),
 })
 
 export type SkillsValues = z.infer<typeof skillsSchema>;
+
+export const languagesSchema = z.object({
+    languagesSectionName: optionalString,
+    languages: z.array(
+        z.object({
+            name: optionalString,
+        })
+    ).optional(),
+})
+
+export type languagesValues = z.infer<typeof languagesSchema>;
+
+export const interestsSchema = z.object({
+    interestsSectionName: optionalString,
+    interests: z.array(
+        z.object({
+            name: optionalString,
+        })
+    ).optional(),
+})
+
+export type interestsValues = z.infer<typeof interestsSchema>;
+  
 
 export const summarySchema = z.object({
     summary: optionalString,
@@ -80,8 +113,11 @@ export const resumeSchema = z.object({
     ...educationSchema.shape,
     ...skillsSchema.shape,
     ...summarySchema.shape,
+    ...languagesSchema.shape,
+    ...interestsSchema.shape,
     colorHex: optionalString,
-    borderStyle: optionalString,
+    borderStyle: optionalString, 
+    layoutStyle: optionalString,
 });
 
 export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {

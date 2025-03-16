@@ -29,12 +29,12 @@ export default function GeneralInfoForm({resumeData, setResumeData}: EditorFormP
     
     return (
         <div className="max-w-xl mx-auto">
-            <div className="space-y-1.5 text-center">
+            {/* <div className="space-y-1.5 text-center">
                 <h2 className="text-2xl font-semibold">General Information</h2>
                 <p className="text-sm text-muted-foreground">Enter the general information about your resume.</p>
-            </div>
+            </div> */}
             <Form {...form}>
-                <form className="space-y-3">
+                <form className="space-y-2">
                     <FormField 
                         control={form.control}
                         name="title"

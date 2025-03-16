@@ -34,13 +34,13 @@ export default function SkillsForm({resumeData, setResumeData}: EditorFormProps)
     }, [form, resumeData, setResumeData]);
     
     return (
-        <div className="max-w-xl mx-auto space-y-6">
-            <div className="space-y-1.5 text-center">
+        <div className="max-w-xl mx-auto space-y-3">
+            {/* <div className="space-y-1.5 text-center">
                 <h2 className="text-2xl font-semibold">Skills</h2>
                 <p className="text-sm text-muted-foreground">What are you good at?</p>
-            </div>
+            </div> */}
             <Form {...form}>
-                <form className="space-y-3">
+                <form className="space-y-2">
                     <FormField
                         control={form.control}
                         name="skills"
@@ -55,6 +55,7 @@ export default function SkillsForm({resumeData, setResumeData}: EditorFormProps)
                                             const skills = e.target.value.split(",");
                                             field.onChange(skills);
                                         }}
+                                        className="min-h-32"
                                     />
                                 </FormControl>
                                 <FormDescription>
