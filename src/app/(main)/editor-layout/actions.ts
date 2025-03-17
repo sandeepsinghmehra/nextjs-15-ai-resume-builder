@@ -14,7 +14,7 @@ export async function saveResume(values: ResumeValues){
     console.log("recieved values", values);
 
     const {
-        photo, workExperiences, educations, skills, ...resumeValues
+        photo, workExperiences, educations, skills, languages, interests,  ...resumeValues
     } = resumeSchema.parse(values);
 
     const { userId} = await auth();
@@ -97,6 +97,20 @@ export async function saveResume(values: ResumeValues){
                         name: skill.name ? skill.name : undefined,
                     }))
                 },
+                interests: {
+                    deleteMany: {},
+                    create: interests?.map(interest => ({
+                        ...interest,
+                        name: interest.name ? interest.name : undefined,
+                    }))
+                },
+                languages: {
+                    deleteMany: {},
+                    create: languages?.map(language => ({
+                        ...language,
+                        name: language?.name ? language.name : undefined,
+                    }))
+                },
                 updatedAt: new Date(),
             }
         })
@@ -124,6 +138,18 @@ export async function saveResume(values: ResumeValues){
                     create: skills?.map(skill => ({
                         ...skill,
                         name: skill.name ? skill.name : undefined,
+                    }))
+                },
+                interests: {
+                    create: interests?.map(interest => ({
+                        ...interest,
+                        name: interest.name ? interest.name : undefined,
+                    }))
+                },
+                languages: {
+                    create: languages?.map(language => ({
+                        ...language,
+                        name: language?.name ? language.name : undefined,
                     }))
                 },
             }

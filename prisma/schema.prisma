@@ -71,7 +71,7 @@ model WorkExperience {
   description String?
 
   resumeId String
-  resume   Resume @relation(fields: [resumeId], references: [id])
+  resume   Resume @relation(fields: [resumeId], references: [id],  onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -88,7 +88,7 @@ model Education {
   endDate   String?
 
   resumeId String
-  resume   Resume @relation(fields: [resumeId], references: [id])
+  resume   Resume @relation(fields: [resumeId], references: [id],  onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -98,7 +98,7 @@ model Education {
 model Skill {
   id       String  @id @default(cuid())
   name     String?
-  resume   Resume  @relation(fields: [resumeId], references: [id])
+  resume   Resume  @relation(fields: [resumeId], references: [id], onDelete: Cascade)
   resumeId String
 
   createdAt DateTime @default(now())
@@ -110,7 +110,7 @@ model Skill {
 model Language {
   id       String  @id @default(cuid())
   name     String?
-  resume   Resume  @relation(fields: [resumeId], references: [id])
+  resume   Resume  @relation(fields: [resumeId], references: [id],  onDelete: Cascade)
   resumeId String
 
   createdAt DateTime @default(now())
@@ -121,7 +121,7 @@ model Language {
 model Interest {
   id       String  @id @default(cuid())
   name     String?
-  resume   Resume  @relation(fields: [resumeId], references: [id])
+  resume   Resume  @relation(fields: [resumeId], references: [id],  onDelete: Cascade)
   resumeId String
 
   createdAt DateTime @default(now())
@@ -133,7 +133,8 @@ model Interest {
 model Keyachivement {
   id       String  @id @default(cuid())
   name     String?
-  resume   Resume  @relation(fields: [resumeId], references: [id])
+  description String?
+  resume   Resume  @relation(fields: [resumeId], references: [id],  onDelete: Cascade)
   resumeId String
 
   createdAt DateTime @default(now())
