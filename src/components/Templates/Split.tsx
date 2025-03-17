@@ -316,7 +316,7 @@ function SkillsSection({resumeData}: ResumeSectionProps){
                 >
                     Skills
                 </p>
-                <div className="flex break-inside-avoid flex-wrap gap-2">
+                {/* <div className="flex break-inside-avoid flex-wrap gap-2">
                     {skills.map((skill, index)=>(
                         <Badge 
                             key={index} 
@@ -329,7 +329,7 @@ function SkillsSection({resumeData}: ResumeSectionProps){
                             {skill}
                         </Badge>
                     ))}
-                </div>
+                </div> */}
             </div>
         </>
     )
