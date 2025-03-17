@@ -1,11 +1,12 @@
 {
   "extends": ["next/core-web-vitals", "next/typescript", "prettier"],
   "rules": {
-    // "@typescript-eslint/no-unused-vars": [
-    //   "error",
-    //   {
-    //     // "ignoreRestsiblings": true
-    //   }
-    // ]
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "ignoreRestsiblings": false
+        // "ignoreRestsiblings": true
+      }
+    ]
   }
 }
