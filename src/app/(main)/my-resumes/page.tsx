@@ -37,7 +37,7 @@ export default async function Page() {
   
   //Todo: Check quota for non-premium users-> done
   return (
-    <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">
+    <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6 ">
         <CreateResumeButton 
           canCreate={canCreateResume(subscriptionLevel, totalCount)}
         />

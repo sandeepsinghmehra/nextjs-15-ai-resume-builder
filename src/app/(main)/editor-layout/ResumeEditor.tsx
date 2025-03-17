@@ -65,7 +65,7 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
                         </div>
                     </div>
                 )}
-            <main className='grow'>
+            <main className='grow mt-16'>
                     <div className={cn(' hidden w-full md:flex', cn(showSmResumePreview && "flex"))} >
                             
                             <div className="flex pt-5 w-full justify-center overflow-y-auto bg-secondary" style={{background: resumeData.colorHex}}>
