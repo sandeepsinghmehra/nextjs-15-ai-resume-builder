@@ -24,10 +24,10 @@ export default function SkillsForm({resumeData, setResumeData}: EditorFormProps)
             //Update resume data
             setResumeData({
                 ...resumeData, 
-                skills: values.skills
-                ?.filter(skill => skill !== undefined)
-                .map(skill => skill.trim())
-                .filter(skill => skill !== "") || [],
+                // skills: values.skills
+                // ?.filter(skill => skill !== undefined)
+                // .map(skill => skill.trim())
+                // .filter(skill => skill !== "") || [],
             })
         });
         return unsubscribe
@@ -48,7 +48,7 @@ export default function SkillsForm({resumeData, setResumeData}: EditorFormProps)
                             <FormItem>
                                 <FormLabel className="sr-only">Skills</FormLabel>
                                 <FormControl>
-                                    <Textarea
+                                    {/* <Textarea
                                         {...field}
                                         placeholder="e.g. React.js, Node.js, MongoDB"
                                         onChange={(e)=>{
@@ -56,7 +56,7 @@ export default function SkillsForm({resumeData, setResumeData}: EditorFormProps)
                                             field.onChange(skills);
                                         }}
                                         className="min-h-32"
-                                    />
+                                    /> */}
                                 </FormControl>
                                 <FormDescription>
                                     Separate each skill with a comma.
