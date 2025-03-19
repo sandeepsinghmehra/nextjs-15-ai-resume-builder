@@ -137,13 +137,13 @@ export async function saveResume(values: ResumeValues){
                 skills: {
                     create: skills?.map(skill => ({
                         ...skill,
-                        name: skill.name ? skill.name : undefined,
+                        name: skill?.name ? skill.name : undefined,
                     }))
                 },
                 interests: {
                     create: interests?.map(interest => ({
                         ...interest,
-                        name: interest.name ? interest.name : undefined,
+                        name: interest?.name ? interest.name : undefined,
                     }))
                 },
                 languages: {

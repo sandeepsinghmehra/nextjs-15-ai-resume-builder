@@ -60,8 +60,6 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
         photo, 
         firstName, 
         lastName, 
-        city, 
-        country, 
         jobTitle, 
         phone, 
         email,
@@ -148,7 +146,7 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                         }}
                     />
                 </div>
-                <p 
+                {/* <p 
                     className="text-xs text-gray-500"
                 >
                     {city}
@@ -156,7 +154,7 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                     {country}
                     {(city || country) && (phone || email) ? " • ": ""}
                     {[phone, email].filter(Boolean).join(" • ")}
-                </p>
+                </p> */}
             </div>
         </div>
     )

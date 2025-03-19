@@ -1,9 +1,9 @@
 import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
-import { educationSchema, EducationValues, personalInfoSchema, PersonalInfoValues, ResumeValues, skillsSchema, SkillsValues, summarySchema, SummaryValues, workExperienceSchema, WorkExperienceValues } from "@/lib/validation";
+import { educationSchema, EducationValues, interestsSchema, InterestsValues, languagesSchema, LanguagesValues, personalInfoSchema, PersonalInfoValues, ResumeValues, skillsSchema, SkillsValues, summarySchema, SummaryValues, workExperienceSchema, WorkExperienceValues } from "@/lib/validation";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {formatDate, set} from "date-fns";
+import {constructNow, formatDate, set} from "date-fns";
 import { Badge } from "../ui/badge";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import { UploadIcon, Sparkle, MapPinIcon, MailIcon, PhoneIcon, MinusIcon, ChevronsUpDownIcon, PlusIcon } from "lucide-react";
@@ -53,6 +53,8 @@ export default function ClassicTemplate({
             <WorkExperienceSection resumeData={resumeData} setResumeData={setResumeData} />
             <EducationSection resumeData={resumeData} setResumeData={setResumeData} />
             <SkillsSection resumeData={resumeData} setResumeData={setResumeData} />
+            <LanguageSection resumeData={resumeData} setResumeData={setResumeData} />
+            <HobbiesSection resumeData={resumeData} setResumeData={setResumeData} />
         </div>
     </div>
     );
@@ -245,18 +247,15 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
         defaultValues: {
             email: resumeData.email || "",
             phone: resumeData.phone || "",
-            city: resumeData.city || "",
-            country: resumeData.country || ""
+            location: resumeData.location || ""
         }
     });
 
     const textCityRef = useRef<HTMLDivElement>(null);
-    const textCountryRef = useRef<HTMLDivElement>(null);
     const textEmailRef = useRef<HTMLDivElement>(null);
     const textPhoneRef = useRef<HTMLDivElement>(null);
 
-    const [cityWidth, setCityWidth] = useState("auto");
-    const [countryWidth, setCountryWidth] = useState("auto");
+    const [locationWidth, setLocationWidth] = useState("auto");
     const [emailWidth, setEmailWidth] = useState("auto");
     const [phoneWidth, setPhoneWidth] = useState("auto");
     
@@ -273,15 +272,9 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
 
     useEffect(() => {
         if (textCityRef.current) {
-            setCityWidth(`${textCityRef.current.offsetWidth + 20}px`);
+            setLocationWidth(`${textCityRef.current.offsetWidth + 20}px`);
         }
-    }, [resumeData.city]);
-
-    useEffect(() => {
-        if (textCountryRef.current) {
-            setCountryWidth(`${textCountryRef.current.offsetWidth + 20}px`);
-        }
-    }, [resumeData.country]);
+    }, [resumeData.location]);
 
     useEffect(() => {
         if (textEmailRef.current) {
@@ -309,63 +302,28 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                     <div className="flex flex-wrap flex-row items-center space-y-1">
                         <div className="flex justify-start items-center gap-1">
                             <MapPinIcon color={'#fff'} fill={colorHex} className="size-7" />
-                            {/* City Field */}
+                            {/* Location Field */}
                             <div className="relative flex">
                                 <span
                                     ref={textCityRef}
                                     className="absolute opacity-0 pointer-events-none whitespace-pre"
                                 >
-                                    {resumeData.city || "Your City"}
+                                    {resumeData.location || "Your Location"}
                                 </span>
                                 <FormField
                                     control={form.control}
-                                    name="city"
+                                    name="location"
                                     render={({ field, fieldState  }) => (
                                     <FormItem>
-                                        <FormLabel className="sr-only">City</FormLabel>
+                                        <FormLabel className="sr-only">Location</FormLabel>
                                         <FormControl>
                                             <input
                                                 {...field}
                                                 type="text"
-                                                placeholder="Your City"
+                                                placeholder="Your Location"
                                                 className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
                                                 style={{
-                                                    width: cityWidth,
-                                                    minWidth: "100px",
-                                                    maxWidth: "100%",
-                                                }}
-                                            />
-                                            
-                                        </FormControl>
-                                        {fieldState.error && (<FormMessage />)}
-                                    </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            {/* Country Field */}
-                            <div className="relative flex">
-                                <span
-                                    ref={textCountryRef}
-                                    className="absolute opacity-0 pointer-events-none whitespace-pre"
-                                >
-                                    {resumeData.country || "Your Country"}
-                                </span>
-
-                                <FormField
-                                    control={form.control}
-                                    name="country"
-                                    render={({ field, fieldState  }) => (
-                                    <FormItem>
-                                        <FormLabel className="sr-only">Country</FormLabel>
-                                        <FormControl>
-                                            <input
-                                                {...field}
-                                                type="text"
-                                                placeholder="Your Country"
-                                                className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
-                                                style={{
-                                                    width: countryWidth,
+                                                    width: locationWidth,
                                                     minWidth: "100px",
                                                     maxWidth: "100%",
                                                 }}
@@ -464,14 +422,12 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
 }
 
 
+
 function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
     // console.log("resumeData", resumeData);
-    const {workExperiences, summary, colorHex} = resumeData;
+    const { colorHex} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const workExperiencesNotEmpty = workExperiences?.filter(
-        (exp) => Object.values(exp).filter(Boolean).length > 0
-    );
     const form = useForm<WorkExperienceValues>({
         resolver: zodResolver(workExperienceSchema),
         defaultValues: {
@@ -482,26 +438,32 @@ function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
         }
     });
 
-    const watchedValues = useMemo(() => form.watch(), [form]);
-    console.log("watchedValues", watchedValues);
-
     useEffect(() => {
-        const {unsubscribe} = form.watch(async (values) => {
-            const isValid = await form.trigger();
-            console.log("isValid", isValid);
-            // if(!isValid) return;
-            console.log("values", values);
-        
-            setResumeData({
-                ...resumeData,
-                workExperienceSectionName: values?.workExperienceSectionName || "",
-            });
-
+        const subscription = form.watch((values) => {
+            (async () => {
+                const isValid = await form.trigger();
+                if (!isValid) return;
+    
+                setResumeData({
+                    ...resumeData, // Using existing state
+                    workExperienceSectionName: values?.workExperienceSectionName || "",
+                    workExperiences: Array.isArray(values?.workExperiences)
+                        ? values.workExperiences
+                              .filter((exp): exp is any => !!exp) // Ensure valid entries
+                              .map((exp) => ({
+                                  position: exp.position || "",
+                                  company: exp.company || "",
+                                  startDate: exp.startDate || "",
+                                  endDate: exp.endDate || "",
+                                  description: exp.description || "",
+                              }))
+                        : [], // Default to empty array if undefined
+                });
+            })();
         });
-        return unsubscribe
-    // }, [JSON.stringify(watchedValues)]);
-    }, [form, resumeData, setResumeData]);
-    // console.log("resumeData", resumeData);
+        return () => subscription.unsubscribe()
+    }, [form, setResumeData]);
+
     const {fields, append, remove, move} = useFieldArray({
         control: form.control,
         name: "workExperiences"
@@ -578,6 +540,7 @@ interface WorkExperienceItemProps {
 function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData}: WorkExperienceItemProps){
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
+
 {/* <div className="relative  "></div> */}
     return (
         <TimelineItem className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
@@ -597,15 +560,6 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                     placeholder="Employer"
                                     className=" w-full block text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                     style={{display: 'block',  color: colorHex,}}
-                                    onChange={(e) => {
-                                        field.onChange(e); // Update form state
-                                        setResumeData((prev: any) => ({
-                                            ...prev,
-                                            workExperiences: prev.workExperiences.map((exp: any, i: number) =>
-                                                i === index ? { ...exp, company: e.target.value } : exp
-                                            )
-                                        }));
-                                    }}
                                 />    
                             
                             </FormControl>
@@ -627,15 +581,6 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                     type="text"
                                     placeholder="POSITION"
                                     className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    onChange={(e) => {
-                                        field.onChange(e); // Update form state
-                                        setResumeData((prev: any) => ({
-                                            ...prev,
-                                            workExperiences: prev.workExperiences.map((exp: any, i: number) =>
-                                                i === index ? { ...exp, position: e.target.value } : exp
-                                            )
-                                        }));
-                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -655,15 +600,6 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                     type="text"
                                     placeholder="from"
                                     className="w-20 text-center text-xs font-light focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    onChange={(e) => {
-                                        field.onChange(e); // Update form state
-                                        setResumeData((prev: any) => ({
-                                            ...prev,
-                                            workExperiences: prev.workExperiences.map((exp: any, i: number) =>
-                                                i === index ? { ...exp, startDate: e.target.value } : exp
-                                            )
-                                        }));
-                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -682,15 +618,6 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                     type="text"
                                     placeholder="Until"
                                     className="w-20 text-center text-xs font-light focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    onChange={(e) => {
-                                        field.onChange(e); // Update form state
-                                        setResumeData((prev: any) => ({
-                                            ...prev,
-                                            workExperiences: prev.workExperiences.map((exp: any, i: number) =>
-                                                i === index ? { ...exp, endDate: e.target.value } : exp
-                                            )
-                                        }));
-                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -709,6 +636,7 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                             <div className="relative  m-0 p-0 pb-0 flex box-border h-auto">
                                 <textarea
                                     {...field}
+                                    value={field.value || ""}
                                     ref={(el) => {
                                         if (el) {
                                             el.style.height = "25px"; // Reset height first
@@ -724,15 +652,15 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                         target.style.height = `${target.scrollHeight}px `; // Set new height
                                     }}                
                                     spellCheck={true}
-                                    onChange={(e) => {
-                                        field.onChange(e); // Update form state
-                                        setResumeData((prev: any) => ({
-                                            ...prev,
-                                            workExperiences: prev.workExperiences.map((exp: any, i: number) =>
-                                                i === index ? { ...exp, description: e.target.value } : exp
-                                            )
-                                        }));
-                                    }}
+                                    // onChange={(e) => {
+                                    //     field.onChange(e); // Update form state
+                                    //     setResumeData((prev: any) => ({
+                                    //         ...prev,
+                                    //         workExperiences: prev.workExperiences.map((exp: any, i: number) =>
+                                    //             i === index ? { ...exp, description: e.target.value } : exp
+                                    //         )
+                                    //     }));
+                                    // }}
                                 /> 
                             </div>
                         </FormControl>
@@ -811,7 +739,6 @@ function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
     const form = useForm<EducationValues>({
             resolver: zodResolver(educationSchema),
             defaultValues: {
-                // educations: resumeData.educations || []
                 educationSectionName: resumeData?.educationSectionName || "",
                 educations: resumeData.educations?.length
                 ? resumeData.educations
@@ -820,17 +747,29 @@ function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
         });
     
         useEffect(() => {
-            const {unsubscribe} = form.watch(async (values) => {
-                const isValid = await form.trigger();
-                if(!isValid) return;
-        
-                setResumeData({
-                    ...resumeData,
-                    educationSectionName: values?.educationSectionName || "",
-                });
+            const subscription = form.watch((values) => {
+                (async () => {
+                    const isValid = await form.trigger();
+                    if (!isValid) return;
+
+                    setResumeData({
+                        ...resumeData,
+                        educationSectionName: values?.educationSectionName || "",
+                        educations: Array.isArray(values?.educations)
+                        ? values.educations
+                            .filter((edu): edu is any => !!edu) // Ensure valid entries
+                            .map((edu) => ({
+                                degree: edu.degree || "",
+                                school: edu.school || "",
+                                startDate: edu.startDate || "",
+                                endDate: edu.endDate || "",
+                            }))
+                        : [], // Default to empty array if undefined
+                    });
+                })();
             });
-            return unsubscribe
-        }, [form, resumeData, setResumeData]);
+            return () => subscription.unsubscribe();
+        }, [form, setResumeData]);
         
         const {fields, append, remove, move} = useFieldArray({
             control: form.control,
@@ -927,15 +866,6 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
                                     placeholder="SCHOOL"
                                     className=" w-full block text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                     style={{display: 'block',  color: colorHex,}}
-                                    onChange={(e) => {
-                                        field.onChange(e); // Update form state
-                                        setResumeData((prev: any) => ({
-                                            ...prev,
-                                            educations: prev.educations.map((edu: any, i: number) =>
-                                                i === index ? { ...edu, school: e.target.value } : edu
-                                            )
-                                        }));
-                                    }}
                                 />    
                             
                             </FormControl>
@@ -957,15 +887,6 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
                                     type="text"
                                     placeholder="DEGREE"
                                     className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    onChange={(e) => {
-                                        field.onChange(e); // Update form state
-                                        setResumeData((prev: any) => ({
-                                            ...prev,
-                                            educations: prev.educations.map((edu: any, i: number) =>
-                                                i === index ? { ...edu, degree: e.target.value } : edu
-                                            )
-                                        }));
-                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -985,15 +906,6 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
                                     type="text"
                                     placeholder="from"
                                     className="w-20 text-center text-xs font-light focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    onChange={(e) => {
-                                        field.onChange(e); // Update form state
-                                        setResumeData((prev: any) => ({
-                                            ...prev,
-                                            educations: prev.educations.map((edu: any, i: number) =>
-                                                i === index ? { ...edu, startDate: e.target.value } : edu
-                                            )
-                                        }));
-                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -1012,15 +924,6 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
                                     type="text"
                                     placeholder="Until"
                                     className="w-20 text-center text-xs font-light focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    onChange={(e) => {
-                                        field.onChange(e); // Update form state
-                                        setResumeData((prev: any) => ({
-                                            ...prev,
-                                            educations: prev.educations.map((edu: any, i: number) =>
-                                                i === index ? { ...edu, endDate: e.target.value } : edu
-                                            )
-                                        }));
-                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -1080,76 +983,45 @@ function EducationButtons({setIsModalOpen, remove, index, append, length}: Educa
     )
 }
 
-function SkillsdsSection({resumeData, setResumeData}: ResumeSectionProps){
-    return(
-        <>
-            <hr 
-                className="border-2" 
-                style={{
-                    // borderColor: colorHex
-                }}
-            />
-            <div className="space-y-3 break-inside-avoid">
-                <p 
-                    className="text-lg font-semibold"
-                    style={{
-                        // color: colorHex
-                    }}
-                >
-                    Skills
-                </p>
-                <div className="flex break-inside-avoid flex-wrap gap-2">
-                    {/* {skills.map((skill, index)=>(
-                        <Badge 
-                            key={index} 
-                            className="bg-black text-white rounded-md hover:bg-black"
-                            style={{
-                                backgroundColor: colorHex,
-                                borderRadius: borderStyle === BorderStyles.SQUARE?"0px" : borderStyle=== BorderStyles.CIRCLE? "9999px":"8px"
-                            }}
-                        >
-                            {skill}
-                        </Badge>
-                    ))} */}
-                </div>
-            </div>
-        </>
-    )
-}
 function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
     const {skills, colorHex, borderStyle} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // if(!skills?.length) return null;
     const form = useForm<SkillsValues>({
-            resolver: zodResolver(skillsSchema),
-            defaultValues: {
-                skillsSectionName: resumeData.skillsSectionName || "",
-                skills: resumeData.skills?.length
-                ? resumeData.skills
-                : [{ name: "" }] 
-            }
-        });
-    
-        useEffect(() => {
-            const {unsubscribe} = form.watch(async (values) => {
-                const isValid = await form.trigger();
-                if(!isValid) return;
-        
-                //Update resume data
-                setResumeData({
-                    ...resumeData, 
-                    skillsSectionName: values.skillsSectionName || ""
-                })
-            });
-            return unsubscribe
-        }, [form, resumeData, setResumeData]);
-        
-        const {fields, append, remove, move}:any = useFieldArray({
-            control: form.control,
-            name: "skills"
-        });
+        resolver: zodResolver(skillsSchema),
+        defaultValues: {
+            skillsSectionName: resumeData.skillsSectionName || "",
+            skills: resumeData.skills?.length ? resumeData?.skills : [{ name: "" }] 
+        }
+    });
 
+    useEffect(() => {
+        const subscription = form.watch((values) => {
+            (async () => {
+                const isValid = await form.trigger();
+                if (!isValid) return;
+
+                setResumeData({
+                    ...resumeData,
+                   skillsSectionName: values.skillsSectionName || "",
+                    skills: Array.isArray(values?.skills)
+                    ? values.skills
+                        .filter((skill): skill is any => !!skill) // Ensure valid entries
+                        .map((skill) => ({
+                            name: skill.name || "",
+                        }))
+                    : [], // Default to empty array if undefined
+                });
+            })();
+        });
+        return () => subscription.unsubscribe();
+    }, [form, setResumeData]);
+        
+    const {fields, append, remove, move}:any = useFieldArray({
+        control: form.control,
+        name: "skills"
+    });
     return (
         <>
             <hr 
@@ -1182,7 +1054,7 @@ function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
                                                     {...field}
                                                     type="text"
                                                     placeholder="SKILLS"
-                                                    className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-300 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                    className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                                     style={{
                                                         display: "block",
                                                         width: "100%",
@@ -1207,7 +1079,6 @@ function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
                                     setIsModalOpen={setIsModalOpen}
                                     append={append}
                                     colorHex={colorHex}
-                                    setResumeData={setResumeData}
                                 />
                             ))} 
                         </div>              
@@ -1227,10 +1098,9 @@ interface SkillItemProps {
     setIsModalOpen: (value: boolean) => void;
     append: ({name}: {name: string}) => void;
     colorHex: string|undefined;
-    setResumeData: (data: any) => void;
 }
 
-function SkillItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData}: SkillItemProps){
+function SkillItem({id, form, index, remove, length, setIsModalOpen, append, colorHex}: SkillItemProps){
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
     const [showButtons, setShowButtons] = useState(false);
@@ -1268,18 +1138,9 @@ function SkillItem({id, form, index, remove, length, setIsModalOpen, append, col
                                         {...field}
                                         type="text"
                                         placeholder="Enter skill"
-                                        className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-300 hover:bg-gray-300 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
-                                        onChange={(e) => {
-                                            field.onChange(e); // Update form state
-                                            setResumeData((prev: any) => ({
-                                                ...prev,
-                                                skills: prev.skills.map((skill: any, i: number) =>
-                                                    i === index ? { ...skill, name: e.target.value } : skill
-                                                )
-                                            }));
-                                        }}
                                     /> 
                                 </div>
                             </FormControl>
@@ -1302,6 +1163,449 @@ interface SkillButtonsProps {
     setShowButtons: (value: boolean) => void;
 }
 function SkillButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons}: SkillButtonsProps){
+    return (
+        <div 
+            className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
+            onMouseEnter={() => setShowButtons(true)}  // Keep visible when hovering buttons
+            onMouseLeave={() => setShowButtons(false)} // Hide only when leaving buttons
+        >
+            <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
+                
+                {length > 1 && (
+                    <Button 
+                        size="icon" 
+                        variant={'destructive'} 
+                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+                        onClick={()=>remove(index)}
+                    >
+                        <MinusIcon className="w-5 h-5" />
+                    </Button>
+                )}
+                {length > 1 && (
+                    <Button 
+                        size="icon" 
+                        variant={'destructive'} 
+                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+                    >
+                        <ChevronsUpDownIcon className="w-5 h-5" />
+                    </Button>
+                )}
+                <Button 
+                    size={"icon"} 
+                    variant={'destructive'} 
+                    className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+                    onClick={()=> append({
+                        name: "",
+                    })}
+                >
+                    <PlusIcon className="w-5 h-5" />
+                </Button>
+            </div>
+        </div>
+    )
+}
+
+function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
+    const { colorHex, borderStyle} = resumeData;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const form = useForm<LanguagesValues>({
+        resolver: zodResolver(languagesSchema),
+        defaultValues: {
+            languagesSectionName: resumeData?.languagesSectionName || "",
+            languages: resumeData.languages?.length ? resumeData?.languages : [{ name: "" }] 
+        }
+    });
+
+    useEffect(() => {
+        const subscription = form.watch((values) => {
+            (async () => {
+                const isValid = await form.trigger();
+                if (!isValid) return;
+
+                setResumeData({
+                    ...resumeData,
+                    languagesSectionName: values.languagesSectionName || "",
+                    languages: Array.isArray(values?.languages)
+                    ? values.languages
+                        .filter((language): language is any => !!language) // Ensure valid entries
+                        .map((language) => ({
+                            name: language.name || "",
+                        }))
+                    : [], // Default to empty array if undefined
+                });
+            })();
+        });
+        return () => subscription.unsubscribe();
+    }, [form, setResumeData]);
+        
+    const {fields, append, remove, move}:any = useFieldArray({
+        control: form.control,
+        name: "languages"
+    });
+    return (
+        <>
+            <hr 
+                className="border-2"
+                style={{
+                    borderColor: colorHex
+                }}
+            />
+            <div className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
+                <Form {...form}>
+                    <div className="break-inside-avoid">
+                        <FormField
+                            control={form.control}
+                            name="languagesSectionName"
+                            render={({ field, fieldState  }) => (
+                                <FormItem>
+                                    <FormLabel className="sr-only">Language Section Name</FormLabel>
+                                    <FormControl>
+                                        <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
+                                                {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
+                                                <Button 
+                                                    variant={'destructive'} 
+                                                    size={"sm"}
+                                                    className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
+                                                    onClick={() => setIsModalOpen(true)}
+                                                >
+                                                    <Sparkle /> Writing Assistant
+                                                </Button>
+                                                <input
+                                                    {...field}
+                                                    type="text"
+                                                    placeholder="LANGUAGES"
+                                                    className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                    style={{
+                                                        display: "block",
+                                                        width: "100%",
+                                                    }}
+                                                />
+                                        </div>
+                                    </FormControl>
+                                    
+                                    {fieldState.error && (<FormMessage />)}
+                                </FormItem>
+                            )}
+                        />
+                        <div className='flex flex-row flex-wrap'>
+                            {fields.map((field:any, index:number) => (
+                                <LanguageItem
+                                    id={field.id}
+                                    key={field.id} 
+                                    index={index}
+                                    form={form}
+                                    remove={remove}
+                                    length={fields.length}
+                                    setIsModalOpen={setIsModalOpen}
+                                    append={append}
+                                    colorHex={colorHex}
+                                />
+                            ))} 
+                        </div>              
+                    </div>
+                </Form>
+            </div>
+        </>
+    )
+}
+
+interface LanguageItemProps {
+    id: string;
+    form: UseFormReturn<LanguagesValues>;
+    index: number;
+    remove: (index: number) => void;
+    length: number;
+    setIsModalOpen: (value: boolean) => void;
+    append: ({name}: {name: string}) => void;
+    colorHex: string|undefined;
+}
+
+function LanguageItem({id, form, index, remove, length, setIsModalOpen, append, colorHex}: LanguageItemProps){
+
+    // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
+    const [showButtons, setShowButtons] = useState(false);
+
+    return (
+        <div className="">
+                <FormField
+                    control={form.control}
+                    name={`languages.${index}.name`}
+                    render={({field})=>(
+                        <FormItem className="space-y-[1px]">
+                            <FormLabel className="sr-only">Language</FormLabel>
+                            <FormControl>
+                                <div 
+                                    className="relative p-0 rounded-md w-full max-w-3xl transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
+                                    onMouseEnter={() => setShowButtons(true)}
+                                    onMouseLeave={() => setShowButtons(false)}
+                                    onFocus={() => setShowButtons(true)} 
+                                    onBlur={(e) => {
+                                        if (!e.currentTarget.contains(e.relatedTarget)) setShowButtons(false);
+                                    }}
+                                    tabIndex={-1} // Ensures div can be focused
+                                >
+                      
+                                    <LanguageButtons 
+                                        remove={remove} 
+                                        length={length} 
+                                        setIsModalOpen={setIsModalOpen} 
+                                        append={append} 
+                                        index={index} 
+                                        showButtons={showButtons} 
+                                        setShowButtons={setShowButtons}
+                                    />
+                                    <input
+                                        {...field}
+                                        type="text"
+                                        placeholder="Enter language"
+                                        className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
+                                        onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
+                                    /> 
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                </div>
+
+    )
+}
+
+interface LanguageButtonsProps {
+    index: number;
+    remove: (index: number) => void;
+    length: number;
+    setIsModalOpen: (value: boolean) => void;
+    append: ({name}: {name: string}) => void;
+    showButtons: boolean;
+    setShowButtons: (value: boolean) => void;
+}
+function LanguageButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons}: LanguageButtonsProps){
+    return (
+        <div 
+            className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
+            onMouseEnter={() => setShowButtons(true)}  // Keep visible when hovering buttons
+            onMouseLeave={() => setShowButtons(false)} // Hide only when leaving buttons
+        >
+            <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
+                
+                {length > 1 && (
+                    <Button 
+                        size="icon" 
+                        variant={'destructive'} 
+                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+                        onClick={()=>remove(index)}
+                    >
+                        <MinusIcon className="w-5 h-5" />
+                    </Button>
+                )}
+                {length > 1 && (
+                    <Button 
+                        size="icon" 
+                        variant={'destructive'} 
+                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+                    >
+                        <ChevronsUpDownIcon className="w-5 h-5" />
+                    </Button>
+                )}
+                <Button 
+                    size={"icon"} 
+                    variant={'destructive'} 
+                    className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+                    onClick={()=> append({
+                        name: "",
+                    })}
+                >
+                    <PlusIcon className="w-5 h-5" />
+                </Button>
+            </div>
+        </div>
+    )
+}
+
+
+function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
+    const { colorHex, borderStyle} = resumeData;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const form = useForm<InterestsValues>({
+        resolver: zodResolver(interestsSchema),
+        defaultValues: {
+            interestsSectionName: resumeData?.interestsSectionName || "",
+            interests: resumeData.interests?.length ? resumeData?.interests : [{ name: "" }] 
+        }
+    });
+
+    useEffect(() => {
+        const subscription = form.watch((values) => {
+            (async () => {
+                const isValid = await form.trigger();
+                if (!isValid) return;
+
+                setResumeData({
+                    ...resumeData,
+                    interestsSectionName: values.interestsSectionName || "",
+                    interests: Array.isArray(values?.interests)
+                    ? values.interests
+                        .filter((interest): interest is any => !!interest) // Ensure valid entries
+                        .map((interest) => ({
+                            name: interest.name || "",
+                        }))
+                    : [], // Default to empty array if undefined
+                });
+            })();
+        });
+        return () => subscription.unsubscribe();
+    }, [form, setResumeData]);
+        
+    const {fields, append, remove, move}:any = useFieldArray({
+        control: form.control,
+        name: "interests"
+    });
+    return (
+        <>
+            <hr 
+                className="border-2"
+                style={{
+                    borderColor: colorHex
+                }}
+            />
+            <div className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
+                <Form {...form}>
+                    <div className="break-inside-avoid">
+                        <FormField
+                            control={form.control}
+                            name="interestsSectionName"
+                            render={({ field, fieldState  }) => (
+                                <FormItem>
+                                    <FormLabel className="sr-only">Insterest Section Name</FormLabel>
+                                    <FormControl>
+                                        <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
+                                                {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
+                                                <Button 
+                                                    variant={'destructive'} 
+                                                    size={"sm"}
+                                                    className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
+                                                    onClick={() => setIsModalOpen(true)}
+                                                >
+                                                    <Sparkle /> Writing Assistant
+                                                </Button>
+                                                <input
+                                                    {...field}
+                                                    type="text"
+                                                    placeholder="LANGUAGES"
+                                                    className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                    style={{
+                                                        display: "block",
+                                                        width: "100%",
+                                                    }}
+                                                />
+                                        </div>
+                                    </FormControl>
+                                    
+                                    {fieldState.error && (<FormMessage />)}
+                                </FormItem>
+                            )}
+                        />
+                        <div className='flex flex-row flex-wrap'>
+                            {fields.map((field:any, index:number) => (
+                                <HobbiesItem
+                                    id={field.id}
+                                    key={field.id} 
+                                    index={index}
+                                    form={form}
+                                    remove={remove}
+                                    length={fields.length}
+                                    setIsModalOpen={setIsModalOpen}
+                                    append={append}
+                                    colorHex={colorHex}
+                                />
+                            ))} 
+                        </div>              
+                    </div>
+                </Form>
+            </div>
+        </>
+    )
+}
+
+interface HobbiesItemProps {
+    id: string;
+    form: UseFormReturn<InterestsValues>;
+    index: number;
+    remove: (index: number) => void;
+    length: number;
+    setIsModalOpen: (value: boolean) => void;
+    append: ({name}: {name: string}) => void;
+    colorHex: string|undefined;
+}
+
+function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, colorHex}: HobbiesItemProps){
+
+    // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
+    const [showButtons, setShowButtons] = useState(false);
+
+    return (
+        <div className="">
+                <FormField
+                    control={form.control}
+                    name={`interests.${index}.name`}
+                    render={({field})=>(
+                        <FormItem className="space-y-[1px]">
+                            <FormLabel className="sr-only">Skill</FormLabel>
+                            <FormControl>
+                                <div 
+                                    className="relative p-0 rounded-md w-full max-w-3xl transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
+                                    onMouseEnter={() => setShowButtons(true)}
+                                    onMouseLeave={() => setShowButtons(false)}
+                                    onFocus={() => setShowButtons(true)} 
+                                    onBlur={(e) => {
+                                        if (!e.currentTarget.contains(e.relatedTarget)) setShowButtons(false);
+                                    }}
+                                    tabIndex={-1} // Ensures div can be focused
+                                >
+                      
+                                    <HobbiesButtons 
+                                        remove={remove} 
+                                        length={length} 
+                                        setIsModalOpen={setIsModalOpen} 
+                                        append={append} 
+                                        index={index} 
+                                        showButtons={showButtons} 
+                                        setShowButtons={setShowButtons}
+                                    />
+                                    <input
+                                        {...field}
+                                        type="text"
+                                        placeholder="Enter language"
+                                        className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
+                                        onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
+                                    /> 
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                </div>
+
+    )
+}
+
+interface HobbiesButtonsProps {
+    index: number;
+    remove: (index: number) => void;
+    length: number;
+    setIsModalOpen: (value: boolean) => void;
+    append: ({name}: {name: string}) => void;
+    showButtons: boolean;
+    setShowButtons: (value: boolean) => void;
+}
+function HobbiesButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons}: HobbiesButtonsProps){
     return (
         <div 
             className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}

@@ -246,8 +246,7 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
         defaultValues: {
             email: resumeData.email || "",
             phone: resumeData.phone || "",
-            city: resumeData.city || "",
-            country: resumeData.country || ""
+            location: resumeData.location || "",
         }
     });
 
@@ -256,7 +255,7 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
     const textEmailRef = useRef<HTMLDivElement>(null);
     const textPhoneRef = useRef<HTMLDivElement>(null);
 
-    const [cityWidth, setCityWidth] = useState("auto");
+    const [locationWidth, setLocationWidth] = useState("auto");
     const [countryWidth, setCountryWidth] = useState("auto");
     const [emailWidth, setEmailWidth] = useState("auto");
     const [phoneWidth, setPhoneWidth] = useState("auto");
@@ -274,15 +273,9 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
 
     useEffect(() => {
         if (textCityRef.current) {
-            setCityWidth(`${textCityRef.current.offsetWidth + 20}px`);
+            setLocationWidth(`${textCityRef.current.offsetWidth + 20}px`);
         }
-    }, [resumeData.city]);
-
-    useEffect(() => {
-        if (textCountryRef.current) {
-            setCountryWidth(`${textCountryRef.current.offsetWidth + 20}px`);
-        }
-    }, [resumeData.country]);
+    }, [resumeData.location]);
 
     useEffect(() => {
         if (textEmailRef.current) {
@@ -310,20 +303,20 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                     <div className="flex flex-wrap flex-row items-center space-y-1">
                         <div className="flex justify-start items-center gap-1">
                             <MapPinIcon color={'#fff'} fill={colorHex} className="size-7" />
-                            {/* City Field */}
+                            {/* location Field */}
                             <div className="relative flex">
                                 <span
                                     ref={textCityRef}
                                     className="absolute opacity-0 pointer-events-none whitespace-pre"
                                 >
-                                    {resumeData.city || "Your City"}
+                                    {resumeData.location || "Your Location"}
                                 </span>
                                 <FormField
                                     control={form.control}
-                                    name="city"
+                                    name="location"
                                     render={({ field, fieldState  }) => (
                                     <FormItem>
-                                        <FormLabel className="sr-only">City</FormLabel>
+                                        <FormLabel className="sr-only">Location</FormLabel>
                                         <FormControl>
                                             <input
                                                 {...field}
@@ -331,42 +324,7 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                 placeholder="Your City"
                                                 className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
                                                 style={{
-                                                    width: cityWidth,
-                                                    minWidth: "100px",
-                                                    maxWidth: "100%",
-                                                }}
-                                            />
-                                            
-                                        </FormControl>
-                                        {fieldState.error && (<FormMessage />)}
-                                    </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            {/* Country Field */}
-                            <div className="relative flex">
-                                <span
-                                    ref={textCountryRef}
-                                    className="absolute opacity-0 pointer-events-none whitespace-pre"
-                                >
-                                    {resumeData.country || "Your Country"}
-                                </span>
-
-                                <FormField
-                                    control={form.control}
-                                    name="country"
-                                    render={({ field, fieldState  }) => (
-                                    <FormItem>
-                                        <FormLabel className="sr-only">Country</FormLabel>
-                                        <FormControl>
-                                            <input
-                                                {...field}
-                                                type="text"
-                                                placeholder="Your Country"
-                                                className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
-                                                style={{
-                                                    width: countryWidth,
+                                                    width: locationWidth,
                                                     minWidth: "100px",
                                                     maxWidth: "100%",
                                                 }}

@@ -35,15 +35,13 @@ model Resume {
   firstName   String?
   lastName    String?
   jobTitle    String?
-  city        String?
-  country     String?
+  location    String?
   phone       String?
   email       String?
   linkedin    String?
   github      String?
   website     String?
 
-  // address     String
   workExperienceSectionName  String @default("Work Experience")
   educationSectionName       String @default("Education")
   skillsSectionName          String @default("Skills")

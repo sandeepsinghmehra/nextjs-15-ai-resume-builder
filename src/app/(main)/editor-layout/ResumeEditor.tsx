@@ -24,6 +24,22 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
     const [resumeData, setResumeData] = useState<ResumeValues>(
         resumeToEdit ? mapToResumeValues(resumeToEdit): {}
     );
+    
+    // const [resumeData, setResumeData] = useState<ResumeValues>(() => 
+    //     resumeToEdit ? mapToResumeValues(resumeToEdit) : {
+    //         workExperienceSectionName: "",
+    //         workExperiences: [],
+    //         educations: [],
+    //         skills: [],
+    //         languages: [],
+    //         interests: [],
+    //         summary: "",
+    //         colorHex: "",
+    //         borderStyle: "",
+    //         layoutStyle: "",
+    //     }
+    // );
+
     const [showSmResumePreview, setShowSmResumePreview] = useState<boolean>(false);
 
     const {isSaving, hasUnsavedChanges} = useAutoSaveResume(resumeData);

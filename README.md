@@ -2,6 +2,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 First run this command:  npm install --legacy-peer-deps 
+Kill 3000 port in windows: npx kill-port 3000
 
 First, run the development server:
 

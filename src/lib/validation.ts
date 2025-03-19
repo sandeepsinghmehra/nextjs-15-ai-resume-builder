@@ -23,9 +23,8 @@ export const personalInfoSchema = z.object({
     lastName: optionalString,
     email: z.string().trim().max(100, "Email must be at most 100 characters").optional().or(z.literal("")),
     phone: z.string().trim().max(16, "Phone must be at most 16 characters").optional().or(z.literal("")),  
-    city: z.string().trim().max(30, "City name must be at most 30 characters").optional().or(z.literal("")),
+    location: z.string().trim().max(60, "Location name must be at most 60 characters").optional().or(z.literal("")),
     jobTitle:  z.string().trim().max(30, "Job role must be at most 30 characters").optional().or(z.literal("")),
-    country:  z.string().trim().max(20, "Country name must be at most 20 characters").optional().or(z.literal("")),
     linkedin: z.string().trim().url().optional().or(z.literal("")),
     github: z.string().trim().url().optional().or(z.literal("")),       
     website: z.string().trim().url().optional().or(z.literal("")),     
@@ -86,7 +85,7 @@ export const languagesSchema = z.object({
     ).optional(),
 })
 
-export type languagesValues = z.infer<typeof languagesSchema>;
+export type LanguagesValues = z.infer<typeof languagesSchema>;
 
 export const interestsSchema = z.object({
     interestsSectionName: optionalString,
@@ -97,7 +96,7 @@ export const interestsSchema = z.object({
     ).optional(),
 })
 
-export type interestsValues = z.infer<typeof interestsSchema>;
+export type InterestsValues = z.infer<typeof interestsSchema>;
   
 
 export const summarySchema = z.object({
