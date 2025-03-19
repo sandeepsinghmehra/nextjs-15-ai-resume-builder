@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {constructNow, formatDate, set} from "date-fns";
 import { Badge } from "../ui/badge";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
-import { UploadIcon, Sparkle, MapPinIcon, MailIcon, PhoneIcon, MinusIcon, ChevronsUpDownIcon, PlusIcon } from "lucide-react";
+import { UploadIcon, Sparkle, MapPinIcon, MailIcon, PhoneIcon, MinusIcon, ChevronsUpDownIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
@@ -33,6 +33,7 @@ export default function ClassicTemplate({
     const containerRef = useRef<HTMLDivElement>(null);
 
     const {width} = useDimensions(containerRef);
+    
     // console.log("resumedata", resumeData)
     return (
     <div 
@@ -40,7 +41,7 @@ export default function ClassicTemplate({
         ref={containerRef}
     >
         <div 
-            className={cn("space-y-6 p-6", !width && "invisible")}
+            className={cn("space-y-6 p-6 box-border h-auto", !width && "invisible")}
             style={{
                 zoom: (1 / 794) * width,
             }}
@@ -67,94 +68,158 @@ interface ResumeSectionProps {
 
 function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const {
-        photo, 
-        firstName, 
-        jobTitle, 
+
+    const { 
         colorHex,
         borderStyle,
     } = resumeData;
 
-    // const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "": photo);
-    const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "": photo);
 
-    useEffect(()=>{
-        const objectUrl = photo instanceof File ? URL.createObjectURL(photo): "";
-        if(objectUrl) setPhotoSrc(objectUrl)
-        if(photo === null) setPhotoSrc("")
-        return () => URL.revokeObjectURL(objectUrl)
-    },[photo]);
+    const initialPhoto = resumeData.photo instanceof File ? URL.createObjectURL(resumeData.photo) : resumeData.photo || null;
+    const [photoSrc, setPhotoSrc] = useState<string | null>(initialPhoto);
+    const form = useForm<PersonalInfoValues>({
+        resolver: zodResolver(personalInfoSchema),
+        defaultValues: {
+            firstName: resumeData.firstName || "",
+            jobTitle: resumeData.jobTitle || "",
+        }
+    });
 
-    // const photoSrc = photo instanceof File ? "": photo;
+    useEffect(() => {
+        const {unsubscribe} = form.watch(async (values) => {
+            const isValid = await form.trigger();
+            if(!isValid) return;
 
+            //Update resume data
+            setResumeData({...resumeData, ...values})
+        });
+        return unsubscribe;
+    }, [form, resumeData, setResumeData]);
+    // Handle File Upload
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const objectUrl = URL.createObjectURL(file);
+            setPhotoSrc(objectUrl);
+            setResumeData({ ...resumeData, photo: file }); // Save image to database
+        }
+    };
+
+    // Handle File Removal
+    const handleRemovePhoto = () => {
+        setPhotoSrc(null);
+        setResumeData({ ...resumeData, photo: null });
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
     return (
-        <div className="flex items-center gap-6">
+        <Form {...form}>
+            <form className="flex justify-between">    
             <div className="space-y-2.5">
                 <div className="space-y-1">
-                    <input
-                        type="text"
-                        value={firstName}
-                        placeholder="Your Name"
-                        onChange={(e)=>{
-                            setResumeData({...resumeData, firstName: e.target.value})
-                        }} 
-                        className="text-3xl font-bold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-2 px-3 border border-transparent rounded-md m-0 dark:bg-white"
-                        style={{
-                            color: colorHex
-                        }}
+                    <FormField 
+                        control={form.control}
+                        name="firstName"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="sr-only">First Name</FormLabel>
+                                <FormControl>
+                                    <input
+                                        {...field}
+                                        type="text"
+                                        placeholder="Your Name"
+                                        className="text-3xl font-bold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-2 px-3 border border-transparent rounded-md m-0 dark:bg-white"
+                                        style={{
+                                            color: colorHex
+                                        }}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem> 
+                        )}    
                     />
-                    {/* <p>Sandeep singh Mehra</p> */}
                     
-                    <input
-                        type="text"
-                        value={jobTitle}
-                        placeholder="Your Role"
-                        onChange={(e)=>{
-                            setResumeData({...resumeData, jobTitle: e.target.value})
-                        }} 
-                        className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1.5 px-3 border border-transparent rounded-md m-0 dark:bg-white"
+                    <FormField 
+                        control={form.control}
+                        name="jobTitle"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="sr-only">Job Title</FormLabel>
+                                <FormControl>
+                                    <input
+                                        {...field}
+                                        type="text"
+                                        placeholder="Your Role"
+                                        className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1.5 px-3 border border-transparent rounded-md m-0 dark:bg-white"
+                                    />
+                                    {/* <Input {...field} placeholder="Fisrt Name" /> */}
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem> 
+                        )}    
                     />
-                    {/* <p>Frontend Developer</p> */}
                 </div>
-            </div>
+
                 
-                {photoSrc ? (<Image
-                    src={photoSrc}
-                    width={100}
-                    height={100}
-                    alt="Author photo"
-                    className="aspect-square object-cover"
-                    style={{
-                        borderRadius: borderStyle === BorderStyles.SQUARE?"0px" : borderStyle=== BorderStyles.CIRCLE? "9999px":"10%"
-                    }}
-                />): (
-                    <div 
-                        className="aspect-square bg-gray flex items-center justify-center cursor-pointer"
-                        style={{
-                            borderRadius: borderStyle === BorderStyles.SQUARE?"0px" : borderStyle=== BorderStyles.CIRCLE? "9999px":"10%",
-                            backgroundColor: colorHex || "gray",
-                            width: 100,
-                            height: 100,
-                        }}
-                        onClick={() => fileInputRef.current?.click()}
-                    >
-                        <UploadIcon className="text-white w-6 h-6"  />
-                        <Input
-                            // {...fieldValues} 
-                            type="file"
-                            accept="image/*"
-                            onChange={(e)=>{
-                                const file = e.target.files?.[0]
-                                // fieldValues.onChange(file)
-                            }} 
-                            // ref={photoInputRef}
-                            className="hidden"
-                        />
-                    </div>
-                )}
+            </div>
             
-            
-        </div>
+            <FormField 
+                control={form.control}
+                name="photo"
+                render={({ field: { value, ...fieldValues } }) => (
+                    <FormItem>
+                        <FormLabel className="sr-only">Your Photo</FormLabel>
+                            <div className="relative group w-[100px] h-[100px]">
+                            {/* Upload/Remove Overlay */}
+                            <div
+                                className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 group-hover:opacity-100 transition-opacity "
+                                style={{
+                                    borderRadius: borderStyle === BorderStyles.SQUARE?"0px" : borderStyle=== BorderStyles.CIRCLE? "9999px":"10%"
+                                }}
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                        {photoSrc ? (
+                                            <TrashIcon
+                                                className="text-transparent group-hover:text-white w-6 h-6 cursor-pointer"
+                                                onClick={handleRemovePhoto}
+                                            />
+                                        ) : (
+                                            <>
+                                            <UploadIcon className="text-white w-6 h-6" />
+                                            <Input 
+                                                {...fieldValues}
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleFileChange}
+                                                ref={fileInputRef}
+                                                style={{display: 'none'}}
+                                            />
+                                        </>
+                                        )}
+                                    </div>
+
+                                    {/* Image or Upload Placeholder */}
+                                    {photoSrc && (
+                                        <Image
+                                            src={photoSrc}
+                                            width={100}
+                                            height={100}
+                                            alt="Profile Photo"
+                                            className="aspect-square object-cover"
+                                            style={{
+                                                borderRadius: borderStyle === BorderStyles.SQUARE?"0px" : borderStyle=== BorderStyles.CIRCLE? "9999px":"10%"
+                                            }}
+                                        />
+                                    )}
+                                    
+                                </div>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+            </form>
+        </Form>
     )
 }
 
@@ -1030,31 +1095,32 @@ function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
                     borderColor: colorHex
                 }}
             />
-            <div className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
+            <div className="relative border-2 border-transparent border-dashed rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300 m-0 p-0">
+                <Button 
+                    variant={'destructive'} 
+                    size={"sm"}
+                    className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
+                    onClick={() => setIsModalOpen(true)}
+                >
+                    <Sparkle /> Writing Assistant
+                </Button>
                 <Form {...form}>
-                    <div className="break-inside-avoid">
+                    <div className="break-inside-avoid box-border">
                         <FormField
                             control={form.control}
                             name="skillsSectionName"
                             render={({ field, fieldState  }) => (
-                                <FormItem>
+                                <FormItem  className="space-y-0 m-0 p-0">
                                     <FormLabel className="sr-only">Skills Section</FormLabel>
                                     <FormControl>
-                                        <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
+                                        <div className=" rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
                                                 {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
-                                                <Button 
-                                                    variant={'destructive'} 
-                                                    size={"sm"}
-                                                    className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
-                                                    onClick={() => setIsModalOpen(true)}
-                                                >
-                                                    <Sparkle /> Writing Assistant
-                                                </Button>
+                                                
                                                 <input
                                                     {...field}
                                                     type="text"
                                                     placeholder="SKILLS"
-                                                    className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                    className="w-full text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                                     style={{
                                                         display: "block",
                                                         width: "100%",
@@ -1067,7 +1133,7 @@ function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
                                 </FormItem>
                             )}
                         />
-                        <div className='flex flex-row flex-wrap'>
+                        <div className='flex flex-row flex-wrap gap-2 w-full'>
                             {fields.map((field:any, index:number) => (
                                 <SkillItem
                                     id={field.id}
@@ -1104,9 +1170,18 @@ function SkillItem({id, form, index, remove, length, setIsModalOpen, append, col
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
     const [showButtons, setShowButtons] = useState(false);
+    // const textSkillRef = useRef<HTMLDivElement>(null);
+
+    // const [width, setWidth] = useState("auto");
+
+    // useEffect(() => {
+    //     if (textSkillRef.current) {
+    //         setWidth(`${textSkillRef.current.offsetWidth + 20}px`);
+    //     }
+    // }, []);
 
     return (
-        <div className="">
+            <div className="w-[24%]">
                 <FormField
                     control={form.control}
                     name={`skills.${index}.name`}
@@ -1115,7 +1190,7 @@ function SkillItem({id, form, index, remove, length, setIsModalOpen, append, col
                             <FormLabel className="sr-only">Skill</FormLabel>
                             <FormControl>
                                 <div 
-                                    className="relative p-0 rounded-md w-full max-w-3xl transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
+                                    className="relative p-0 rounded-md transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
                                     onMouseEnter={() => setShowButtons(true)}
                                     onMouseLeave={() => setShowButtons(false)}
                                     onFocus={() => setShowButtons(true)} 
@@ -1141,6 +1216,11 @@ function SkillItem({id, form, index, remove, length, setIsModalOpen, append, col
                                         className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
+                                        style={{
+                                            width: 'auto',
+                                            minWidth: "50px",
+                                            maxWidth: "100%",
+                                        }}
                                     /> 
                                 </div>
                             </FormControl>
@@ -1258,7 +1338,7 @@ function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
                             control={form.control}
                             name="languagesSectionName"
                             render={({ field, fieldState  }) => (
-                                <FormItem>
+                                <FormItem  className="space-y-0 m-0 p-0">
                                     <FormLabel className="sr-only">Language Section Name</FormLabel>
                                     <FormControl>
                                         <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
@@ -1288,7 +1368,7 @@ function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
                                 </FormItem>
                             )}
                         />
-                        <div className='flex flex-row flex-wrap'>
+                        <div className='flex flex-row flex-wrap gap-2'>
                             {fields.map((field:any, index:number) => (
                                 <LanguageItem
                                     id={field.id}
@@ -1327,7 +1407,7 @@ function LanguageItem({id, form, index, remove, length, setIsModalOpen, append, 
     const [showButtons, setShowButtons] = useState(false);
 
     return (
-        <div className="">
+        <div className="w-[24%]">
                 <FormField
                     control={form.control}
                     name={`languages.${index}.name`}
@@ -1362,6 +1442,11 @@ function LanguageItem({id, form, index, remove, length, setIsModalOpen, append, 
                                         className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
+                                        style={{
+                                            width: 'auto',
+                                            minWidth: "50px",
+                                            maxWidth: "100%",
+                                        }}
                                     /> 
                                 </div>
                             </FormControl>
@@ -1480,7 +1565,7 @@ function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
                             control={form.control}
                             name="interestsSectionName"
                             render={({ field, fieldState  }) => (
-                                <FormItem>
+                                <FormItem  className="space-y-0 m-0 p-0">
                                     <FormLabel className="sr-only">Insterest Section Name</FormLabel>
                                     <FormControl>
                                         <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
@@ -1510,7 +1595,7 @@ function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
                                 </FormItem>
                             )}
                         />
-                        <div className='flex flex-row flex-wrap'>
+                        <div className='flex flex-row flex-wrap gap-2'>
                             {fields.map((field:any, index:number) => (
                                 <HobbiesItem
                                     id={field.id}
@@ -1549,7 +1634,7 @@ function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, c
     const [showButtons, setShowButtons] = useState(false);
 
     return (
-        <div className="">
+        <div className="w-[24%]">
                 <FormField
                     control={form.control}
                     name={`interests.${index}.name`}
@@ -1584,6 +1669,11 @@ function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, c
                                         className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
+                                        style={{
+                                            width: 'auto',
+                                            minWidth: "50px",
+                                            maxWidth: "100%",
+                                        }}
                                     /> 
                                 </div>
                             </FormControl>
