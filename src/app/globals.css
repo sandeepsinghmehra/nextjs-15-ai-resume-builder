@@ -86,3 +86,10 @@ body {
   size: A4;
   margin: 0.6cm;
 }
+
+.dynamic-time-line-header-point-after::after {
+  content: "";
+  display: block;
+  border-color: var(--primary-color) !important;
+  background-color: var(--primary-color) !important;
+}

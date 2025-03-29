@@ -19,6 +19,8 @@ export const personalInfoSchema = z.object({
     .refine(
         (file) => !file || file.size <= 4 * 1024 * 1024, "File size must be less than 4MB",
     ),
+    fontFamily: z.string().optional().default("Arial"),
+    fontSize: z.string().optional().default("medium"),
     personalDetailName: optionalString,
     firstName: z.string().trim().max(50, "Name must be at most 50 characters").optional().or(z.literal("")),
     lastName: optionalString,

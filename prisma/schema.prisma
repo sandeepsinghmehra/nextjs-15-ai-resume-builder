@@ -25,7 +25,7 @@ model Resume {
   photoUrl           String?
   colorHex           String  @default("#000000")
   borderStyle        String  @default("squircle")
-  fontSize           Int     @default(16)
+  fontSize           String  @default("medium")
   fontFamily         String  @default("Arial")
   fontWeight         String  @default("normal")
   fontStyle          String  @default("normal")

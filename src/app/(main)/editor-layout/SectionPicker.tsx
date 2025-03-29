@@ -128,7 +128,7 @@ export default function SectionPicker({resumeData, setResumeData, onChange, colo
             <Button 
                 variant={"outline"}
                 size={'sm'}
-                title={"Change resume color"}
+                title={"Add/Remove resume section"}
                 onClick={ () => {
                     // if(!canUseCustomizations(subscriptionLevel)){
                     //     premiumModal.setOpen(true);

@@ -77,8 +77,10 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     borderStyle: data.borderStyle,
     colorHex: data.colorHex,
     summary: data.summary || undefined,
-    summaryName: data.summaryName || undefined,
+    summaryName: data.summaryName || "About Me",
     layoutStyle: data.layoutStyle,
-    personalDetailName: data.personalDetailName || undefined,
+    personalDetailName: data.personalDetailName || "Personal Details",
+    fontFamily: data.fontFamily || "Arial",
+    fontSize: data.fontSize || "medium",
   }
 }

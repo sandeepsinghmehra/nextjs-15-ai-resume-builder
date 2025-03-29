@@ -60,7 +60,7 @@ export default function SplitTemplate({
                     borderColor: colorHex
                 }}
             />
-            <div className="flex flex-row">
+            <div className="flex flex-row gap-1">
                 <div className="flex flex-col w-1/3">
                     <SummarySection resumeData={resumeData} setResumeData={setResumeData} />
                     <ProfileUI resumeData={resumeData} setResumeData={setResumeData} />
@@ -91,6 +91,8 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
         borderStyle,
         isPhotoSection,
         isJobTitleSection,
+        fontFamily,
+        fontSize,
     } = resumeData;
 
 
@@ -207,7 +209,11 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                                         placeholder="Your Name"
                                         className="text-3xl font-bold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-2 px-3 border border-transparent rounded-md m-0 dark:bg-white"
                                         style={{
-                                            color: colorHex
+                                            color: colorHex,
+                                            fontSize: `${fontSize === 'big'?'30px': fontSize==='medium'? '24px': '20px'}`,
+                                            lineHeight: `${fontSize === 'big'?'36px': fontSize==='medium'? '32px': '28px'}`,
+                                            fontFamily: fontFamily,
+                                            fontWeight: 700,
                                         }}
                                     />
                                 </FormControl>
@@ -228,6 +234,12 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                                         type="text"
                                         placeholder="Your Role"
                                         className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1.5 px-3 border border-transparent rounded-md m-0 dark:bg-white"
+                                        style={{
+                                            fontSize: `${fontSize === 'big'?'24px': fontSize==='medium'? '20px': '16px'}`,
+                                            lineHeight: `${fontSize === 'big'?'32px': fontSize==='medium'? '28px': '24px'}`,
+                                            fontFamily: fontFamily,
+                                            fontWeight: 500
+                                        }}
                                     />
                                     {/* <Input {...field} placeholder="Fisrt Name" /> */}
                                 </FormControl>
@@ -247,7 +259,7 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
 
 function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { colorHex, isSummarySection } = resumeData;
+    const { colorHex, isSummarySection, fontSize, fontFamily } = resumeData;
     const form = useForm<SummaryValues>({
         resolver: zodResolver(summarySchema),
         defaultValues: {
@@ -338,7 +350,13 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
                                                     target.style.height = "auto"; // Reset height first
                                                     target.style.height = `${target.scrollHeight}px `; // Set new height
                                                 }}
-                                                style={{margin: "0px !important", marginBottom: "0px !important"}}
+                                                style={{
+                                                    margin: "0px !important", 
+                                                    marginBottom: "0px !important",
+                                                    fontSize: `${fontSize === 'big'?'20px': fontSize === 'medium'? '18px': '14px'}`,
+                                                    lineHeight: `${fontSize === 'big'?'24px': fontSize === 'medium'? '22px': '18px'}`,
+                                                    fontFamily: fontFamily,
+                                                }}
                                                 spellCheck={true}
                                             />
                                         </div>
@@ -465,9 +483,9 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                     placeholder="Your Location"
                                                     className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
                                                     style={{
-                                                        // width: locationWidth,
-                                                        // minWidth: "100px",
-                                                        // maxWidth: "100%",
+                                                        width: locationWidth,
+                                                        minWidth: "100px",
+                                                        maxWidth: "100%",
                                                     }}
                                                 />
                                                 

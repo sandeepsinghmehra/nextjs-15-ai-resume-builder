@@ -16,6 +16,7 @@ import SummaryModal from "./components/summary/SummaryModal";
 import { Textarea } from "../ui/textarea";
 import { TimelineLayout } from "./components/layout/timeline-layout";
 import { Timeline, TimelineHeader, TimelineItem } from "./components/layout/timeline";
+import { twMerge } from "tailwind-merge";
 
 interface ResumePreviewProps {
     resumeData: ResumeValues;
@@ -74,6 +75,8 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
         borderStyle,
         isPhotoSection,
         isJobTitleSection,
+        fontFamily,
+        fontSize,
     } = resumeData;
 
 
@@ -118,22 +121,27 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
     return (
         <Form {...form}>
             <form className="flex justify-between">    
-            <div className="space-y-2.5">
-                <div className="space-y-1">
+            <div className="space-y-0">
+                <div className="space-y-0">
                     <FormField 
                         control={form.control}
                         name="firstName"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="space-y-0">
                                 <FormLabel className="sr-only">First Name</FormLabel>
                                 <FormControl>
                                     <input
                                         {...field}
                                         type="text"
                                         placeholder="Your Name"
-                                        className="text-3xl font-bold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-2 px-3 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className={`font-bold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-2 px-3 border border-transparent rounded-md m-0 dark:bg-white`}
                                         style={{
-                                            color: colorHex
+                                            color: colorHex,
+                                            fontSize: `${fontSize === 'big'?'30px': fontSize==='medium'? '24px': '20px'}`,
+                                            lineHeight: `${fontSize === 'big'?'36px': fontSize==='medium'? '32px': '28px'}`,
+                                            fontFamily: fontFamily,
+                                            fontWeight: 700,
+                                            padding: `${fontSize === 'big'?'8px 12px': fontSize==='medium'? '6px 10px': '4px 8px'}`,
                                         }}
                                     />
                                 </FormControl>
@@ -146,7 +154,7 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                         control={form.control}
                         name="jobTitle"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="space-y-0">
                                 <FormLabel className="sr-only">Job Title</FormLabel>
                                 <FormControl>
                                     <input
@@ -154,6 +162,13 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                                         type="text"
                                         placeholder="Your Role"
                                         className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1.5 px-3 border border-transparent rounded-md m-0 dark:bg-white"
+                                        style={{
+                                            fontSize: `${fontSize === 'big'?'24px': fontSize==='medium'? '20px': '16px'}`,
+                                            lineHeight: `${fontSize === 'big'?'32px': fontSize==='medium'? '28px': '24px'}`,
+                                            fontFamily: fontFamily,
+                                            fontWeight: 500,
+                                            padding: `${fontSize === 'big'?'8px 12px': fontSize==='medium'? '6px 10px': '4px 8px'}`,
+                                        }}
                                     />
                                     {/* <Input {...field} placeholder="Fisrt Name" /> */}
                                 </FormControl>
@@ -169,57 +184,63 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                 isPhotoSection ?
                 <FormField 
                     control={form.control}
-                name="photo"
-                render={({ field: { value, ...fieldValues } }) => (
-                    <FormItem>
-                        <FormLabel className="sr-only">Your Photo</FormLabel>
-                            <div className="relative group w-[100px] h-[100px]">
-                            {/* Upload/Remove Overlay */}
-                            <div
-                                className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 group-hover:opacity-100 transition-opacity "
-                                style={{
-                                    borderRadius: borderStyle === BorderStyles.SQUARE?"0px" : borderStyle=== BorderStyles.CIRCLE? "9999px":"10%"
-                                }}
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                        {photoSrc ? (
-                                            <TrashIcon
-                                                className="text-transparent group-hover:text-white w-6 h-6 cursor-pointer"
-                                                onClick={handleRemovePhoto}
-                                            />
-                                        ) : (
-                                            <>
-                                            <UploadIcon className="text-white w-6 h-6" />
-                                            <Input 
-                                                {...fieldValues}
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleFileChange}
-                                                ref={fileInputRef}
-                                                style={{display: 'none'}}
-                                            />
-                                        </>
-                                        )}
-                                    </div>
+                    name="photo"
+                    render={({ field: { value, ...fieldValues } }) => (
+                        <FormItem>
+                            <FormLabel className="sr-only">Your Photo</FormLabel>
+                                <div 
+                                    className="relative group w-[100px] h-[100px]" 
+                                    style={{
+                                        height: fontSize==='big'? 100: fontSize==='medium'? 90: 80,
+                                        width: fontSize==='big'? 100: fontSize==='medium'? 90: 80
+                                    }}
+                                >
+                                {/* Upload/Remove Overlay */}
+                                <div
+                                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 group-hover:opacity-100 transition-opacity "
+                                    style={{
+                                        borderRadius: borderStyle === BorderStyles.SQUARE?"0px" : borderStyle=== BorderStyles.CIRCLE? "9999px":"10%"
+                                    }}
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                            {photoSrc ? (
+                                                <TrashIcon
+                                                    className="text-transparent group-hover:text-white w-6 h-6 cursor-pointer"
+                                                    onClick={handleRemovePhoto}
+                                                />
+                                            ) : (
+                                                <>
+                                                <UploadIcon className="text-white w-6 h-6" />
+                                                <Input 
+                                                    {...fieldValues}
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleFileChange}
+                                                    ref={fileInputRef}
+                                                    style={{display: 'none'}}
+                                                />
+                                            </>
+                                            )}
+                                        </div>
 
-                                    {/* Image or Upload Placeholder */}
-                                    {photoSrc && (
-                                        <Image
-                                            src={photoSrc}
-                                            width={100}
-                                            height={100}
-                                            alt="Profile Photo"
-                                            className="aspect-square object-cover"
-                                            style={{
-                                                borderRadius: borderStyle === BorderStyles.SQUARE?"0px" : borderStyle=== BorderStyles.CIRCLE? "9999px":"10%"
-                                            }}
-                                        />
-                                    )}
-                                    
-                                </div>
-                                <FormMessage />
-                            </FormItem>
-                    )}
+                                        {/* Image or Upload Placeholder */}
+                                        {photoSrc && (
+                                            <Image
+                                                src={photoSrc}
+                                                width={fontSize==='big'? 100: fontSize==='medium'? 90: 80}
+                                                height={fontSize==='big'? 100: fontSize==='medium'? 90: 80}
+                                                alt="Profile Photo"
+                                                className="aspect-square object-cover"
+                                                style={{
+                                                    borderRadius: borderStyle === BorderStyles.SQUARE?"0px" : borderStyle=== BorderStyles.CIRCLE? "9999px":"10%"
+                                                }}
+                                            />
+                                        )}
+                                        
+                                    </div>
+                                    <FormMessage />
+                                </FormItem>
+                        )}
                 /> : null
                 }
             </form>
@@ -229,7 +250,7 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
 
 function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { colorHex, isSummarySection } = resumeData;
+    const { colorHex, isSummarySection, fontSize, fontFamily } = resumeData;
     const form = useForm<SummaryValues>({
         resolver: zodResolver(summarySchema),
         defaultValues: {
@@ -253,11 +274,17 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
             <hr 
                 className="border-2"
                 style={{
-                    borderColor: colorHex
+                    borderColor: colorHex,
+                    marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
                 }}
             />
             <Form {...form}>
-                <div className="space-y-2 break-inside-avoid">
+                <div 
+                    className="space-y-2 break-inside-avoid"
+                    style={{
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+                    }}
+                >
                     <div className="whitespace-pre-line text-sm">
                         <FormField
                             control={form.control}
@@ -288,13 +315,19 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
                                                 }}
                                                 placeholder="Enter your professional summary"
                                                 // rows={1}
-                                                className="w-full min-h-[30px] text-lg font-light focus:outline-none focus:bg-gray-200 hover:bg-gray-200 transition-colors py-0.5 px-1.5 border border-transparent rounded-md resize-none overflow-hidden bg-white dark:bg-white dark:focus:bg-slate-200 dark:hover:bg-slate-200 m-0"
+                                                className="w-full min-h-[30px] text-justify text-lg font-light focus:outline-none focus:bg-gray-200 hover:bg-gray-200 transition-colors py-0.5 px-1.5 border border-transparent rounded-md resize-none overflow-hidden bg-white dark:bg-white dark:focus:bg-slate-200 dark:hover:bg-slate-200 m-0"
                                                 onInput={(e) => {
                                                     const target = e.target as HTMLTextAreaElement;
                                                     target.style.height = "auto"; // Reset height first
                                                     target.style.height = `${target.scrollHeight}px `; // Set new height
                                                 }}
-                                                style={{margin: "0px !important", marginBottom: "0px !important"}}
+                                                style={{
+                                                    margin: "0px !important", 
+                                                    marginBottom: "0px !important",
+                                                    fontSize: `${fontSize === 'big'?'20px': fontSize === 'medium'? '18px': '14px'}`,
+                                                    lineHeight: `${fontSize === 'big'?'24px': fontSize === 'medium'? '22px': '18px'}`,
+                                                    fontFamily: fontFamily,
+                                                }}
                                                 spellCheck={true}
                                             />
                                         </div>
@@ -312,7 +345,7 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
 }
 
 function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
-    const { colorHex, isLocationSection, isEmailSection, isPhoneSection, isLinkedinSection, isWebsiteSection, isGithubSection } = resumeData;
+    const { colorHex, isLocationSection, isEmailSection, isPhoneSection, isLinkedinSection, isWebsiteSection, isGithubSection, fontFamily, fontSize } = resumeData;
     const form = useForm<PersonalInfoValues>({
         resolver: zodResolver(personalInfoSchema),
         defaultValues: {
@@ -365,11 +398,17 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
             <hr 
                 className="border-2"
                 style={{
-                    borderColor: colorHex
+                    borderColor: colorHex,
+                    marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
                 }}
             />
             <Form {...form}>
-                <div className="space-y-3 break-inside-avoid">
+                <div 
+                    className="space-y-3 break-inside-avoid"
+                    style={{
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+                    }}
+                >
                     
                     <div className="flex flex-wrap flex-row items-center space-y-1">
                         {isLocationSection ?
@@ -396,9 +435,12 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                     placeholder="Your Location"
                                                     className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
                                                     style={{
-                                                        // width: locationWidth,
-                                                        // minWidth: "100px",
-                                                        // maxWidth: "100%",
+                                                        width: locationWidth,
+                                                        minWidth: "100px",
+                                                        maxWidth: "100%",
+                                                        fontSize: `${fontSize === 'big'?'14px': fontSize === 'medium'? '13px': '12px'}`,
+                                                        lineHeight: `${fontSize === 'big'?'20px': fontSize === 'medium'? '19px': '18px'}`,
+                                                        fontFamily: fontFamily,
                                                     }}
                                                 />
                                                 
@@ -438,7 +480,10 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                     width: emailWidth,
                                                     minWidth: "100px",
                                                     maxWidth: "100%",
-                                                    marginTop: "0px"
+                                                    marginTop: "0px",
+                                                    fontSize: `${fontSize === 'big'?'14px': fontSize === 'medium'? '13px': '12px'}`,
+                                                    lineHeight: `${fontSize === 'big'?'20px': fontSize === 'medium'? '19px': '18px'}`,
+                                                    fontFamily: fontFamily,
                                                 }}
                                             />
                                             
@@ -478,7 +523,10 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                     width: phoneWidth,
                                                     minWidth: "100px",
                                                     maxWidth: "100%",
-                                                    marginTop: "0px"
+                                                    marginTop: "0px",
+                                                    fontSize: `${fontSize === 'big'?'14px': fontSize === 'medium'? '13px': '12px'}`,
+                                                    lineHeight: `${fontSize === 'big'?'20px': fontSize === 'medium'? '19px': '18px'}`,
+                                                    fontFamily: fontFamily,
                                                 }}
                                             />
                                             
@@ -501,7 +549,7 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
 
 function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
     // console.log("resumeData", resumeData);
-    const { colorHex, isWorkSection} = resumeData;
+    const { colorHex, isWorkSection, fontFamily, fontSize} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const form = useForm<WorkExperienceValues>({
@@ -552,11 +600,17 @@ function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
                 <hr 
                     className="border-2"
                     style={{
-                        borderColor: colorHex
+                        borderColor: colorHex,
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
                     }}
                 />
                 <Form {...form}>
-                    <div className="break-inside-avoid">
+                    <div 
+                        className="break-inside-avoid"
+                        style={{
+                            marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+                        }}
+                    >
                     <FormField
                         control={form.control}
                         name="workExperienceSectionName"
@@ -568,11 +622,14 @@ function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
                                         {...field}
                                         type="text"
                                         placeholder="EXPERIENCE"
-                                        className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         style={{
                                             // color: colorHex,
                                             display: "block",
                                             width: "100%",
+                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+                                            fontFamily: fontFamily,
                                         }}
                                     />
                                 </FormControl>
@@ -594,6 +651,8 @@ function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
                                     append={append}
                                     colorHex={colorHex}
                                     setResumeData={setResumeData}
+                                    fontFamily={fontFamily}
+                                    fontSize={fontSize}
                                 />
                             ))} 
                         </Timeline>              
@@ -615,9 +674,14 @@ interface WorkExperienceItemProps {
     append: ({position, company, startDate, endDate, description}: {position: string, company: string, startDate: string, endDate: string, description: string}) => void;
     colorHex: string|undefined;
     setResumeData: (data: any) => void;
+    fontFamily: string|undefined;
+    fontSize: string|undefined;
 }
 
-function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData}: WorkExperienceItemProps){
+function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData, fontFamily, fontSize}: WorkExperienceItemProps){
+    useEffect(() => {
+        document.documentElement.style.setProperty("--primary-color", colorHex as string); // Set the CSS variable dynamically
+    }, [colorHex]); 
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
 
@@ -626,7 +690,7 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
         <TimelineItem className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
                       
             <ExperienceButtons remove={remove} length={length} setIsModalOpen={setIsModalOpen} append={append} index={index} />
-            <TimelineHeader>
+            <TimelineHeader className="dynamic-time-line-header-point-after">
                 <FormField
                     control={form.control}
                     name={`workExperiences.${index}.company`}
@@ -638,8 +702,15 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                     {...field}
                                     type="text"
                                     placeholder="Employer"
-                                    className=" w-full block text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{display: 'block',  color: colorHex,}}
+                                    className=" w-full block text-lg font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                    style={{
+                                        display: 'block',  
+                                        color: colorHex,
+                                        fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+                                        lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+                                        fontFamily: fontFamily,
+                                        fontWeight: 600,
+                                    }}
                                 />    
                             
                             </FormControl>
@@ -661,6 +732,12 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                     type="text"
                                     placeholder="POSITION"
                                     className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                    style={{
+                                        fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+                                        lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+                                        fontFamily: fontFamily,
+                                        fontWeight: 600,
+                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -679,7 +756,12 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                     {...field}
                                     type="text"
                                     placeholder="from"
-                                    className="w-20 text-center text-xs font-light focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                    style={{
+                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+                                        fontFamily: fontFamily,
+                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -697,7 +779,12 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                     {...field}
                                     type="text"
                                     placeholder="Until"
-                                    className="w-20 text-center text-xs font-light focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                    style={{
+                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+                                        fontFamily: fontFamily,
+                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -741,6 +828,11 @@ function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, ap
                                     //         )
                                     //     }));
                                     // }}
+                                    style={{
+                                        fontSize: `${fontSize === 'big'?'14px': fontSize==='medium'? '13px': '12px'}`,
+                                        lineHeight: `${fontSize === 'big'?'22px': fontSize==='medium'? '20px': '18px'}`,
+                                        fontFamily: fontFamily,
+                                    }}
                                 /> 
                             </div>
                         </FormControl>
@@ -813,7 +905,7 @@ function ExperienceButtons({setIsModalOpen, remove, index, append, length}: Expe
 
 function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
     // console.log("resumeData", resumeData);
-    const {educations,  colorHex, isEducationSection} = resumeData;
+    const {educations,  colorHex, isEducationSection, fontSize, fontFamily} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const form = useForm<EducationValues>({
@@ -864,11 +956,17 @@ function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
                 <hr 
                     className="border-2"
                     style={{
-                        borderColor: colorHex
+                        borderColor: colorHex,
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
                     }}
                 />
                 <Form {...form}>
-                    <div className="break-inside-avoid">
+                    <div 
+                        className="break-inside-avoid"
+                        style={{
+                            marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+                        }}
+                    >
                     <FormField
                         control={form.control}
                         name="educationSectionName"
@@ -880,11 +978,14 @@ function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
                                         {...field}
                                         type="text"
                                         placeholder="EDUCATION"
-                                        className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         style={{
                                             // color: colorHex,
                                             display: "block",
                                             width: "100%",
+                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+                                            fontFamily: fontFamily,
                                         }}
                                     />
                                 </FormControl>
@@ -906,6 +1007,8 @@ function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
                                     append={append}
                                     colorHex={colorHex}
                                     setResumeData={setResumeData}
+                                    fontFamily={fontFamily}
+                                    fontSize={fontSize}
                                 />
                             ))} 
                         </Timeline>              
@@ -927,9 +1030,15 @@ interface EducationItemProps {
     append: ({school, degree, startDate, endDate}: {school: string, degree: string, startDate: string, endDate: string}) => void;
     colorHex: string|undefined;
     setResumeData: (data: any) => void;
+    fontFamily: string|undefined;
+    fontSize: string|undefined;
 }
 
-function EducationItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData}: EducationItemProps){
+function EducationItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData, fontFamily, fontSize}: EducationItemProps){
+
+    useEffect(() => {
+        document.documentElement.style.setProperty("--primary-color", colorHex as string); // Set the CSS variable dynamically
+    }, [colorHex]); 
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
 {/* <div className="relative  "></div> */}
@@ -937,7 +1046,7 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
         <TimelineItem className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
                       
             <EducationButtons remove={remove} length={length} setIsModalOpen={setIsModalOpen} append={append} index={index} />
-            <TimelineHeader>
+            <TimelineHeader className="dynamic-time-line-header-point-after">
                 <FormField
                     control={form.control}
                     name={`educations.${index}.school`}
@@ -950,7 +1059,14 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
                                     type="text"
                                     placeholder="SCHOOL"
                                     className=" w-full block text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{display: 'block',  color: colorHex,}}
+                                    style={{
+                                        display: 'block',  
+                                        color: colorHex,
+                                        fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+                                        lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+                                        fontFamily: fontFamily,
+                                        fontWeight: 600,
+                                    }}
                                 />    
                             
                             </FormControl>
@@ -972,6 +1088,12 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
                                     type="text"
                                     placeholder="DEGREE"
                                     className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                    style={{
+                                        fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+                                        lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+                                        fontFamily: fontFamily,
+                                        fontWeight: 600,
+                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -990,7 +1112,12 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
                                     {...field}
                                     type="text"
                                     placeholder="from"
-                                    className="w-20 text-center text-xs font-light focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                    style={{
+                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+                                        fontFamily: fontFamily,
+                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -1008,7 +1135,12 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
                                     {...field}
                                     type="text"
                                     placeholder="Until"
-                                    className="w-20 text-center text-xs font-light focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                    style={{
+                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+                                        fontFamily: fontFamily,
+                                    }}
                                 /> 
                             </FormControl>
                             <FormMessage />
@@ -1069,7 +1201,7 @@ function EducationButtons({setIsModalOpen, remove, index, append, length}: Educa
 }
 
 function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
-    const {skills, colorHex, borderStyle, isSkillSection} = resumeData;
+    const {skills, colorHex, borderStyle, isSkillSection, fontSize, fontFamily} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // if(!skills?.length) return null;
@@ -1115,10 +1247,16 @@ function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
                 <hr 
                     className="border-2"
                     style={{
-                        borderColor: colorHex
+                        borderColor: colorHex,
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
                     }}
                 />
-                <div className="relative border-2 border-transparent border-dashed rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300 m-0 p-0">
+                <div 
+                    className="relative border-2 border-transparent border-dashed rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300 m-0 p-0"
+                    style={{
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+                    }}
+                >
                     <Button 
                         variant={'destructive'} 
                         size={"sm"}
@@ -1143,10 +1281,13 @@ function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
                                                         {...field}
                                                         type="text"
                                                         placeholder="SKILLS"
-                                                        className="w-full text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                        className="w-full text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                                         style={{
                                                             display: "block",
                                                             width: "100%",
+                                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+                                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+                                                            fontFamily: fontFamily,
                                                         }}
                                                     />
                                             </div>
@@ -1168,6 +1309,8 @@ function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
                                         setIsModalOpen={setIsModalOpen}
                                         append={append}
                                         colorHex={colorHex}
+                                        fontFamily={fontFamily}
+                                        fontSize={fontSize}
                                     />
                                 ))} 
                             </div>              
@@ -1189,9 +1332,11 @@ interface SkillItemProps {
     setIsModalOpen: (value: boolean) => void;
     append: ({name}: {name: string}) => void;
     colorHex: string|undefined;
+    fontFamily: string|undefined;
+    fontSize: string|undefined;
 }
 
-function SkillItem({id, form, index, remove, length, setIsModalOpen, append, colorHex}: SkillItemProps){
+function SkillItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize}: SkillItemProps){
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
     const [showButtons, setShowButtons] = useState(false);
@@ -1238,13 +1383,17 @@ function SkillItem({id, form, index, remove, length, setIsModalOpen, append, col
                                         {...field}
                                         type="text"
                                         placeholder="Enter skill"
-                                        className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className="text-md font-medium text-muted-foreground focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
                                         style={{
                                             width: 'auto',
                                             minWidth: "50px",
                                             maxWidth: "100%",
+                                            fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+                                            lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+                                            fontFamily: fontFamily,
+                                            fontWeight: 500,
                                         }}
                                     /> 
                                 </div>
@@ -1311,7 +1460,7 @@ function SkillButtons({setIsModalOpen, remove, index, append, length, showButton
 }
 
 function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
-    const { colorHex, borderStyle, isLanguageSection} = resumeData;
+    const { colorHex, borderStyle, isLanguageSection, fontSize, fontFamily} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const form = useForm<LanguagesValues>({
@@ -1356,10 +1505,16 @@ function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
                 <hr 
                     className="border-2"
                     style={{
-                        borderColor: colorHex
+                        borderColor: colorHex,
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
                     }}
                 />
-                <div className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
+                <div 
+                    className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300"
+                    style={{
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+                    }}
+                >
                     <Form {...form}>
                         <div className="break-inside-avoid">
                             <FormField
@@ -1374,10 +1529,13 @@ function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
                                                         {...field}
                                                         type="text"
                                                         placeholder="LANGUAGES"
-                                                        className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                        className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                                         style={{
                                                             display: "block",
                                                             width: "100%",
+                                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+                                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+                                                            fontFamily: fontFamily,
                                                         }}
                                                     />
                                             </div>
@@ -1399,6 +1557,8 @@ function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
                                         setIsModalOpen={setIsModalOpen}
                                         append={append}
                                         colorHex={colorHex}
+                                        fontFamily={fontFamily}
+                                        fontSize={fontSize}
                                     />
                                 ))} 
                             </div>              
@@ -1420,9 +1580,11 @@ interface LanguageItemProps {
     setIsModalOpen: (value: boolean) => void;
     append: ({name}: {name: string}) => void;
     colorHex: string|undefined;
+    fontFamily: string|undefined;
+    fontSize: string|undefined;
 }
 
-function LanguageItem({id, form, index, remove, length, setIsModalOpen, append, colorHex}: LanguageItemProps){
+function LanguageItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize}: LanguageItemProps){
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
     const [showButtons, setShowButtons] = useState(false);
@@ -1460,13 +1622,17 @@ function LanguageItem({id, form, index, remove, length, setIsModalOpen, append, 
                                         {...field}
                                         type="text"
                                         placeholder="Enter language"
-                                        className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className="text-md font-medium text-muted-foreground focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
                                         style={{
                                             width: 'auto',
                                             minWidth: "50px",
                                             maxWidth: "100%",
+                                            fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+                                            lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+                                            fontFamily: fontFamily,
+                                            fontWeight: 500,
                                         }}
                                     /> 
                                 </div>
@@ -1534,7 +1700,7 @@ function LanguageButtons({setIsModalOpen, remove, index, append, length, showBut
 
 
 function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
-    const { colorHex, borderStyle, isInterestSection} = resumeData;
+    const { colorHex, borderStyle, isInterestSection, fontSize, fontFamily} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const form = useForm<InterestsValues>({
@@ -1579,10 +1745,16 @@ function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
                 <hr 
                     className="border-2"
                     style={{
-                        borderColor: colorHex
+                        borderColor: colorHex,
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
                     }}
                 />
-                <div className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
+                <div 
+                    className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300"
+                    style={{
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+                    }}
+                >
                     <Form {...form}>
                         <div className="break-inside-avoid">
                             <FormField
@@ -1597,10 +1769,13 @@ function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
                                                         {...field}
                                                         type="text"
                                                         placeholder="LANGUAGES"
-                                                        className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                        className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                                         style={{
                                                             display: "block",
                                                             width: "100%",
+                                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+                                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+                                                            fontFamily: fontFamily,
                                                         }}
                                                     />
                                             </div>
@@ -1622,6 +1797,8 @@ function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
                                         setIsModalOpen={setIsModalOpen}
                                         append={append}
                                         colorHex={colorHex}
+                                        fontFamily={fontFamily}
+                                        fontSize={fontSize}
                                     />
                                 ))} 
                             </div>              
@@ -1644,9 +1821,11 @@ interface HobbiesItemProps {
     setIsModalOpen: (value: boolean) => void;
     append: ({name}: {name: string}) => void;
     colorHex: string|undefined;
+    fontFamily: string|undefined;
+    fontSize: string|undefined;
 }
 
-function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, colorHex}: HobbiesItemProps){
+function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize}: HobbiesItemProps){
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
     const [showButtons, setShowButtons] = useState(false);
@@ -1684,13 +1863,17 @@ function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, c
                                         {...field}
                                         type="text"
                                         placeholder="Enter language"
-                                        className="text-md font-medium focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className="text-md font-medium text-muted-foreground focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
                                         style={{
                                             width: 'auto',
                                             minWidth: "50px",
                                             maxWidth: "100%",
+                                            fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+                                            lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+                                            fontFamily: fontFamily,
+                                            fontWeight: 500,
                                         }}
                                     /> 
                                 </div>
