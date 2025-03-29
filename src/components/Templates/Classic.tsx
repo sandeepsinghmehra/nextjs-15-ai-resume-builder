@@ -37,7 +37,7 @@ export default function ClassicTemplate({
     // console.log("resumedata", resumeData)
     return (
     <div 
-        className={cn("bg-white text-black h-fit w-full aspect-[210/297]", className)}
+        className={cn("bg-white text-black h-fit w-full aspect-[210/297] m-auto", className)}
         ref={containerRef}
     >
         <div 
@@ -72,6 +72,8 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
     const { 
         colorHex,
         borderStyle,
+        isPhotoSection,
+        isJobTitleSection,
     } = resumeData;
 
 
@@ -139,7 +141,7 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                             </FormItem> 
                         )}    
                     />
-                    
+                    {isJobTitleSection ?
                     <FormField 
                         control={form.control}
                         name="jobTitle"
@@ -158,14 +160,15 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                                 <FormMessage />
                             </FormItem> 
                         )}    
-                    />
+                    />: null}
                 </div>
 
                 
             </div>
-            
-            <FormField 
-                control={form.control}
+            {
+                isPhotoSection ?
+                <FormField 
+                    control={form.control}
                 name="photo"
                 render={({ field: { value, ...fieldValues } }) => (
                     <FormItem>
@@ -216,8 +219,9 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                                 </div>
                                 <FormMessage />
                             </FormItem>
-                        )}
-                    />
+                    )}
+                /> : null
+                }
             </form>
         </Form>
     )
@@ -225,7 +229,7 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
 
 function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { colorHex } = resumeData;
+    const { colorHex, isSummarySection } = resumeData;
     const form = useForm<SummaryValues>({
         resolver: zodResolver(summarySchema),
         defaultValues: {
@@ -245,6 +249,7 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
 
     return (
         <>
+        {isSummarySection ? <>
             <hr 
                 className="border-2"
                 style={{
@@ -301,12 +306,13 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
                 </div>
             </Form>
             <SummaryModal open={isModalOpen} setOpen={setIsModalOpen} />
+        </> : null}
         </>
     )
 }
 
 function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
-    const { colorHex } = resumeData;
+    const { colorHex, isLocationSection, isEmailSection, isPhoneSection, isLinkedinSection, isWebsiteSection, isGithubSection } = resumeData;
     const form = useForm<PersonalInfoValues>({
         resolver: zodResolver(personalInfoSchema),
         defaultValues: {
@@ -364,45 +370,48 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
             />
             <Form {...form}>
                 <div className="space-y-3 break-inside-avoid">
+                    
                     <div className="flex flex-wrap flex-row items-center space-y-1">
-                        <div className="flex justify-start items-center gap-1">
-                            <MapPinIcon color={'#fff'} fill={colorHex} className="size-7" />
-                            {/* Location Field */}
-                            <div className="relative flex">
-                                <span
-                                    ref={textCityRef}
-                                    className="absolute opacity-0 pointer-events-none whitespace-pre"
-                                >
-                                    {resumeData.location || "Your Location"}
-                                </span>
-                                <FormField
-                                    control={form.control}
-                                    name="location"
-                                    render={({ field, fieldState  }) => (
-                                    <FormItem>
-                                        <FormLabel className="sr-only">Location</FormLabel>
-                                        <FormControl>
-                                            <input
-                                                {...field}
-                                                type="text"
-                                                placeholder="Your Location"
-                                                className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
-                                                style={{
-                                                    width: locationWidth,
-                                                    minWidth: "100px",
-                                                    maxWidth: "100%",
-                                                }}
-                                            />
-                                            
-                                        </FormControl>
-                                        {fieldState.error && (<FormMessage />)}
-                                    </FormItem>
-                                    )}
-                                />
+                        {isLocationSection ?
+                            <div className="flex justify-start items-center gap-1">
+                                <MapPinIcon color={'#fff'} fill={colorHex} className="size-7" />
+                                {/* Location Field */}
+                                <div className="relative flex">
+                                    <span
+                                        ref={textCityRef}
+                                        className="absolute opacity-0 pointer-events-none whitespace-pre"
+                                    >
+                                        {resumeData.location || "Your Location"}
+                                    </span>
+                                    <FormField
+                                        control={form.control}
+                                        name="location"
+                                        render={({ field, fieldState  }) => (
+                                        <FormItem>
+                                            <FormLabel className="sr-only">Location</FormLabel>
+                                            <FormControl>
+                                                <input
+                                                    {...field}
+                                                    type="text"
+                                                    placeholder="Your Location"
+                                                    className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
+                                                    style={{
+                                                        // width: locationWidth,
+                                                        // minWidth: "100px",
+                                                        // maxWidth: "100%",
+                                                    }}
+                                                />
+                                                
+                                            </FormControl>
+                                            {fieldState.error && (<FormMessage />)}
+                                        </FormItem>
+                                        )}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex justify-start items-center gap-1">
-
+                        : null } 
+                        {isEmailSection ?<div className="flex justify-start items-center gap-1">
+                            
                             <MailIcon absoluteStrokeWidth color={'#fff'} fill={colorHex} className="size-7" />
                             {/* Email Field */}
                             <div className="relative flex">
@@ -439,7 +448,8 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                     )}
                                 />
                             </div>
-                        </div>
+                        </div>: null}
+                        {isPhoneSection ? 
                         <div className="flex justify-start items-center gap-1">
 
                             <PhoneIcon absoluteStrokeWidth color={'#fff'} fill={colorHex} className="size-7" />
@@ -479,7 +489,8 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                 />
                             </div>
                         </div>
-                    </div>
+                        :null}
+                    </div> 
                 </div>
             </Form> 
         </>
@@ -490,7 +501,7 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
 
 function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
     // console.log("resumeData", resumeData);
-    const { colorHex} = resumeData;
+    const { colorHex, isWorkSection} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const form = useForm<WorkExperienceValues>({
@@ -536,56 +547,60 @@ function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
 
     return (
         <>
-            <hr 
-                className="border-2"
-                style={{
-                    borderColor: colorHex
-                }}
-            />
-            <Form {...form}>
-                <div className="break-inside-avoid">
-                <FormField
-                    control={form.control}
-                    name="workExperienceSectionName"
-                    render={({ field, fieldState  }) => (
-                        <FormItem>
-                            <FormLabel className="sr-only">Work Experience Section</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="EXPERIENCE"
-                                    className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        // color: colorHex,
-                                        display: "block",
-                                        width: "100%",
-                                    }}
-                                />
-                            </FormControl>
-                            
-                            {fieldState.error && (<FormMessage />)}
-                        </FormItem>
-                    )}
+        { isWorkSection ?
+            <>
+                <hr 
+                    className="border-2"
+                    style={{
+                        borderColor: colorHex
+                    }}
                 />
-                    <Timeline className=''>
-                        {fields.map((field, index) => (
-                            <WorkExperienceItem 
-                                id={field.id}
-                                key={field.id} 
-                                index={index}
-                                form={form}
-                                remove={remove}
-                                length={fields.length}
-                                setIsModalOpen={setIsModalOpen}
-                                append={append}
-                                colorHex={colorHex}
-                                setResumeData={setResumeData}
-                            />
-                        ))} 
-                    </Timeline>              
-                </div>
-            </Form>
+                <Form {...form}>
+                    <div className="break-inside-avoid">
+                    <FormField
+                        control={form.control}
+                        name="workExperienceSectionName"
+                        render={({ field, fieldState  }) => (
+                            <FormItem>
+                                <FormLabel className="sr-only">Work Experience Section</FormLabel>
+                                <FormControl>
+                                    <input
+                                        {...field}
+                                        type="text"
+                                        placeholder="EXPERIENCE"
+                                        className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        style={{
+                                            // color: colorHex,
+                                            display: "block",
+                                            width: "100%",
+                                        }}
+                                    />
+                                </FormControl>
+                                
+                                {fieldState.error && (<FormMessage />)}
+                            </FormItem>
+                        )}
+                    />
+                        <Timeline className=''>
+                            {fields.map((field, index) => (
+                                <WorkExperienceItem 
+                                    id={field.id}
+                                    key={field.id} 
+                                    index={index}
+                                    form={form}
+                                    remove={remove}
+                                    length={fields.length}
+                                    setIsModalOpen={setIsModalOpen}
+                                    append={append}
+                                    colorHex={colorHex}
+                                    setResumeData={setResumeData}
+                                />
+                            ))} 
+                        </Timeline>              
+                    </div>
+                </Form>
+            </> : null
+        }
         </>
     )
 }
@@ -798,7 +813,7 @@ function ExperienceButtons({setIsModalOpen, remove, index, append, length}: Expe
 
 function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
     // console.log("resumeData", resumeData);
-    const {educations,  colorHex} = resumeData;
+    const {educations,  colorHex, isEducationSection} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const form = useForm<EducationValues>({
@@ -843,56 +858,61 @@ function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
 
     return (
         <>
-            <hr 
-                className="border-2"
-                style={{
-                    borderColor: colorHex
-                }}
-            />
-            <Form {...form}>
-                <div className="break-inside-avoid">
-                <FormField
-                    control={form.control}
-                    name="educationSectionName"
-                    render={({ field, fieldState  }) => (
-                        <FormItem>
-                            <FormLabel className="sr-only">Education Section</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="EDUCATION"
-                                    className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        // color: colorHex,
-                                        display: "block",
-                                        width: "100%",
-                                    }}
-                                />
-                            </FormControl>
-                            
-                            {fieldState.error && (<FormMessage />)}
-                        </FormItem>
-                    )}
+        {
+            isEducationSection ?
+            <>
+                <hr 
+                    className="border-2"
+                    style={{
+                        borderColor: colorHex
+                    }}
                 />
-                    <Timeline className=''>
-                        {fields.map((field, index) => (
-                            <EducationItem 
-                                id={field.id}
-                                key={field.id} 
-                                index={index}
-                                form={form}
-                                remove={remove}
-                                length={fields.length}
-                                setIsModalOpen={setIsModalOpen}
-                                append={append}
-                                colorHex={colorHex}
-                                setResumeData={setResumeData}
-                            />
-                        ))} 
-                    </Timeline>              
-                </div>
-            </Form>
+                <Form {...form}>
+                    <div className="break-inside-avoid">
+                    <FormField
+                        control={form.control}
+                        name="educationSectionName"
+                        render={({ field, fieldState  }) => (
+                            <FormItem>
+                                <FormLabel className="sr-only">Education Section</FormLabel>
+                                <FormControl>
+                                    <input
+                                        {...field}
+                                        type="text"
+                                        placeholder="EDUCATION"
+                                        className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        style={{
+                                            // color: colorHex,
+                                            display: "block",
+                                            width: "100%",
+                                        }}
+                                    />
+                                </FormControl>
+                                
+                                {fieldState.error && (<FormMessage />)}
+                            </FormItem>
+                        )}
+                    />
+                        <Timeline className=''>
+                            {fields.map((field, index) => (
+                                <EducationItem 
+                                    id={field.id}
+                                    key={field.id} 
+                                    index={index}
+                                    form={form}
+                                    remove={remove}
+                                    length={fields.length}
+                                    setIsModalOpen={setIsModalOpen}
+                                    append={append}
+                                    colorHex={colorHex}
+                                    setResumeData={setResumeData}
+                                />
+                            ))} 
+                        </Timeline>              
+                    </div>
+                </Form>
+            </> : null
+        }
         </>
     )
 }
@@ -1049,7 +1069,7 @@ function EducationButtons({setIsModalOpen, remove, index, append, length}: Educa
 }
 
 function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
-    const {skills, colorHex, borderStyle} = resumeData;
+    const {skills, colorHex, borderStyle, isSkillSection} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // if(!skills?.length) return null;
@@ -1089,68 +1109,73 @@ function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
     });
     return (
         <>
-            <hr 
-                className="border-2"
-                style={{
-                    borderColor: colorHex
-                }}
-            />
-            <div className="relative border-2 border-transparent border-dashed rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300 m-0 p-0">
-                <Button 
-                    variant={'destructive'} 
-                    size={"sm"}
-                    className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
-                    onClick={() => setIsModalOpen(true)}
-                >
-                    <Sparkle /> Writing Assistant
-                </Button>
-                <Form {...form}>
-                    <div className="break-inside-avoid box-border">
-                        <FormField
-                            control={form.control}
-                            name="skillsSectionName"
-                            render={({ field, fieldState  }) => (
-                                <FormItem  className="space-y-0 m-0 p-0">
-                                    <FormLabel className="sr-only">Skills Section</FormLabel>
-                                    <FormControl>
-                                        <div className=" rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
-                                                {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
-                                                
-                                                <input
-                                                    {...field}
-                                                    type="text"
-                                                    placeholder="SKILLS"
-                                                    className="w-full text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                                    style={{
-                                                        display: "block",
-                                                        width: "100%",
-                                                    }}
-                                                />
-                                        </div>
-                                    </FormControl>
-                                    
-                                    {fieldState.error && (<FormMessage />)}
-                                </FormItem>
-                            )}
-                        />
-                        <div className='flex flex-row flex-wrap gap-2 w-full'>
-                            {fields.map((field:any, index:number) => (
-                                <SkillItem
-                                    id={field.id}
-                                    key={field.id} 
-                                    index={index}
-                                    form={form}
-                                    remove={remove}
-                                    length={fields.length}
-                                    setIsModalOpen={setIsModalOpen}
-                                    append={append}
-                                    colorHex={colorHex}
-                                />
-                            ))} 
-                        </div>              
-                    </div>
-                </Form>
-            </div>
+        {
+            isSkillSection ?
+            <>
+                <hr 
+                    className="border-2"
+                    style={{
+                        borderColor: colorHex
+                    }}
+                />
+                <div className="relative border-2 border-transparent border-dashed rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300 m-0 p-0">
+                    <Button 
+                        variant={'destructive'} 
+                        size={"sm"}
+                        className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
+                        onClick={() => setIsModalOpen(true)}
+                    >
+                        <Sparkle /> Writing Assistant
+                    </Button>
+                    <Form {...form}>
+                        <div className="break-inside-avoid box-border">
+                            <FormField
+                                control={form.control}
+                                name="skillsSectionName"
+                                render={({ field, fieldState  }) => (
+                                    <FormItem  className="space-y-0 m-0 p-0">
+                                        <FormLabel className="sr-only">Skills Section</FormLabel>
+                                        <FormControl>
+                                            <div className=" rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
+                                                    {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
+                                                    
+                                                    <input
+                                                        {...field}
+                                                        type="text"
+                                                        placeholder="SKILLS"
+                                                        className="w-full text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                        style={{
+                                                            display: "block",
+                                                            width: "100%",
+                                                        }}
+                                                    />
+                                            </div>
+                                        </FormControl>
+                                        
+                                        {fieldState.error && (<FormMessage />)}
+                                    </FormItem>
+                                )}
+                            />
+                            <div className='flex flex-row flex-wrap gap-2 w-full'>
+                                {fields.map((field:any, index:number) => (
+                                    <SkillItem
+                                        id={field.id}
+                                        key={field.id} 
+                                        index={index}
+                                        form={form}
+                                        remove={remove}
+                                        length={fields.length}
+                                        setIsModalOpen={setIsModalOpen}
+                                        append={append}
+                                        colorHex={colorHex}
+                                    />
+                                ))} 
+                            </div>              
+                        </div>
+                    </Form>
+                </div>
+            </>: null
+        }
         </>
     )
 }
@@ -1286,7 +1311,7 @@ function SkillButtons({setIsModalOpen, remove, index, append, length, showButton
 }
 
 function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
-    const { colorHex, borderStyle} = resumeData;
+    const { colorHex, borderStyle, isLanguageSection} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const form = useForm<LanguagesValues>({
@@ -1325,67 +1350,63 @@ function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
     });
     return (
         <>
-            <hr 
-                className="border-2"
-                style={{
-                    borderColor: colorHex
-                }}
-            />
-            <div className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
-                <Form {...form}>
-                    <div className="break-inside-avoid">
-                        <FormField
-                            control={form.control}
-                            name="languagesSectionName"
-                            render={({ field, fieldState  }) => (
-                                <FormItem  className="space-y-0 m-0 p-0">
-                                    <FormLabel className="sr-only">Language Section Name</FormLabel>
-                                    <FormControl>
-                                        <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
-                                                {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
-                                                <Button 
-                                                    variant={'destructive'} 
-                                                    size={"sm"}
-                                                    className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
-                                                    onClick={() => setIsModalOpen(true)}
-                                                >
-                                                    <Sparkle /> Writing Assistant
-                                                </Button>
-                                                <input
-                                                    {...field}
-                                                    type="text"
-                                                    placeholder="LANGUAGES"
-                                                    className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                                    style={{
-                                                        display: "block",
-                                                        width: "100%",
-                                                    }}
-                                                />
-                                        </div>
-                                    </FormControl>
-                                    
-                                    {fieldState.error && (<FormMessage />)}
-                                </FormItem>
-                            )}
-                        />
-                        <div className='flex flex-row flex-wrap gap-2'>
-                            {fields.map((field:any, index:number) => (
-                                <LanguageItem
-                                    id={field.id}
-                                    key={field.id} 
-                                    index={index}
-                                    form={form}
-                                    remove={remove}
-                                    length={fields.length}
-                                    setIsModalOpen={setIsModalOpen}
-                                    append={append}
-                                    colorHex={colorHex}
-                                />
-                            ))} 
-                        </div>              
-                    </div>
-                </Form>
-            </div>
+        {
+            isLanguageSection ?
+            <>
+                <hr 
+                    className="border-2"
+                    style={{
+                        borderColor: colorHex
+                    }}
+                />
+                <div className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
+                    <Form {...form}>
+                        <div className="break-inside-avoid">
+                            <FormField
+                                control={form.control}
+                                name="languagesSectionName"
+                                render={({ field, fieldState  }) => (
+                                    <FormItem  className="space-y-0 m-0 p-0">
+                                        <FormLabel className="sr-only">Language Section Name</FormLabel>
+                                        <FormControl>
+                                            <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
+                                                    <input
+                                                        {...field}
+                                                        type="text"
+                                                        placeholder="LANGUAGES"
+                                                        className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                        style={{
+                                                            display: "block",
+                                                            width: "100%",
+                                                        }}
+                                                    />
+                                            </div>
+                                        </FormControl>
+                                        
+                                        {fieldState.error && (<FormMessage />)}
+                                    </FormItem>
+                                )}
+                            />
+                            <div className='flex flex-row flex-wrap gap-2'>
+                                {fields.map((field:any, index:number) => (
+                                    <LanguageItem
+                                        id={field.id}
+                                        key={field.id} 
+                                        index={index}
+                                        form={form}
+                                        remove={remove}
+                                        length={fields.length}
+                                        setIsModalOpen={setIsModalOpen}
+                                        append={append}
+                                        colorHex={colorHex}
+                                    />
+                                ))} 
+                            </div>              
+                        </div>
+                    </Form>
+                </div>
+            </> : null
+        }
         </>
     )
 }
@@ -1513,7 +1534,7 @@ function LanguageButtons({setIsModalOpen, remove, index, append, length, showBut
 
 
 function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
-    const { colorHex, borderStyle} = resumeData;
+    const { colorHex, borderStyle, isInterestSection} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const form = useForm<InterestsValues>({
@@ -1552,67 +1573,64 @@ function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
     });
     return (
         <>
-            <hr 
-                className="border-2"
-                style={{
-                    borderColor: colorHex
-                }}
-            />
-            <div className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
-                <Form {...form}>
-                    <div className="break-inside-avoid">
-                        <FormField
-                            control={form.control}
-                            name="interestsSectionName"
-                            render={({ field, fieldState  }) => (
-                                <FormItem  className="space-y-0 m-0 p-0">
-                                    <FormLabel className="sr-only">Insterest Section Name</FormLabel>
-                                    <FormControl>
-                                        <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
-                                                {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
-                                                <Button 
-                                                    variant={'destructive'} 
-                                                    size={"sm"}
-                                                    className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
-                                                    onClick={() => setIsModalOpen(true)}
-                                                >
-                                                    <Sparkle /> Writing Assistant
-                                                </Button>
-                                                <input
-                                                    {...field}
-                                                    type="text"
-                                                    placeholder="LANGUAGES"
-                                                    className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                                    style={{
-                                                        display: "block",
-                                                        width: "100%",
-                                                    }}
-                                                />
-                                        </div>
-                                    </FormControl>
-                                    
-                                    {fieldState.error && (<FormMessage />)}
-                                </FormItem>
-                            )}
-                        />
-                        <div className='flex flex-row flex-wrap gap-2'>
-                            {fields.map((field:any, index:number) => (
-                                <HobbiesItem
-                                    id={field.id}
-                                    key={field.id} 
-                                    index={index}
-                                    form={form}
-                                    remove={remove}
-                                    length={fields.length}
-                                    setIsModalOpen={setIsModalOpen}
-                                    append={append}
-                                    colorHex={colorHex}
-                                />
-                            ))} 
-                        </div>              
-                    </div>
-                </Form>
-            </div>
+        { 
+        isInterestSection ?
+            <>
+                <hr 
+                    className="border-2"
+                    style={{
+                        borderColor: colorHex
+                    }}
+                />
+                <div className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
+                    <Form {...form}>
+                        <div className="break-inside-avoid">
+                            <FormField
+                                control={form.control}
+                                name="interestsSectionName"
+                                render={({ field, fieldState  }) => (
+                                    <FormItem  className="space-y-0 m-0 p-0">
+                                        <FormLabel className="sr-only">Insterest Section Name</FormLabel>
+                                        <FormControl>
+                                            <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
+                                                    <input
+                                                        {...field}
+                                                        type="text"
+                                                        placeholder="LANGUAGES"
+                                                        className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                                        style={{
+                                                            display: "block",
+                                                            width: "100%",
+                                                        }}
+                                                    />
+                                            </div>
+                                        </FormControl>
+                                        
+                                        {fieldState.error && (<FormMessage />)}
+                                    </FormItem>
+                                )}
+                            />
+                            <div className='flex flex-row flex-wrap gap-2'>
+                                {fields.map((field:any, index:number) => (
+                                    <HobbiesItem
+                                        id={field.id}
+                                        key={field.id} 
+                                        index={index}
+                                        form={form}
+                                        remove={remove}
+                                        length={fields.length}
+                                        setIsModalOpen={setIsModalOpen}
+                                        append={append}
+                                        colorHex={colorHex}
+                                    />
+                                ))} 
+                            </div>              
+                        </div>
+                    </Form>
+                </div>
+            </>
+        : null 
+        }
         </>
     )
 }

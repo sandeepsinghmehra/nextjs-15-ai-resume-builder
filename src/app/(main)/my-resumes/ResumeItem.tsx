@@ -13,6 +13,7 @@ import { deleteResume } from "./actions";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import LoadingButton from "@/components/LoadingButton";
 import {useReactToPrint} from "react-to-print";
+import LayoutChooser from "../editor-layout/LayoutChooser";
 
 interface ResumeItemProps {
     resume: ResumeServerData
@@ -51,10 +52,12 @@ export default function ResumeItem({resume}: ResumeItemProps){
                     href={`/editor-layout?resumeId=${resume.id}`}
                     className="relative inline-block w-full"
                 >
-                    <ResumePreview 
+                    <LayoutChooser 
                         resumeData={mapToResumeValues(resume)} 
+                        setResumeData={()=>{}}
+                        templateName={resume.layoutStyle}
                         contentRef={contentRef}
-                        className="overflow-hidden shadow-sm transition-shadow group-hover:shadow-lg"
+                        className="overflow-hidden shadow-sm transition-shadow group-hover:shadow-lg max-w-3xl"
                     />
                     <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
                 </Link>

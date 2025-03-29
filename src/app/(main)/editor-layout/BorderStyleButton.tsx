@@ -38,7 +38,7 @@ export default function BorderStyleButton({
 
     return <Button 
         variant={'outline'} 
-        size={'icon'} 
+        size={'sm'} 
         title="Change border style"
         onClick={handleClick}
         >

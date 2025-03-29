@@ -13,6 +13,7 @@ import LayoutSectionButton from './LayoutSectionButton';
 import ColorPicker from './ColorPicker';
 import BorderStyleButton from './BorderStyleButton';
 import LayoutChooser from './LayoutChooser';
+import SectionPicker from './SectionPicker';
 
 interface ResumeEditorProps {
     resumeToEdit: ResumeServerData | null
@@ -22,23 +23,36 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
     const searchParams = useSearchParams();
 
     const [resumeData, setResumeData] = useState<ResumeValues>(
-        resumeToEdit ? mapToResumeValues(resumeToEdit): {}
+        resumeToEdit ? mapToResumeValues(resumeToEdit) : {
+            workExperienceSectionName: "",
+            workExperiences: [],
+            educations: [],
+            skills: [],
+            languages: [],
+            interests: [],
+            summary: "",
+            summaryName: "",
+            colorHex: "",
+            borderStyle: "",
+            layoutStyle: "",
+            isPhotoSection: false,
+            isSummarySection: false,
+            isEmailSection: false,
+            isLocationSection: false,
+            isPhoneSection: false,
+            isJobTitleSection: false,
+            isLinkedinSection: false,
+            isGithubSection: false,
+            isWebsiteSection: false,
+            isWorkSection: false,
+            isEducationSection: false,
+            isSkillSection: false,
+            isLanguageSection: false,
+            isInterestSection: false,
+            isSocialLinkSection: false,  
+            isKeyachivementSection: false,
+        }
     );
-    
-    // const [resumeData, setResumeData] = useState<ResumeValues>(() => 
-    //     resumeToEdit ? mapToResumeValues(resumeToEdit) : {
-    //         workExperienceSectionName: "",
-    //         workExperiences: [],
-    //         educations: [],
-    //         skills: [],
-    //         languages: [],
-    //         interests: [],
-    //         summary: "",
-    //         colorHex: "",
-    //         borderStyle: "",
-    //         layoutStyle: "",
-    //     }
-    // );
 
     const [showSmResumePreview, setShowSmResumePreview] = useState<boolean>(false);
 
@@ -74,6 +88,17 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
                                 color={resumeData.colorHex}
                                 onChange={(color => setResumeData({...resumeData, colorHex: color.hex}))}
                             />
+                            <SectionPicker 
+                                resumeData={resumeData} 
+                                setResumeData={setResumeData}
+                                onChange={(layoutStyle =>{
+                                    console.log('SectionPicker', layoutStyle);
+                                        setResumeData({...resumeData, layoutStyle: layoutStyle});
+                                        console.log('resumeData', resumeData);
+                                    }
+                                )}
+                                color={resumeData.colorHex}
+                            />
                             <BorderStyleButton
                                 borderStyle={resumeData.borderStyle}
                                 onChange={(borderStyle) => setResumeData({...resumeData, borderStyle: borderStyle})}
@@ -84,11 +109,12 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
             <main className='grow mt-16'>
                     <div className={cn(' hidden w-full md:flex', cn(showSmResumePreview && "flex"))} >
                             
-                            <div className="flex pt-5 w-full justify-center overflow-y-auto bg-secondary" style={{background: resumeData.colorHex}}>
+                            <div className="pt-5 w-full overflow-y-auto bg-secondary" style={{background: resumeData.colorHex}}>
                                 <LayoutChooser
                                     resumeData={resumeData}
                                     setResumeData={setResumeData}
                                     templateName={resumeData.layoutStyle}
+                                    className="overflow-hidden shadow-sm transition-shadow group-hover:shadow-lg max-w-3xl"
                                 />
                             </div>
                         </div>

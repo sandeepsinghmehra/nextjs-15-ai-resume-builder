@@ -14,16 +14,17 @@ interface ResumeLayoutTemplateChooserProps {
     resumeData: ResumeValues;
     setResumeData: (data: ResumeValues) => void;
     templateName: string | undefined;
+    contentRef?: React.Ref<HTMLDivElement>;
+    className?: string;
 }
 
 export default function LayoutChooser({
     resumeData, 
     setResumeData,
-    templateName
+    templateName,
+    contentRef,
+    className
 }: ResumeLayoutTemplateChooserProps){
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    const {width} = useDimensions(containerRef);
     // console.log("resumedata", resumeData)
     return (
     <div>
@@ -31,21 +32,23 @@ export default function LayoutChooser({
             <ClassicTemplate
                 resumeData={resumeData}
                 setResumeData={setResumeData}
-                className="max-w-2xl shadow-md"
+                // className="max-w-3xl shadow-md"
+                contentRef={contentRef}
+                className={className}
             />
         )}
         {templateName === "split" && (
             <SplitTemplate
                 resumeData={resumeData}
                 setResumeData={setResumeData}
-                className="max-w-2xl shadow-md"
+                className="max-w-3xl shadow-md"
             />
         )}
         {templateName === "hybrid" && (
             <HybridTemplate
                 resumeData={resumeData}
                 setResumeData={setResumeData}
-                className="max-w-2xl shadow-md"
+                className="max-w-3xl shadow-md"
             />
         )}
     </div>

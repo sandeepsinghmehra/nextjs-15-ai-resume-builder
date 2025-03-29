@@ -19,6 +19,7 @@ export const personalInfoSchema = z.object({
     .refine(
         (file) => !file || file.size <= 4 * 1024 * 1024, "File size must be less than 4MB",
     ),
+    personalDetailName: optionalString,
     firstName: z.string().trim().max(50, "Name must be at most 50 characters").optional().or(z.literal("")),
     lastName: optionalString,
     email: z.string().trim().max(100, "Email must be at most 100 characters").optional().or(z.literal("")),
@@ -27,7 +28,23 @@ export const personalInfoSchema = z.object({
     jobTitle:  z.string().trim().max(30, "Job role must be at most 30 characters").optional().or(z.literal("")),
     linkedin: z.string().trim().url().optional().or(z.literal("")),
     github: z.string().trim().url().optional().or(z.literal("")),       
-    website: z.string().trim().url().optional().or(z.literal("")),     
+    website: z.string().trim().url().optional().or(z.literal("")), 
+    isPhotoSection: z.boolean().optional().default(false),
+    isSummarySection: z.boolean().optional().default(true),        
+    isEmailSection: z.boolean().optional().default(true),         
+    isLocationSection: z.boolean().optional().default(true),       
+    isPhoneSection: z.boolean().optional().default(true),         
+    isJobTitleSection: z.boolean().optional().default(true),       
+    isLinkedinSection: z.boolean().optional().default(true),      
+    isGithubSection: z.boolean().optional().default(true),        
+    isSocialLinkSection: z.boolean().optional().default(true),  
+    isWebsiteSection: z.boolean().optional().default(true),      
+    isWorkSection: z.boolean().optional().default(true),         
+    isEducationSection: z.boolean().optional().default(true),     
+    isSkillSection: z.boolean().optional().default(true),         
+    isLanguageSection: z.boolean().optional().default(false),      
+    isInterestSection: z.boolean().optional().default(false),        
+    isKeyachivementSection: z.boolean().optional().default(false),  
 });
 
 export type PersonalInfoValues = z.infer<typeof personalInfoSchema>;
@@ -100,6 +117,7 @@ export type InterestsValues = z.infer<typeof interestsSchema>;
   
 
 export const summarySchema = z.object({
+    summaryName: optionalString,
     summary: optionalString,
 })
 
