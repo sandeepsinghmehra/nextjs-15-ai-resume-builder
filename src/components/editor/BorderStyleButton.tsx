@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { Squircle, Square, Circle } from "lucide-react";
-import { useSubscriptionLevel } from "../SubscriptionLevelProvider";
+import { useSubscriptionLevel } from "../../app/(main)/SubscriptionLevelProvider";
 import { canUseCustomizations } from "@/lib/permissions";
 
 export const BorderStyles = {

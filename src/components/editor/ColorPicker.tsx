@@ -3,7 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover
 import { PaletteIcon } from "lucide-react";
 import { useState } from "react";
 import { Color, ColorChangeHandler, TwitterPicker } from "react-color";
-import { useSubscriptionLevel } from "../SubscriptionLevelProvider";
+import { useSubscriptionLevel } from "../../app/(main)/SubscriptionLevelProvider";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { canUseCustomizations } from "@/lib/permissions";
 

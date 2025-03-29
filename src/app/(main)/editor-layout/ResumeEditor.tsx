@@ -25,6 +25,7 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
 
     const [resumeData, setResumeData] = useState<ResumeValues>(
         resumeToEdit ? mapToResumeValues(resumeToEdit) : {
+            firstName: "",
             workExperienceSectionName: "",
             workExperiences: [],
             educations: [],
@@ -33,21 +34,21 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
             interests: [],
             summary: "",
             summaryName: "",
-            colorHex: "",
+            colorHex: "#0693E3",
             borderStyle: "",
-            layoutStyle: "",
-            isPhotoSection: false,
-            isSummarySection: false,
-            isEmailSection: false,
-            isLocationSection: false,
-            isPhoneSection: false,
-            isJobTitleSection: false,
+            layoutStyle: "classic",
+            isPhotoSection: true,
+            isSummarySection: true,
+            isEmailSection: true,
+            isLocationSection: true,
+            isPhoneSection: true,
+            isJobTitleSection: true,
             isLinkedinSection: false,
             isGithubSection: false,
             isWebsiteSection: false,
-            isWorkSection: false,
-            isEducationSection: false,
-            isSkillSection: false,
+            isWorkSection: true,
+            isEducationSection: true,
+            isSkillSection: true,
             isLanguageSection: false,
             isInterestSection: false,
             isSocialLinkSection: false,  
@@ -80,7 +81,7 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
                     <div className="w-10 h-10 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
                 </div>
             )} */}
-            {true && (
+            {resumeToEdit && (
                     <span className="fixed left-20 right-0 top-4 z-50 w-fit group flex items-center justify-center m-auto gap-3 bg-slate-50">
                         <div className="opacity-50 lg:opacity-100 group-hover:opacity-100 transition-opacity flex flex-row gap-3 flex-none lg:left-3 lg:top-3">
                             <LayoutSectionButton

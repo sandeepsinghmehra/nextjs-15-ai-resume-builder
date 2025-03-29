@@ -5,7 +5,7 @@ import { WandSparklesIcon } from "lucide-react";
 import { useState } from "react";
 import { generateSummary } from "./actions";
 import { canUseAITools } from "@/lib/permissions";
-import { useSubscriptionLevel } from "../../SubscriptionLevelProvider";
+import { useSubscriptionLevel } from "../../../app/(main)/SubscriptionLevelProvider";
 import usePremiumModal from "@/hooks/usePremiumModal";
 
 interface GenerateSummaryButtonProps {

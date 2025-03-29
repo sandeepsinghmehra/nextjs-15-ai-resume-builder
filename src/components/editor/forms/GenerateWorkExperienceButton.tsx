@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogHeader } f
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useSubscriptionLevel } from "../../SubscriptionLevelProvider";
+import { useSubscriptionLevel } from "../../../app/(main)/SubscriptionLevelProvider";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { canUseAITools } from "@/lib/permissions";
 

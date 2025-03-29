@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import {formatDate} from "date-fns";
 import { Badge } from "./ui/badge";
-import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
+import { BorderStyles } from "@/components/editor/BorderStyleButton";
 
 interface ResumePreviewProps {
     resumeData: ResumeValues;

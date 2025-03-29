@@ -47,7 +47,7 @@ export default function LayoutSectionButton({layoutStyle, onChange, color}: Layo
             <Button 
                 variant={"outline"}
                 size={'sm'}
-                title={"Change resume color"}
+                title={"Change resume layout"}
                 onClick={ () => {
                     // if(!canUseCustomizations(subscriptionLevel)){
                     //     premiumModal.setOpen(true);

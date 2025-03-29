@@ -16,7 +16,7 @@ export default function CreateResumeButton({canCreate}: CreateResumeButtonProps)
     if(canCreate){
         return (
             <Button asChild className="mx-auto flex w-fit gap-2">
-                <Link href={"/editor"}>
+                <Link href={"/editor-layout"}>
                     <PlusSquare className="size-5" />
                     New Resume
                 </Link>

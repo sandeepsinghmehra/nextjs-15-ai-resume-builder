@@ -15,7 +15,7 @@ export default function Navbar() {
     return (
         <header className="shadow-sm w-full fixed top-0 left-0 bg-white z-50">
             <div className="max-w-7xl mx-auto p-3 flex items-center justify-between gap-3">
-                <Link href="/resumes" className="flex items-center gap-2">
+                <Link href="/my-resumes" className="flex items-center gap-2">
                     <Image 
                         src={logo} 
                         alt="Logo" 

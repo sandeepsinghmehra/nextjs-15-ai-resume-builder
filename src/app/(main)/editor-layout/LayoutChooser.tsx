@@ -4,7 +4,7 @@ import { ResumeValues } from "@/lib/validation";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import {formatDate, set} from "date-fns";
-import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
+import { BorderStyles } from "@/components/editor/BorderStyleButton";
 import { UploadIcon } from "lucide-react";
 import ClassicTemplate from "@/components/Templates/Classic";
 import SplitTemplate from "@/components/Templates/Split";

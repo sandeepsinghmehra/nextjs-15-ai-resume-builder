@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {constructNow, formatDate, set} from "date-fns";
 import { Badge } from "../ui/badge";
-import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
+import { BorderStyles } from "@/components/editor/BorderStyleButton";
 import { UploadIcon, Sparkle, MapPinIcon, MailIcon, PhoneIcon, MinusIcon, ChevronsUpDownIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";

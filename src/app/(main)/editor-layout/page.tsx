@@ -38,7 +38,8 @@ export default async function Page({searchParams}: PageProps) {
   //   include: resumeDataInclude 
   // }): null;
   // const resumeId = "cm7psve77000113rwbepd1v0z";
-  const resumeToEdit = await prisma.resume.findUnique({
+  console.log("!resumeId", !resumeId);
+  const resumeToEdit = !resumeId ? null :  await prisma.resume.findUnique({
     where: {
       id: resumeId, userId
     },
