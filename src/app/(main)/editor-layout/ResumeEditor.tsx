@@ -102,7 +102,7 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
                                 resumeData={resumeData} 
                                 setResumeData={setResumeData}
                                 onChange={((data: {fontFamily: string, fontSize: string}) =>{
-                                    console.log('Typograpy', data);
+                                    // console.log('Typograpy', data);
                                         setResumeData({...resumeData, fontFamily: data.fontFamily, fontSize: data.fontSize});
                                     }
                                 )}

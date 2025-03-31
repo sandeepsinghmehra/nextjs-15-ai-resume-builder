@@ -420,14 +420,14 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                         ref={textCityRef}
                                         className="absolute opacity-0 pointer-events-none whitespace-pre"
                                     >
-                                        {resumeData.location || "Your Location"}
+                                        {resumeData.location || "Your Address"}
                                     </span>
                                     <FormField
                                         control={form.control}
                                         name="location"
                                         render={({ field, fieldState  }) => (
                                         <FormItem>
-                                            <FormLabel className="sr-only">Location</FormLabel>
+                                            <FormLabel className="sr-only">Address</FormLabel>
                                             <FormControl>
                                                 <input
                                                     {...field}
@@ -517,7 +517,7 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                             <input
                                                 {...field}
                                                 type="text"
-                                                placeholder="Your Email"
+                                                placeholder="Your Phone Number"
                                                 className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
                                                 style={{
                                                     width: phoneWidth,
