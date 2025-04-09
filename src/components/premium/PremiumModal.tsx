@@ -6,8 +6,9 @@ import { Button } from "../ui/button";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { createCheckoutSession } from "./actions";
+import { createSubscription } from "./actions";
 import { env } from "@/env";
+
 
 const freeFeatures = ["Create Resume", "Only 1 resume"];
 const premiumFeatures = ["AI Tools", "Up to 3 resumes"];
@@ -21,10 +22,33 @@ export default function PremiumModal() {
     const [loading, setLoading] = useState(false);
 
     async function handlePremiumClick(priceId: string){
+        console.log("handlePremiumClick called");
         try {
             setLoading(true);
-            const redirectUrl = await createCheckoutSession(priceId);
-            window.location.href = redirectUrl;
+            console.log("Price ID", priceId);
+            const { id: subscriptionId } = await createSubscription(priceId);
+            const options = {
+                key: env.NEXT_PUBLIC_RAZORPAY_KEY, // must be public key
+                subscription_id: subscriptionId,
+                name: "Resume Builder AI",
+                description: "Premium Subscription",
+                handler: function (response: any) {
+                  toast({
+                    description: `Subscribed successfully!`,
+                  });
+                  console.log("Razorpay response", response);
+                },
+                // prefill: {
+                //   email: email,
+                // },
+                theme: {
+                  color: "#00C853",
+                },
+              };
+          
+              const razor = new (window as any).Razorpay(options);
+              razor.open();
+            // window.location.href = redirectUrl;
         } catch (error) {
             console.error(error);
             toast({
@@ -35,6 +59,7 @@ export default function PremiumModal() {
             setLoading(false);
         }
     }
+   
     return (
         <Dialog open={open} onOpenChange={(open)=>{
             if(!loading) {
@@ -78,7 +103,10 @@ export default function PremiumModal() {
                                 ))}
                             </ul>
                             <Button
-                                onClick={()=> handlePremiumClick(env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY)}
+                                onClick={() =>{ 
+                                    console.log("Pro clicked")
+                                    handlePremiumClick(env.NEXT_PUBLIC_RAZORPAY_PLAN_ID_PRO)
+                                }}
                                 disabled={loading}
                             >
                                 Get Premium
@@ -98,7 +126,10 @@ export default function PremiumModal() {
                                 ))}
                             </ul>
                             <Button 
-                                onClick={()=> handlePremiumClick(env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY)}
+                                onClick={()=> {
+                                    console.log("Premium Plus clicked")
+                                    handlePremiumClick(env.NEXT_PUBLIC_RAZORPAY_PLAN_ID_PREMIUM)
+                                }}
                                 variant={"premium"}
                                 disabled={loading}
                             >

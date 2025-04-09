@@ -6,6 +6,7 @@ import {
 } from '@clerk/nextjs'
 import { ThemeProvider } from "next-themes"
 import { Toaster } from "@/components/ui/toaster";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,12 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <Script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            strategy="beforeInteractive"
+          />
+        </head>
         <body className={inter.className} suppressHydrationWarning>
           <ThemeProvider
             attribute="class"

@@ -23,6 +23,8 @@ export const env = createEnv({
         OPENAI_API_KEY: z.string().min(1), 
         STRIPE_SECRET_KEY: z.string().min(1), 
         STRIPE_WEBHOOK_SECRET: z.string().min(1),
+        RAZORPAY_SECRET: z.string().min(1),
+        RAZORPAY_WEBHOOK_SECRET: z.string().min(1),
     }, 
     client: {
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
@@ -32,6 +34,9 @@ export const env = createEnv({
         NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY: z.string().min(1),
         NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY: z.string().min(1),
         NEXT_PUBLIC_BASE_URL: z.string().min(1).url(),
+        NEXT_PUBLIC_RAZORPAY_KEY: z.string().min(1),
+        NEXT_PUBLIC_RAZORPAY_PLAN_ID_PRO: z.string().min(1),
+        NEXT_PUBLIC_RAZORPAY_PLAN_ID_PREMIUM: z.string().min(1),
     },
     experimental__runtimeEnv: {
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
@@ -41,5 +46,8 @@ export const env = createEnv({
         NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY,
         NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY,
         NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+        NEXT_PUBLIC_RAZORPAY_KEY: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+        NEXT_PUBLIC_RAZORPAY_PLAN_ID_PRO: process.env.NEXT_PUBLIC_RAZORPAY_PLAN_ID_PRO,
+        NEXT_PUBLIC_RAZORPAY_PLAN_ID_PREMIUM: process.env.NEXT_PUBLIC_RAZORPAY_PLAN_ID_PREMIUM,
     }
 })
