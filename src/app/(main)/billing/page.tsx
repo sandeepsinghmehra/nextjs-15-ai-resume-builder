@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import stripe from "@/lib/stripe";
+// import stripe from "@/lib/stripe";
 import { auth } from "@clerk/nextjs/server";
 import { formatDate } from "date-fns";
 import { Metadata } from "next";
@@ -22,11 +22,11 @@ export default async function Page() {
     where: { userId },
   });
 
-  const priceInfo = subscription
-    ? await stripe.prices.retrieve(subscription.stripePriceId, {
-        expand: ["product"],
-      })
-    : null;
+  // const priceInfo = subscription
+  //   ? await stripe.prices.retrieve(subscription.stripePriceId, {
+  //       expand: ["product"],
+  //     })
+  //   : null;
 
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">
@@ -34,7 +34,8 @@ export default async function Page() {
       <p>
         Your current plan:{" "}
         <span className="font-bold">
-          {priceInfo ? (priceInfo.product as Stripe.Product).name : "Free"}
+          {/* {priceInfo ? (priceInfo.product as Stripe.Product).name : "Free"} */}
+          Free
         </span>
       </p>
       {subscription ? (
