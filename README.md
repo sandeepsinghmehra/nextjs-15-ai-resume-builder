@@ -47,3 +47,6 @@ npx prisma db push
 npx prisma studio
 # Format prima schema
 npx prisma format
+
+#kill the port
+npx kill-port 4001

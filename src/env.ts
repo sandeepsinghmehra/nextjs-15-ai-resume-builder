@@ -37,6 +37,7 @@ export const env = createEnv({
         NEXT_PUBLIC_RAZORPAY_KEY: z.string().min(1),
         NEXT_PUBLIC_RAZORPAY_PLAN_ID_PRO: z.string().min(1),
         NEXT_PUBLIC_RAZORPAY_PLAN_ID_PREMIUM: z.string().min(1),
+        NEXT_PUBLIC_WEBSOCKET_BACKEND_URL: z.string().min(1).url(),
     },
     experimental__runtimeEnv: {
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
@@ -49,5 +50,6 @@ export const env = createEnv({
         NEXT_PUBLIC_RAZORPAY_KEY: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
         NEXT_PUBLIC_RAZORPAY_PLAN_ID_PRO: process.env.NEXT_PUBLIC_RAZORPAY_PLAN_ID_PRO,
         NEXT_PUBLIC_RAZORPAY_PLAN_ID_PREMIUM: process.env.NEXT_PUBLIC_RAZORPAY_PLAN_ID_PREMIUM,
+        NEXT_PUBLIC_WEBSOCKET_BACKEND_URL: process.env.NEXT_PUBLIC_WEBSOCKET_BACKEND_URL,
     }
 })

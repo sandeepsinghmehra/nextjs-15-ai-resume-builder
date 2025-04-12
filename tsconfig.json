@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "socket-server.ts"  ],
   "exclude": [
     "node_modules"
   ]
