@@ -1,11 +1,11 @@
 import { env } from "@/env";
 import { io, Socket } from "socket.io-client";
-import { useToast } from "@/hooks/use-toast";
+
 
 let socket: Socket;
 
 export const connectSocket = (userId: string,  onConfirmed: () => void) => {
-    const {toast} = useToast();
+   
     socket = io(env.NEXT_PUBLIC_WEBSOCKET_BACKEND_URL, {
         transports: ["websocket"],
     });
@@ -17,13 +17,7 @@ export const connectSocket = (userId: string,  onConfirmed: () => void) => {
 
     socket.on("subscription-activated", (data) => {
         console.log("🔥 Subscription event", data);
-        // alert("Subscription Activated");
-        toast({
-            title: "Subscription Activated",
-            description: "Your subscription has been activated successfully.",
-        });
         onConfirmed();
-        location.reload();
     });
 };
 

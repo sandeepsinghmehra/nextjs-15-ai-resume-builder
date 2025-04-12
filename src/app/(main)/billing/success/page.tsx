@@ -4,18 +4,35 @@ import { useRouter } from "next/navigation";
 
 import { useUser } from "@clerk/nextjs";
 import { useSubscriptionSocket } from "@/hooks/use-subscription-socket";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
 
 export default function Page() {
+    const {toast} = useToast();
     const router = useRouter();
     const { user } = useUser();
+    const [redirect, setRedirect] = useState(false);
+    
   
     useSubscriptionSocket(user?.id!, () => {
-      router.push("/my-resumes");
+        toast({
+            title: "Subscription Activated",
+            description: "Your subscription has been activated successfully.",
+        });
+        setRedirect(true); 
+        // window.location.href = `/my-resumes`;
     });
+    // console.log("ridrect", redirect);
+    useEffect(() => {
+        if (redirect) {
+          // do not wrap in setTimeout
+          router.push("/my-resumes");
+        }
+      }, [redirect, router]);
   
     return (
       <main className="text-center py-20">
-        <h1 className="text-3xl font-bold">Waiting for Razorpay confirmation...</h1>
+        <h1 className="text-3xl font-bold">Waiting for Payment confirmation...</h1>
         <p className="text-muted-foreground">We'll redirect you automatically.</p>
       </main>
     );
