@@ -52,6 +52,13 @@ export default function PremiumModal() {
                     //     "razorpay_subscription_id": "sub_QHOk2S8K4TKWZL",
                     //     "razorpay_signature": "d5308791887f2302baf53b77a04d5db2eb476484f4961751533aeda0789728ed"
                     // }
+                    const query = new URLSearchParams({
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_subscription_id: response.razorpay_subscription_id,
+                        razorpay_signature: response.razorpay_signature,
+                      }).toString();
+                    
+                    window.location.href = `/billing/success?${query}`;
                 },
                 // prefill: {
                 //   email: email,

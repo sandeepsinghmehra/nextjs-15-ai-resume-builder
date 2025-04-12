@@ -50,3 +50,5 @@ npx prisma format
 
 #kill the port
 npx kill-port 4001
+
+# "dev": "concurrently \"tsx socket-server.ts\" \"rm -rf .next && next dev\"",
