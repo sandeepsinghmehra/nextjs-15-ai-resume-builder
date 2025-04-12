@@ -2,14 +2,14 @@
 
 import { useRouter } from "next/navigation";
 
-import { useAuth } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { useSubscriptionSocket } from "@/hooks/use-subscription-socket";
 
 export default function Page() {
     const router = useRouter();
-    const { userId } = useAuth(); // or from session
+    const { user } = useUser();
   
-    useSubscriptionSocket(userId!, () => {
+    useSubscriptionSocket(user?.id!, () => {
       router.push("/my-resumes");
     });
   
