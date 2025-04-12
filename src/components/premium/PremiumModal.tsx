@@ -8,8 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { createSubscription, getSubscriptionStatus } from "./actions";
 import { env } from "@/env";
-// import { PollForSubscription } from "./PollForSubscription";
-import { ListenForSubscription } from "./ListenForSubscription";
+// import { ListenForSubscription } from "./ListenForSubscription";
 
 
 const freeFeatures = ["Create Resume", "Only 1 resume", "No AI tools", "No Pdf download"];
@@ -23,7 +22,7 @@ const premiumPlusFeatures = [
 
 export default function PremiumModal() {
     const {open, setOpen} = usePremiumModal();
-    const [showPolling, setShowPolling] = useState(false);
+    // const [showPolling, setShowPolling] = useState(false);
 
     const {toast} = useToast();
 
@@ -45,7 +44,7 @@ export default function PremiumModal() {
                     // ✅ Payment was successful
                     // setShowListen(true); 
                     // Start polling for subscription
-                    setShowPolling(true);
+                    // setShowPolling(true);
                     // console.log("Razorpay response", response); 
                     // let dummyres ={
                     //     "razorpay_payment_id": "pay_QHOl3kp3SYAeYU",
@@ -83,8 +82,8 @@ export default function PremiumModal() {
    
     return (
         <>
-        {showPolling && <ListenForSubscription />}
-        {/* {showPolling && <PollForSubscription />} */}
+        {/* {showPolling && <ListenForSubscription />} */}
+
         <Dialog open={open} onOpenChange={(open)=>{
             if(!loading) {
                 setOpen(open);

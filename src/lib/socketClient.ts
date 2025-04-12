@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 
 let socket: Socket;
 
-export const connectSocket = (userId: string) => {
+export const connectSocket = (userId: string,  onConfirmed: () => void) => {
     const {toast} = useToast();
     socket = io(env.NEXT_PUBLIC_WEBSOCKET_BACKEND_URL, {
         transports: ["websocket"],
@@ -22,6 +22,7 @@ export const connectSocket = (userId: string) => {
             title: "Subscription Activated",
             description: "Your subscription has been activated successfully.",
         });
+        onConfirmed();
         location.reload();
     });
 };
