@@ -82,7 +82,6 @@ export default function PremiumModal() {
    
     return (
         <>
-        {/* {showPolling && <ListenForSubscription />} */}
 
         <Dialog open={open} onOpenChange={(open)=>{
             if(!loading) {

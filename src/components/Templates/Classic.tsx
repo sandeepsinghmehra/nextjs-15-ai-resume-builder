@@ -586,7 +586,8 @@ function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
             })();
         });
         return () => subscription.unsubscribe()
-    }, [form, setResumeData]);
+    // }, [form, setResumeData]);
+    }, [form, resumeData, setResumeData]);
 
     const {fields, append, remove, move} = useFieldArray({
         control: form.control,
@@ -941,7 +942,8 @@ function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
                 })();
             });
             return () => subscription.unsubscribe();
-        }, [form, setResumeData]);
+        // }, [form, setResumeData]);
+        }, [form, resumeData, setResumeData]);
         
         const {fields, append, remove, move} = useFieldArray({
             control: form.control,
@@ -1233,7 +1235,8 @@ function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
             })();
         });
         return () => subscription.unsubscribe();
-    }, [form, setResumeData]);
+    // }, [form, setResumeData]);
+    }, [form, resumeData, setResumeData]);
         
     const {fields, append, remove, move}:any = useFieldArray({
         control: form.control,
@@ -1491,7 +1494,8 @@ function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
             })();
         });
         return () => subscription.unsubscribe();
-    }, [form, setResumeData]);
+    // }, [form, setResumeData]);
+    }, [form, resumeData, setResumeData]);
         
     const {fields, append, remove, move}:any = useFieldArray({
         control: form.control,
@@ -1731,8 +1735,9 @@ function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
             })();
         });
         return () => subscription.unsubscribe();
-    }, [form, setResumeData]);
-        
+    // }, [form, setResumeData]);
+    }, [form, resumeData, setResumeData]);
+    
     const {fields, append, remove, move}:any = useFieldArray({
         control: form.control,
         name: "interests"
