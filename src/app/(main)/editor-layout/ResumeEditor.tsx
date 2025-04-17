@@ -100,9 +100,9 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
                             <LayoutSectionButton
                                 layoutStyle={resumeData.layoutStyle}
                                 onChange={(layoutStyle =>{
-                                    console.log('layoutStyle', layoutStyle);
+                                        // console.log('layoutStyle', layoutStyle);
                                         setResumeData({...resumeData, layoutStyle: layoutStyle});
-                                        console.log('resumeData', resumeData);
+                                        // console.log('resumeData', resumeData);
                                     }
                                 )}
                                 color={resumeData.colorHex}

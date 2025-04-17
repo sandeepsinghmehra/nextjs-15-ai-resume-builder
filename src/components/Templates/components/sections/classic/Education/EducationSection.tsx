@@ -2,7 +2,7 @@
 import { educationSchema, EducationValues, ResumeValues } from "@/lib/validation";
 import { useEffect, useRef, useState } from "react";
 import { BorderStyles } from "@/components/editor/BorderStyleButton";
-import { MinusIcon, ChevronsUpDownIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { MinusIcon, ChevronsUpDownIcon, PlusIcon, TrashIcon, Loader } from "lucide-react";
 
 import { useFieldArray, useForm, UseFormReturn, UseFieldArrayAppend } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +21,8 @@ export default function EducationSection({resumeData, setResumeData}: ResumeSect
     // console.log("resumeData", resumeData);
     const {educations,  colorHex, isEducationSection, fontSize, fontFamily} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPlusLoading, setIsPlusLoading] = useState<Record<number, boolean>>({});
+    const [isMinusLoading, setIsMinusLoading] = useState<Record<number, boolean>>({});
 
     const form = useForm<EducationValues>({
             resolver: zodResolver(educationSchema),
@@ -129,6 +131,10 @@ export default function EducationSection({resumeData, setResumeData}: ResumeSect
                                     fontSize={fontSize}
                                     eduId={field.id}
                                     resumeId={field.resumeId}
+                                    isPlusLoading={isPlusLoading}
+                                    setIsPlusLoading={setIsPlusLoading}
+                                    isMinusLoading={isMinusLoading}
+                                    setIsMinusLoading={setIsMinusLoading}
                                 />
                             ))} 
                         </Timeline>              
@@ -154,9 +160,31 @@ interface EducationItemProps {
     fontSize: string|undefined;
     eduId: string;
     resumeId: string;
+    isPlusLoading: Record<number, boolean>;
+    setIsPlusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
+    isMinusLoading: Record<number, boolean>;
+    setIsMinusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
 }
 
-function EducationItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData, fontFamily, fontSize, eduId, resumeId}: EducationItemProps){
+function EducationItem({
+    id, 
+    form, 
+    index, 
+    remove, 
+    length, 
+    setIsModalOpen, 
+    append, 
+    colorHex, 
+    setResumeData, 
+    fontFamily, 
+    fontSize, 
+    eduId, 
+    resumeId,
+    isPlusLoading,
+    setIsPlusLoading,
+    isMinusLoading,
+    setIsMinusLoading,
+}: EducationItemProps){
 
     useEffect(() => {
         document.documentElement.style.setProperty("--primary-color", colorHex as string); // Set the CSS variable dynamically
@@ -167,7 +195,19 @@ function EducationItem({id, form, index, remove, length, setIsModalOpen, append,
     return (
         <TimelineItem className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
                       
-            <EducationButtons remove={remove} length={length} setIsModalOpen={setIsModalOpen} append={append} index={index} eduId={eduId} resumeId={resumeId} />
+            <EducationButtons 
+                remove={remove} 
+                length={length} 
+                setIsModalOpen={setIsModalOpen} 
+                append={append} 
+                index={index} 
+                eduId={eduId} 
+                resumeId={resumeId} 
+                isPlusLoading={isPlusLoading}
+                setIsPlusLoading={setIsPlusLoading}
+                isMinusLoading={isMinusLoading}
+                setIsMinusLoading={setIsMinusLoading}
+            />
             <TimelineHeader className="dynamic-time-line-header-point-after">
                 <FormField
                     control={form.control}
@@ -286,8 +326,24 @@ interface EducationButtonsProps {
     append: UseFieldArrayAppend<EducationValues, "educations">;
     eduId: string;
     resumeId: string;
+    isPlusLoading: Record<number, boolean>;
+    setIsPlusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
+    isMinusLoading: Record<number, boolean>;
+    setIsMinusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
 }
-function EducationButtons({setIsModalOpen, remove, index, append, length, eduId, resumeId}: EducationButtonsProps){
+function EducationButtons({
+    setIsModalOpen, 
+    remove, 
+    index, 
+    append, 
+    length, 
+    eduId, 
+    resumeId,
+    isPlusLoading,
+    setIsPlusLoading,
+    isMinusLoading,
+    setIsMinusLoading,
+}: EducationButtonsProps){
     return (
         <div className="absolute -top-3.5 right-2 border border-transparent rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 ">
             <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
@@ -297,11 +353,13 @@ function EducationButtons({setIsModalOpen, remove, index, append, length, eduId,
                         variant={'destructive'} 
                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
                         onClick={async()=>{
+                            setIsMinusLoading((prev) => ({ ...prev, [index]: true }));
                             await deleteSingleEducation(eduId); 
-                            remove(index)
+                            remove(index);
+                            setIsMinusLoading((prev) => ({ ...prev, [index]: false }));
                         }}
                     >
-                        <MinusIcon className="w-5 h-5" />
+                        {isMinusLoading[index] ? <Loader className="w-5 h-5 animate-spin" /> :<MinusIcon className="w-5 h-5" />}
                     </Button>
                 )}
                 {length > 1 && (
@@ -318,8 +376,9 @@ function EducationButtons({setIsModalOpen, remove, index, append, length, eduId,
                     variant={'destructive'} 
                     className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
                     onClick={async() => {
+                        setIsPlusLoading((prev) => ({ ...prev, [index]: true }));
                         const res = await handleAddNewEducation(resumeId);
-                        console.log("res", res);
+                        // console.log("res", res);
                         if(Object.keys(res).length > 0 && res.id){
                             append({
                                 id: res.id,
@@ -330,9 +389,10 @@ function EducationButtons({setIsModalOpen, remove, index, append, length, eduId,
                                 endDate: "",
                             });
                         }
+                        setIsPlusLoading((prev) => ({ ...prev, [index]: false }));
                     }}
                 >
-                    <PlusIcon className="w-5 h-5" />
+                    {isPlusLoading[index] ? <Loader className="w-5 h-5 animate-spin" /> : <PlusIcon className="w-5 h-5" />}
                 </Button>
             </div>
         </div>

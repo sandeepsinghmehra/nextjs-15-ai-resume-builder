@@ -30,7 +30,7 @@ export async function updateSubscriptionStatus(action: "cancel" | "pause" | "res
         const resPause = await razorpay.subscriptions.pause(razorpaySubscriptionId, {
           pause_at_cycle_end: 1,
         } as any);
-        console.log("Pause response", resPause);
+        // console.log("Pause response", resPause);
         await prisma.userSubscriptionForRazorPay.update({
           where: { razorpaySubId: razorpaySubscriptionId },
           data: { status: "paused" },
@@ -41,7 +41,7 @@ export async function updateSubscriptionStatus(action: "cancel" | "pause" | "res
         const resResume = await razorpay.subscriptions.resume(razorpaySubscriptionId, {
           resume_at_cycle_end: 1,
         } as any);
-        console.log("Resume response", resResume);
+        // console.log("Resume response", resResume);
         await prisma.userSubscriptionForRazorPay.update({
           where: { razorpaySubId: razorpaySubscriptionId },
           data: { status: "active" },

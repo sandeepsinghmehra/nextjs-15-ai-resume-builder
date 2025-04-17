@@ -20,7 +20,7 @@ export default async function Page({searchParams}: PageProps) {
     return null;
   }
 
-  console.log("!resumeId", !resumeId);
+  // console.log("!resumeId", !resumeId);
 
   const resumeToEdit = !resumeId ? null :  await prisma.resume.findUnique({
     where: {

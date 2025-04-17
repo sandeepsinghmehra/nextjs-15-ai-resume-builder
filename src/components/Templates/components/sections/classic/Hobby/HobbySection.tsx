@@ -2,7 +2,7 @@
 import { interestsSchema, InterestsValues, ResumeValues } from "@/lib/validation";
 import { useEffect, useRef, useState } from "react";
 import { BorderStyles } from "@/components/editor/BorderStyleButton";
-import { MinusIcon, ChevronsUpDownIcon, PlusIcon } from "lucide-react";
+import { MinusIcon, ChevronsUpDownIcon, PlusIcon, Loader } from "lucide-react";
 
 import { useFieldArray, useForm, UseFormReturn, UseFieldArrayAppend } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,8 @@ interface ResumeSectionProps {
 export default function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
     const { colorHex, borderStyle, isInterestSection, fontSize, fontFamily} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPlusLoading, setIsPlusLoading] = useState<Record<number, boolean>>({});
+    const [isMinusLoading, setIsMinusLoading] = useState<Record<number, boolean>>({});
 
     const form = useForm<InterestsValues>({
         resolver: zodResolver(interestsSchema),
@@ -123,6 +125,10 @@ export default function HobbiesSection({resumeData, setResumeData}: ResumeSectio
                                         fontSize={fontSize}
                                         hobbyId={field.id}
                                         resumeId={field.resumeId}
+                                        isPlusLoading={isPlusLoading}
+                                        setIsPlusLoading={setIsPlusLoading}
+                                        isMinusLoading={isMinusLoading}
+                                        setIsMinusLoading={setIsMinusLoading}
                                     />
                                 ))} 
                             </div>              
@@ -150,9 +156,30 @@ interface HobbiesItemProps {
     fontSize: string|undefined;
     hobbyId: string;
     resumeId: string;
+    isPlusLoading: Record<number, boolean>;
+    setIsPlusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
+    isMinusLoading: Record<number, boolean>;
+    setIsMinusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
 }
 
-function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize, hobbyId, resumeId}: HobbiesItemProps){
+function HobbiesItem({
+    id, 
+    form, 
+    index, 
+    remove, 
+    length, 
+    setIsModalOpen, 
+    append, 
+    colorHex, 
+    fontFamily, 
+    fontSize, 
+    hobbyId, 
+    resumeId,
+    isPlusLoading,
+    setIsPlusLoading,
+    isMinusLoading,
+    setIsMinusLoading,
+}: HobbiesItemProps){
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
     const [showButtons, setShowButtons] = useState(false);
@@ -187,6 +214,10 @@ function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, c
                                         setShowButtons={setShowButtons}
                                         hobbyId={hobbyId}
                                         resumeId={resumeId}
+                                        isPlusLoading={isPlusLoading}
+                                        setIsPlusLoading={setIsPlusLoading}
+                                        isMinusLoading={isMinusLoading}
+                                        setIsMinusLoading={setIsMinusLoading}
                                     />
                                     <input
                                         {...field}
@@ -227,8 +258,26 @@ interface HobbiesButtonsProps {
     setShowButtons: (value: boolean) => void;
     hobbyId: string;
     resumeId: string;
+    isPlusLoading: Record<number, boolean>;
+    setIsPlusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
+    isMinusLoading: Record<number, boolean>;
+    setIsMinusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
 }
-function HobbiesButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons, hobbyId, resumeId}: HobbiesButtonsProps){
+function HobbiesButtons({
+    setIsModalOpen, 
+    remove, 
+    index, 
+    append, 
+    length, 
+    showButtons, 
+    setShowButtons, 
+    hobbyId, 
+    resumeId,
+    isPlusLoading,
+    setIsPlusLoading,
+    isMinusLoading,
+    setIsMinusLoading,
+}: HobbiesButtonsProps){
     return (
         <div 
             className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
@@ -243,11 +292,13 @@ function HobbiesButtons({setIsModalOpen, remove, index, append, length, showButt
                         variant={'destructive'} 
                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
                         onClick={async()=>{
+                            setIsMinusLoading((prev) => ({ ...prev, [index]: true }));
                             await deleteSingleHobby(hobbyId);
                             remove(index);
+                            setIsMinusLoading((prev) => ({ ...prev, [index]: false }));
                         }}
                     >
-                        <MinusIcon className="w-5 h-5" />
+                        {isMinusLoading[index] ? <Loader className="w-5 h-5 animate-spin" /> :<MinusIcon className="w-5 h-5" />}
                     </Button>
                 )}
                 {length > 1 && (
@@ -264,6 +315,7 @@ function HobbiesButtons({setIsModalOpen, remove, index, append, length, showButt
                     variant={'destructive'} 
                     className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
                     onClick={async() => {
+                        setIsPlusLoading((prev) => ({ ...prev, [index]: true }));
                         const res = await handleAddNewHobby(resumeId);
                         // console.log("res", res);
                         if(Object.keys(res).length > 0 && res.id){
@@ -273,9 +325,10 @@ function HobbiesButtons({setIsModalOpen, remove, index, append, length, showButt
                                 name: "",
                             });        
                         }
+                        setIsPlusLoading((prev) => ({ ...prev, [index]: false }));
                     }}
                 >
-                    <PlusIcon className="w-5 h-5" />
+                    {isPlusLoading[index] ? <Loader className="w-5 h-5 animate-spin" /> : <PlusIcon className="w-5 h-5" />}
                 </Button>
             </div>
         </div>

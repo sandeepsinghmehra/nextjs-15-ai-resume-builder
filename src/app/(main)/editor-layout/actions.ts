@@ -12,12 +12,12 @@ import path from "path";
 export async function saveResume(values: ResumeValues){
     const {id} = values;
 
-    console.log("recieved values", values);
+    // console.log("recieved values", values);
 
     const {
         photo, workExperiences, educations, skills, languages, interests,  ...resumeValues
     } = resumeSchema.parse(values);
-    console.log("workExperiences", workExperiences);
+    // console.log("workExperiences", workExperiences);
     // console.log("educations", educations);
     const { userId} = await auth();
 
@@ -35,9 +35,9 @@ export async function saveResume(values: ResumeValues){
         }
     }
 
-    console.log("id", id);
+    // console.log("id", id);
     const existingResume = id ? await prisma.resume.findUnique({where: {id, userId}}): null;
-    console.log("existingResume", existingResume);
+    // console.log("existingResume", existingResume);
     if(id && !existingResume) {
         throw new Error('Resume not found');
     }
@@ -88,7 +88,7 @@ export async function saveResume(values: ResumeValues){
                 include: resumeDataInclude
             });
           });
-          console.log("updateResume in action", updateResume);
+        //   console.log("updateResume in action", updateResume);
         return updateResume;  
     }
 }
@@ -114,7 +114,7 @@ export async function saveExperiencResume(values: WorkExperiences){
                 include: resumeDataInclude
             });
           });
-          console.log("updateResume in action", updateResume);
+        //   console.log("updateResume in action", updateResume);
         return updateResume;  
     } 
 }
@@ -140,7 +140,7 @@ export async function saveEducationResume(values: EducationType){
                 include: resumeDataInclude
             });
           });
-          console.log("updateResume in action", updateResume);
+        //   console.log("updateResume in action", updateResume);
         return updateResume;  
     } 
 }
@@ -166,7 +166,7 @@ export async function saveSkillResume(values: SkillType){
                 include: resumeDataInclude
             });
           });
-          console.log("updateResume in action skill", updateResume);
+        //   console.log("updateResume in action skill", updateResume);
         return updateResume;  
     } 
 }
@@ -192,7 +192,7 @@ export async function saveInterestResume(values: InterestType){
                 include: resumeDataInclude
             });
           });
-          console.log("updateResume in action skill", updateResume);
+        //   console.log("updateResume in action skill", updateResume);
         return updateResume;  
     } 
 }
@@ -218,7 +218,7 @@ export async function saveLanguageResume(values: LanguageType){
                 include: resumeDataInclude
             });
           });
-          console.log("updateResume in action skill", updateResume);
+        //   console.log("updateResume in action skill", updateResume);
         return updateResume;  
     } 
 }

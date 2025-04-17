@@ -22,7 +22,7 @@ export default async function Page() {
     where: { userId },
   });
 
-  console.log("subscription", subscription);
+  // console.log("subscription", subscription);
   // const planInfo = subscription
   //   // ? await stripe.prices.retrieve(subscription.stripePriceId, {
   //   //     expand: ["product"],

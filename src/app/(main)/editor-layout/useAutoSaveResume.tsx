@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { fileReplacer, getUnsavedEducations, getUnsavedExperiences, getUnsavedHobby, getUnsavedLanguage, getUnsavedSkills } from "@/lib/utils";
 
 export default function useAutoSaveResume(resumeData: ResumeValues){
-    console.log("resumeData in UseAutoSave: ", resumeData)
+    // console.log("resumeData in UseAutoSave: ", resumeData)
     const searchParams = useSearchParams();
 
     const {toast} = useToast();
@@ -20,7 +20,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues){
     const [lastSavedData, setLastSavedData] = useState(
         structuredClone(resumeData)
     );
-    console.log("lastSavedData in useAutoSaveResume: ", lastSavedData);
+    // console.log("lastSavedData in useAutoSaveResume: ", lastSavedData);
 
     const [isSaving, setIsSaving] = useState(false);
 
@@ -41,14 +41,14 @@ export default function useAutoSaveResume(resumeData: ResumeValues){
                 setIsSaving(true);
                 setIsError(false);
                 const newData = structuredClone(debouncedResumeData);
-                console.log("New Data: ", newData, lastSavedData);
+                // console.log("New Data: ", newData, lastSavedData);
                 const changedExperiences = getUnsavedExperiences(debouncedResumeData, lastSavedData);
                 const changedEducations = getUnsavedEducations(debouncedResumeData, lastSavedData);
                 const changedSkills = getUnsavedSkills(debouncedResumeData, lastSavedData);
                 const changedLanguage = getUnsavedLanguage(debouncedResumeData, lastSavedData);
                 const changedInterests = getUnsavedHobby(debouncedResumeData, lastSavedData);
 
-                console.log("Changed Experiences: ", changedExperiences);
+                // console.log("Changed Experiences: ", changedExperiences);
 
                 // remove workExperiences from both objects
                 const { workExperiences: newExperiences, ...restExperienceNew } = newData;
@@ -81,7 +81,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues){
                 const isOnlyInterestChanged = JSON.stringify(restInterestNew, fileReplacer) === JSON.stringify(restInterestOld, fileReplacer) && changedInterests.length > 0;
 
                 let updatedResume:any;
-                console.log("isOnlyExperienceChanged: ", isOnlyExperienceChanged);
+                // console.log("isOnlyExperienceChanged: ", isOnlyExperienceChanged);
                 if (isOnlyExperienceChanged) {
                     // only update changed experiences
                     updatedResume = await saveExperiencResume(changedExperiences[0]);
@@ -90,7 +90,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues){
                     // only update changed educations
                     updatedResume = await saveEducationResume(changedEducations[0]);
                 }
-                console.log("changedSkills: ", changedSkills);
+                // console.log("changedSkills: ", changedSkills);
                 if(isOnlySkillChanged) {
                     // only update changed skills
                     updatedResume = await saveSkillResume(changedSkills[0]);
@@ -113,7 +113,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues){
                         id: resumeId || resumeData.id,
                     });
                 }
-                console.log("Updated Resume in useAutoSaveResume: ", updatedResume);
+                // console.log("Updated Resume in useAutoSaveResume: ", updatedResume);
 
                 setResumeId(updatedResume.id);
                 setLastSavedData(newData);

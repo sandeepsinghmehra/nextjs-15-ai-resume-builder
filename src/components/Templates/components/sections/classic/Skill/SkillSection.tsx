@@ -3,7 +3,7 @@ import { ResumeValues, skillsSchema, SkillsValues } from "@/lib/validation";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { BorderStyles } from "@/components/editor/BorderStyleButton";
-import { Sparkle, MinusIcon, ChevronsUpDownIcon, PlusIcon } from "lucide-react";
+import { Sparkle, MinusIcon, ChevronsUpDownIcon, PlusIcon, Loader } from "lucide-react";
 
 import { useFieldArray, useForm, UseFormReturn, UseFieldArrayAppend } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,8 +20,9 @@ interface ResumeSectionProps {
 export default function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
     const {skills, colorHex, borderStyle, isSkillSection, fontSize, fontFamily} = resumeData;
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPlusLoading, setIsPlusLoading] = useState<Record<number, boolean>>({});
+    const [isMinusLoading, setIsMinusLoading] = useState<Record<number, boolean>>({});
 
-    // if(!skills?.length) return null;
     const form = useForm<SkillsValues>({
         resolver: zodResolver(skillsSchema),
         defaultValues: {
@@ -134,6 +135,10 @@ export default function SkillsSection({resumeData, setResumeData}: ResumeSection
                                         fontSize={fontSize}
                                         skillId={field.id}
                                         resumeId={field.resumeId}
+                                        isPlusLoading={isPlusLoading}
+                                        setIsPlusLoading={setIsPlusLoading}
+                                        isMinusLoading={isMinusLoading}
+                                        setIsMinusLoading={setIsMinusLoading}
                                     />
                                 ))} 
                             </div>              
@@ -160,9 +165,30 @@ interface SkillItemProps {
     fontSize: string|undefined;
     skillId: string;
     resumeId: string;
+    isPlusLoading: Record<number, boolean>;
+    setIsPlusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
+    isMinusLoading: Record<number, boolean>;
+    setIsMinusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
 }
 
-function SkillItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize, skillId, resumeId}: SkillItemProps){
+function SkillItem({
+    id, 
+    form, 
+    index, 
+    remove, 
+    length, 
+    setIsModalOpen, 
+    append, 
+    colorHex, 
+    fontFamily, 
+    fontSize, 
+    skillId, 
+    resumeId,
+    isPlusLoading,
+    setIsPlusLoading,
+    isMinusLoading,
+    setIsMinusLoading,
+}: SkillItemProps){
 
     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
     const [showButtons, setShowButtons] = useState(false);
@@ -206,6 +232,10 @@ function SkillItem({id, form, index, remove, length, setIsModalOpen, append, col
                                         setShowButtons={setShowButtons}
                                         skillId={skillId}
                                         resumeId={resumeId}
+                                        isPlusLoading={isPlusLoading}
+                                        setIsPlusLoading={setIsPlusLoading}
+                                        isMinusLoading={isMinusLoading}
+                                        setIsMinusLoading={setIsMinusLoading}
                                     />
                                     <input
                                         {...field}
@@ -245,8 +275,26 @@ interface SkillButtonsProps {
     setShowButtons: (value: boolean) => void;
     skillId: string;
     resumeId: string;
+    isPlusLoading: Record<number, boolean>;
+    setIsPlusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
+    isMinusLoading: Record<number, boolean>;
+    setIsMinusLoading: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
 }
-function SkillButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons, skillId, resumeId}: SkillButtonsProps){
+function SkillButtons({
+    setIsModalOpen, 
+    remove, 
+    index, 
+    append, 
+    length, 
+    showButtons, 
+    setShowButtons, 
+    skillId, 
+    resumeId,
+    isPlusLoading,
+    setIsPlusLoading,
+    isMinusLoading,
+    setIsMinusLoading,
+}: SkillButtonsProps){
     return (
         <div 
             className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
@@ -261,11 +309,13 @@ function SkillButtons({setIsModalOpen, remove, index, append, length, showButton
                         variant={'destructive'} 
                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
                         onClick={async()=>{
+                            setIsMinusLoading((prev) => ({ ...prev, [index]: true }));
                             await deleteSingleSkill(skillId);
-                            remove(index)
+                            remove(index);
+                            setIsMinusLoading((prev) => ({ ...prev, [index]: false }));
                         }}
                     >
-                        <MinusIcon className="w-5 h-5" />
+                        {isMinusLoading[index] ? <Loader className="w-5 h-5 animate-spin" /> :<MinusIcon className="w-5 h-5" />}
                     </Button>
                 )}
                 {length > 1 && (
@@ -282,6 +332,7 @@ function SkillButtons({setIsModalOpen, remove, index, append, length, showButton
                     variant={'destructive'} 
                     className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
                     onClick={async() => {
+                        setIsPlusLoading((prev) => ({ ...prev, [index]: true }));
                         const res = await handleAddNewSkill(resumeId);
                         // console.log("res", res);
                         if(Object.keys(res).length > 0 && res.id){
@@ -291,9 +342,10 @@ function SkillButtons({setIsModalOpen, remove, index, append, length, showButton
                                 name: "",
                             });
                         }
+                        setIsPlusLoading((prev) => ({ ...prev, [index]: false }));
                     }}
                 >
-                    <PlusIcon className="w-5 h-5" />
+                    {isPlusLoading[index] ? <Loader className="w-5 h-5 animate-spin" /> : <PlusIcon className="w-5 h-5" />}
                 </Button>
             </div>
         </div>
