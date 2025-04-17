@@ -2,9 +2,7 @@ import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { educationSchema, EducationValues, interestsSchema, InterestsValues, languagesSchema, LanguagesValues, personalInfoSchema, PersonalInfoValues, ResumeValues, skillsSchema, SkillsValues, summarySchema, SummaryValues, workExperienceSchema, WorkExperienceValues } from "@/lib/validation";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
-import {constructNow, formatDate, set} from "date-fns";
-import { Badge } from "../ui/badge";
+import { useEffect, useRef, useState } from "react";
 import { BorderStyles } from "@/components/editor/BorderStyleButton";
 import { UploadIcon, Sparkle, MapPinIcon, MailIcon, PhoneIcon, MinusIcon, ChevronsUpDownIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Input } from "../ui/input";
@@ -13,10 +11,14 @@ import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import SummaryModal from "./components/summary/SummaryModal";
-import { Textarea } from "../ui/textarea";
-import { TimelineLayout } from "./components/layout/timeline-layout";
+
 import { Timeline, TimelineHeader, TimelineItem } from "./components/layout/timeline";
-import { twMerge } from "tailwind-merge";
+import WorkExperienceSection from "./components/sections/classic/Experience/ExperienceSection";
+import EducationSection from "./components/sections/classic/Education/EducationSection";
+import SkillsSection from "./components/sections/classic/Skill/SkillSection";
+import LanguageSection from "./components/sections/classic/Language/LanguageSection";
+import HobbiesSection from "./components/sections/classic/Hobby/HobbySection";
+
 
 interface ResumePreviewProps {
     resumeData: ResumeValues;
@@ -547,1399 +549,1399 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
 
 
 
-function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
-    // console.log("resumeData", resumeData);
-    const { colorHex, isWorkSection, fontFamily, fontSize} = resumeData;
-    const [isModalOpen, setIsModalOpen] = useState(false);
+// function WorkExperienceSection({resumeData, setResumeData}: ResumeSectionProps){
+//     // console.log("resumeData", resumeData);
+//     const { colorHex, isWorkSection, fontFamily, fontSize} = resumeData;
+//     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const form = useForm<WorkExperienceValues>({
-        resolver: zodResolver(workExperienceSchema),
-        defaultValues: {
-            workExperienceSectionName: resumeData?.workExperienceSectionName || "",
-            workExperiences: resumeData.workExperiences?.length
-                ? resumeData.workExperiences
-                : [{ position: "", company: "", startDate: "", endDate: "", description: "" }]
-        }
-    });
+//     const form = useForm<WorkExperienceValues>({
+//         resolver: zodResolver(workExperienceSchema),
+//         defaultValues: {
+//             workExperienceSectionName: resumeData?.workExperienceSectionName || "",
+//             workExperiences: resumeData.workExperiences?.length
+//                 ? resumeData.workExperiences
+//                 : [{ position: "", company: "", startDate: "", endDate: "", description: "" }]
+//         }
+//     });
 
-    useEffect(() => {
-        const subscription = form.watch((values) => {
-            (async () => {
-                const isValid = await form.trigger();
-                if (!isValid) return;
+//     useEffect(() => {
+//         const subscription = form.watch((values) => {
+//             (async () => {
+//                 const isValid = await form.trigger();
+//                 if (!isValid) return;
     
-                setResumeData({
-                    ...resumeData, // Using existing state
-                    workExperienceSectionName: values?.workExperienceSectionName || "",
-                    workExperiences: Array.isArray(values?.workExperiences)
-                        ? values.workExperiences
-                              .filter((exp): exp is any => !!exp) // Ensure valid entries
-                              .map((exp) => ({
-                                  position: exp.position || "",
-                                  company: exp.company || "",
-                                  startDate: exp.startDate || "",
-                                  endDate: exp.endDate || "",
-                                  description: exp.description || "",
-                              }))
-                        : [], // Default to empty array if undefined
-                });
-            })();
-        });
-        return () => subscription.unsubscribe()
-    // }, [form, setResumeData]);
-    }, [form, resumeData, setResumeData]);
+//                 setResumeData({
+//                     ...resumeData, // Using existing state
+//                     workExperienceSectionName: values?.workExperienceSectionName || "",
+//                     workExperiences: Array.isArray(values?.workExperiences)
+//                         ? values.workExperiences
+//                               .filter((exp): exp is any => !!exp) // Ensure valid entries
+//                               .map((exp) => ({
+//                                   position: exp.position || "",
+//                                   company: exp.company || "",
+//                                   startDate: exp.startDate || "",
+//                                   endDate: exp.endDate || "",
+//                                   description: exp.description || "",
+//                               }))
+//                         : [], // Default to empty array if undefined
+//                 });
+//             })();
+//         });
+//         return () => subscription.unsubscribe()
+//     // }, [form, setResumeData]);
+//     }, [form, resumeData, setResumeData]);
 
-    const {fields, append, remove, move} = useFieldArray({
-        control: form.control,
-        name: "workExperiences"
-    });
+//     const {fields, append, remove, move} = useFieldArray({
+//         control: form.control,
+//         name: "workExperiences"
+//     });
 
-    return (
-        <>
-        { isWorkSection ?
-            <>
-                <hr 
-                    className="border-2"
-                    style={{
-                        borderColor: colorHex,
-                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                    }}
-                />
-                <Form {...form}>
-                    <div 
-                        className="break-inside-avoid"
-                        style={{
-                            marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                        }}
-                    >
-                    <FormField
-                        control={form.control}
-                        name="workExperienceSectionName"
-                        render={({ field, fieldState  }) => (
-                            <FormItem>
-                                <FormLabel className="sr-only">Work Experience Section</FormLabel>
-                                <FormControl>
-                                    <input
-                                        {...field}
-                                        type="text"
-                                        placeholder="EXPERIENCE"
-                                        className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                        style={{
-                                            // color: colorHex,
-                                            display: "block",
-                                            width: "100%",
-                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
-                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
-                                            fontFamily: fontFamily,
-                                        }}
-                                    />
-                                </FormControl>
+//     return (
+//         <>
+//         { isWorkSection ?
+//             <>
+//                 <hr 
+//                     className="border-2"
+//                     style={{
+//                         borderColor: colorHex,
+//                         marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                     }}
+//                 />
+//                 <Form {...form}>
+//                     <div 
+//                         className="break-inside-avoid"
+//                         style={{
+//                             marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                         }}
+//                     >
+//                     <FormField
+//                         control={form.control}
+//                         name="workExperienceSectionName"
+//                         render={({ field, fieldState  }) => (
+//                             <FormItem>
+//                                 <FormLabel className="sr-only">Work Experience Section</FormLabel>
+//                                 <FormControl>
+//                                     <input
+//                                         {...field}
+//                                         type="text"
+//                                         placeholder="EXPERIENCE"
+//                                         className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                         style={{
+//                                             // color: colorHex,
+//                                             display: "block",
+//                                             width: "100%",
+//                                             fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+//                                             lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+//                                             fontFamily: fontFamily,
+//                                         }}
+//                                     />
+//                                 </FormControl>
                                 
-                                {fieldState.error && (<FormMessage />)}
-                            </FormItem>
-                        )}
-                    />
-                        <Timeline className=''>
-                            {fields.map((field, index) => (
-                                <WorkExperienceItem 
-                                    id={field.id}
-                                    key={field.id} 
-                                    index={index}
-                                    form={form}
-                                    remove={remove}
-                                    length={fields.length}
-                                    setIsModalOpen={setIsModalOpen}
-                                    append={append}
-                                    colorHex={colorHex}
-                                    setResumeData={setResumeData}
-                                    fontFamily={fontFamily}
-                                    fontSize={fontSize}
-                                />
-                            ))} 
-                        </Timeline>              
-                    </div>
-                </Form>
-            </> : null
-        }
-        </>
-    )
-}
+//                                 {fieldState.error && (<FormMessage />)}
+//                             </FormItem>
+//                         )}
+//                     />
+//                         <Timeline className=''>
+//                             {fields.map((field, index) => (
+//                                 <WorkExperienceItem 
+//                                     id={field.id}
+//                                     key={field.id} 
+//                                     index={index}
+//                                     form={form}
+//                                     remove={remove}
+//                                     length={fields.length}
+//                                     setIsModalOpen={setIsModalOpen}
+//                                     append={append}
+//                                     colorHex={colorHex}
+//                                     setResumeData={setResumeData}
+//                                     fontFamily={fontFamily}
+//                                     fontSize={fontSize}
+//                                 />
+//                             ))} 
+//                         </Timeline>              
+//                     </div>
+//                 </Form>
+//             </> : null
+//         }
+//         </>
+//     )
+// }
 
-interface WorkExperienceItemProps {
-    id: string;
-    form: UseFormReturn<WorkExperienceValues>;
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({position, company, startDate, endDate, description}: {position: string, company: string, startDate: string, endDate: string, description: string}) => void;
-    colorHex: string|undefined;
-    setResumeData: (data: any) => void;
-    fontFamily: string|undefined;
-    fontSize: string|undefined;
-}
+// interface WorkExperienceItemProps {
+//     id: string;
+//     form: UseFormReturn<WorkExperienceValues>;
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({position, company, startDate, endDate, description}: {position: string, company: string, startDate: string, endDate: string, description: string}) => void;
+//     colorHex: string|undefined;
+//     setResumeData: (data: any) => void;
+//     fontFamily: string|undefined;
+//     fontSize: string|undefined;
+// }
 
-function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData, fontFamily, fontSize}: WorkExperienceItemProps){
-    useEffect(() => {
-        document.documentElement.style.setProperty("--primary-color", colorHex as string); // Set the CSS variable dynamically
-    }, [colorHex]); 
+// function WorkExperienceItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData, fontFamily, fontSize}: WorkExperienceItemProps){
+//     useEffect(() => {
+//         document.documentElement.style.setProperty("--primary-color", colorHex as string); // Set the CSS variable dynamically
+//     }, [colorHex]); 
 
-    // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
+//     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
 
-{/* <div className="relative  "></div> */}
-    return (
-        <TimelineItem className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
+// {/* <div className="relative  "></div> */}
+//     return (
+//         <TimelineItem className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
                       
-            <ExperienceButtons remove={remove} length={length} setIsModalOpen={setIsModalOpen} append={append} index={index} />
-            <TimelineHeader className="dynamic-time-line-header-point-after">
-                <FormField
-                    control={form.control}
-                    name={`workExperiences.${index}.company`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px] block w-full">
-                            <FormLabel className="sr-only">Company</FormLabel>
-                            <FormControl>   
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="Employer"
-                                    className=" w-full block text-lg font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        display: 'block',  
-                                        color: colorHex,
-                                        fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
-                                        lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
-                                        fontFamily: fontFamily,
-                                        fontWeight: 600,
-                                    }}
-                                />    
+//             <ExperienceButtons remove={remove} length={length} setIsModalOpen={setIsModalOpen} append={append} index={index} />
+//             <TimelineHeader className="dynamic-time-line-header-point-after">
+//                 <FormField
+//                     control={form.control}
+//                     name={`workExperiences.${index}.company`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px] block w-full">
+//                             <FormLabel className="sr-only">Company</FormLabel>
+//                             <FormControl>   
+//                                 <input
+//                                     {...field}
+//                                     type="text"
+//                                     placeholder="Employer"
+//                                     className=" w-full block text-lg font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                     style={{
+//                                         display: 'block',  
+//                                         color: colorHex,
+//                                         fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+//                                         lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+//                                         fontFamily: fontFamily,
+//                                         fontWeight: 600,
+//                                     }}
+//                                 />    
                             
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-            </TimelineHeader>
-            <div className="flex flex-row flex-wrap items-center">
-                <FormField
-                    control={form.control}
-                    name={`workExperiences.${index}.position`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">Job title</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="POSITION"
-                                    className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
-                                        lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
-                                        fontFamily: fontFamily,
-                                        fontWeight: 600,
-                                    }}
-                                /> 
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />
+//             </TimelineHeader>
+//             <div className="flex flex-row flex-wrap items-center">
+//                 <FormField
+//                     control={form.control}
+//                     name={`workExperiences.${index}.position`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px]">
+//                             <FormLabel className="sr-only">Job title</FormLabel>
+//                             <FormControl>
+//                                 <input
+//                                     {...field}
+//                                     type="text"
+//                                     placeholder="POSITION"
+//                                     className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                     style={{
+//                                         fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+//                                         lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+//                                         fontFamily: fontFamily,
+//                                         fontWeight: 600,
+//                                     }}
+//                                 /> 
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />
                             
-                <FormField
-                    control={form.control}
-                    name={`workExperiences.${index}.startDate`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">Start Date</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="from"
-                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
-                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
-                                        fontFamily: fontFamily,
-                                    }}
-                                /> 
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />{" - "}
-                <FormField
-                    control={form.control}
-                    name={`workExperiences.${index}.endDate`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">End Date</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="Until"
-                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
-                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
-                                        fontFamily: fontFamily,
-                                    }}
-                                /> 
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-            </div>
+//                 <FormField
+//                     control={form.control}
+//                     name={`workExperiences.${index}.startDate`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px]">
+//                             <FormLabel className="sr-only">Start Date</FormLabel>
+//                             <FormControl>
+//                                 <input
+//                                     {...field}
+//                                     type="text"
+//                                     placeholder="from"
+//                                     className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+//                                     style={{
+//                                         fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+//                                         lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+//                                         fontFamily: fontFamily,
+//                                     }}
+//                                 /> 
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />{" - "}
+//                 <FormField
+//                     control={form.control}
+//                     name={`workExperiences.${index}.endDate`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px]">
+//                             <FormLabel className="sr-only">End Date</FormLabel>
+//                             <FormControl>
+//                                 <input
+//                                     {...field}
+//                                     type="text"
+//                                     placeholder="Until"
+//                                     className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+//                                     style={{
+//                                         fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+//                                         lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+//                                         fontFamily: fontFamily,
+//                                     }}
+//                                 /> 
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />
+//             </div>
                 
-            <FormField
-                control={form.control}
-                name={`workExperiences.${index}.description`}
-                render={({field})=>(
-                    <FormItem className="space-y-[1px]">
-                        <FormLabel className="sr-only">Description</FormLabel>
-                        <FormControl className="m-0 p-0">
-                            <div className="relative  m-0 p-0 pb-0 flex box-border h-auto">
-                                <textarea
-                                    {...field}
-                                    value={field.value || ""}
-                                    ref={(el) => {
-                                        if (el) {
-                                            el.style.height = "25px"; // Reset height first
-                                            el.style.height = `${el.scrollHeight}px`; // Set new height
-                                        }
-                                    }}
-                                    placeholder="Enter your work experience description"
-                                    rows={1}
-                                    className="w-full min-h-[25px] text-md font-light focus:outline-none focus:bg-gray-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-sm resize-none overflow-hidden bg-white dark:bg-white dark:focus:bg-slate-200 dark:hover:bg-slate-200 box-border"
-                                    onInput={(e) => {
-                                        const target = e.target as HTMLTextAreaElement;
-                                        target.style.height = "25px"; // Reset height first
-                                        target.style.height = `${target.scrollHeight}px `; // Set new height
-                                    }}                
-                                    spellCheck={true}
-                                    // onChange={(e) => {
-                                    //     field.onChange(e); // Update form state
-                                    //     setResumeData((prev: any) => ({
-                                    //         ...prev,
-                                    //         workExperiences: prev.workExperiences.map((exp: any, i: number) =>
-                                    //             i === index ? { ...exp, description: e.target.value } : exp
-                                    //         )
-                                    //     }));
-                                    // }}
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'14px': fontSize==='medium'? '13px': '12px'}`,
-                                        lineHeight: `${fontSize === 'big'?'22px': fontSize==='medium'? '20px': '18px'}`,
-                                        fontFamily: fontFamily,
-                                    }}
-                                /> 
-                            </div>
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-        </TimelineItem>
-    )
-}
+//             <FormField
+//                 control={form.control}
+//                 name={`workExperiences.${index}.description`}
+//                 render={({field})=>(
+//                     <FormItem className="space-y-[1px]">
+//                         <FormLabel className="sr-only">Description</FormLabel>
+//                         <FormControl className="m-0 p-0">
+//                             <div className="relative  m-0 p-0 pb-0 flex box-border h-auto">
+//                                 <textarea
+//                                     {...field}
+//                                     value={field.value || ""}
+//                                     ref={(el) => {
+//                                         if (el) {
+//                                             el.style.height = "25px"; // Reset height first
+//                                             el.style.height = `${el.scrollHeight}px`; // Set new height
+//                                         }
+//                                     }}
+//                                     placeholder="Enter your work experience description"
+//                                     rows={1}
+//                                     className="w-full min-h-[25px] text-md font-light focus:outline-none focus:bg-gray-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-sm resize-none overflow-hidden bg-white dark:bg-white dark:focus:bg-slate-200 dark:hover:bg-slate-200 box-border"
+//                                     onInput={(e) => {
+//                                         const target = e.target as HTMLTextAreaElement;
+//                                         target.style.height = "25px"; // Reset height first
+//                                         target.style.height = `${target.scrollHeight}px `; // Set new height
+//                                     }}                
+//                                     spellCheck={true}
+//                                     // onChange={(e) => {
+//                                     //     field.onChange(e); // Update form state
+//                                     //     setResumeData((prev: any) => ({
+//                                     //         ...prev,
+//                                     //         workExperiences: prev.workExperiences.map((exp: any, i: number) =>
+//                                     //             i === index ? { ...exp, description: e.target.value } : exp
+//                                     //         )
+//                                     //     }));
+//                                     // }}
+//                                     style={{
+//                                         fontSize: `${fontSize === 'big'?'14px': fontSize==='medium'? '13px': '12px'}`,
+//                                         lineHeight: `${fontSize === 'big'?'22px': fontSize==='medium'? '20px': '18px'}`,
+//                                         fontFamily: fontFamily,
+//                                     }}
+//                                 /> 
+//                             </div>
+//                         </FormControl>
+//                         <FormMessage />
+//                     </FormItem>
+//                 )}
+//             />
+//         </TimelineItem>
+//     )
+// }
 
-interface ExperienceButtonsProps {
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({position, company, startDate, endDate, description}: {position: string, company: string, startDate: string, endDate: string, description: string}) => void;
-}
+// interface ExperienceButtonsProps {
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({position, company, startDate, endDate, description}: {position: string, company: string, startDate: string, endDate: string, description: string}) => void;
+// }
 
-function ExperienceButtons({setIsModalOpen, remove, index, append, length}: ExperienceButtonsProps){
-    return (
-        <div className="absolute -top-3.5 right-2 border border-transparent rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 ">
-            <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
-                <Button 
-                    variant={'destructive'} 
-                    size={"sm"}
-                    className="border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
-                    onClick={() => setIsModalOpen(true)}
-                >
-                    <Sparkle className="w-5 h-5" /> Writing Assistant
-                </Button>
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                        onClick={()=>remove(index)}
-                    >
-                        <MinusIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    >
-                        <ChevronsUpDownIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                <Button 
-                    size={"icon"} 
-                    variant={'destructive'} 
-                    className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    onClick={()=> append({
-                        position: "",
-                        company: "",
-                        startDate: "",
-                        endDate: "",
-                        description: "",
-                    })}
-                >
-                    <PlusIcon className="w-5 h-5" />
-                </Button>
-            </div>
-        </div>
-    )
-}
+// function ExperienceButtons({setIsModalOpen, remove, index, append, length}: ExperienceButtonsProps){
+//     return (
+//         <div className="absolute -top-3.5 right-2 border border-transparent rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 ">
+//             <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
+//                 <Button 
+//                     variant={'destructive'} 
+//                     size={"sm"}
+//                     className="border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
+//                     onClick={() => setIsModalOpen(true)}
+//                 >
+//                     <Sparkle className="w-5 h-5" /> Writing Assistant
+//                 </Button>
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                         onClick={()=>remove(index)}
+//                     >
+//                         <MinusIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     >
+//                         <ChevronsUpDownIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 <Button 
+//                     size={"icon"} 
+//                     variant={'destructive'} 
+//                     className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     onClick={()=> append({
+//                         position: "",
+//                         company: "",
+//                         startDate: "",
+//                         endDate: "",
+//                         description: "",
+//                     })}
+//                 >
+//                     <PlusIcon className="w-5 h-5" />
+//                 </Button>
+//             </div>
+//         </div>
+//     )
+// }
 
 
-function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
-    // console.log("resumeData", resumeData);
-    const {educations,  colorHex, isEducationSection, fontSize, fontFamily} = resumeData;
-    const [isModalOpen, setIsModalOpen] = useState(false);
+// function EducationSection({resumeData, setResumeData}: ResumeSectionProps){
+//     // console.log("resumeData", resumeData);
+//     const {educations,  colorHex, isEducationSection, fontSize, fontFamily} = resumeData;
+//     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const form = useForm<EducationValues>({
-            resolver: zodResolver(educationSchema),
-            defaultValues: {
-                educationSectionName: resumeData?.educationSectionName || "",
-                educations: resumeData.educations?.length
-                ? resumeData.educations
-                : [{ degree: "", school: "", startDate: "", endDate: "", }]
-            }
-        });
+//     const form = useForm<EducationValues>({
+//             resolver: zodResolver(educationSchema),
+//             defaultValues: {
+//                 educationSectionName: resumeData?.educationSectionName || "",
+//                 educations: resumeData.educations?.length
+//                 ? resumeData.educations
+//                 : [{ degree: "", school: "", startDate: "", endDate: "", }]
+//             }
+//         });
     
-        useEffect(() => {
-            const subscription = form.watch((values) => {
-                (async () => {
-                    const isValid = await form.trigger();
-                    if (!isValid) return;
+//         useEffect(() => {
+//             const subscription = form.watch((values) => {
+//                 (async () => {
+//                     const isValid = await form.trigger();
+//                     if (!isValid) return;
 
-                    setResumeData({
-                        ...resumeData,
-                        educationSectionName: values?.educationSectionName || "",
-                        educations: Array.isArray(values?.educations)
-                        ? values.educations
-                            .filter((edu): edu is any => !!edu) // Ensure valid entries
-                            .map((edu) => ({
-                                degree: edu.degree || "",
-                                school: edu.school || "",
-                                startDate: edu.startDate || "",
-                                endDate: edu.endDate || "",
-                            }))
-                        : [], // Default to empty array if undefined
-                    });
-                })();
-            });
-            return () => subscription.unsubscribe();
-        // }, [form, setResumeData]);
-        }, [form, resumeData, setResumeData]);
+//                     setResumeData({
+//                         ...resumeData,
+//                         educationSectionName: values?.educationSectionName || "",
+//                         educations: Array.isArray(values?.educations)
+//                         ? values.educations
+//                             .filter((edu): edu is any => !!edu) // Ensure valid entries
+//                             .map((edu) => ({
+//                                 degree: edu.degree || "",
+//                                 school: edu.school || "",
+//                                 startDate: edu.startDate || "",
+//                                 endDate: edu.endDate || "",
+//                             }))
+//                         : [], // Default to empty array if undefined
+//                     });
+//                 })();
+//             });
+//             return () => subscription.unsubscribe();
+//         // }, [form, setResumeData]);
+//         }, [form, resumeData, setResumeData]);
         
-        const {fields, append, remove, move} = useFieldArray({
-            control: form.control,
-            name: "educations"
-        });
+//         const {fields, append, remove, move} = useFieldArray({
+//             control: form.control,
+//             name: "educations"
+//         });
 
-    return (
-        <>
-        {
-            isEducationSection ?
-            <>
-                <hr 
-                    className="border-2"
-                    style={{
-                        borderColor: colorHex,
-                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                    }}
-                />
-                <Form {...form}>
-                    <div 
-                        className="break-inside-avoid"
-                        style={{
-                            marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                        }}
-                    >
-                    <FormField
-                        control={form.control}
-                        name="educationSectionName"
-                        render={({ field, fieldState  }) => (
-                            <FormItem>
-                                <FormLabel className="sr-only">Education Section</FormLabel>
-                                <FormControl>
-                                    <input
-                                        {...field}
-                                        type="text"
-                                        placeholder="EDUCATION"
-                                        className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                        style={{
-                                            // color: colorHex,
-                                            display: "block",
-                                            width: "100%",
-                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
-                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
-                                            fontFamily: fontFamily,
-                                        }}
-                                    />
-                                </FormControl>
+//     return (
+//         <>
+//         {
+//             isEducationSection ?
+//             <>
+//                 <hr 
+//                     className="border-2"
+//                     style={{
+//                         borderColor: colorHex,
+//                         marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                     }}
+//                 />
+//                 <Form {...form}>
+//                     <div 
+//                         className="break-inside-avoid"
+//                         style={{
+//                             marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                         }}
+//                     >
+//                     <FormField
+//                         control={form.control}
+//                         name="educationSectionName"
+//                         render={({ field, fieldState  }) => (
+//                             <FormItem>
+//                                 <FormLabel className="sr-only">Education Section</FormLabel>
+//                                 <FormControl>
+//                                     <input
+//                                         {...field}
+//                                         type="text"
+//                                         placeholder="EDUCATION"
+//                                         className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                         style={{
+//                                             // color: colorHex,
+//                                             display: "block",
+//                                             width: "100%",
+//                                             fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+//                                             lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+//                                             fontFamily: fontFamily,
+//                                         }}
+//                                     />
+//                                 </FormControl>
                                 
-                                {fieldState.error && (<FormMessage />)}
-                            </FormItem>
-                        )}
-                    />
-                        <Timeline className=''>
-                            {fields.map((field, index) => (
-                                <EducationItem 
-                                    id={field.id}
-                                    key={field.id} 
-                                    index={index}
-                                    form={form}
-                                    remove={remove}
-                                    length={fields.length}
-                                    setIsModalOpen={setIsModalOpen}
-                                    append={append}
-                                    colorHex={colorHex}
-                                    setResumeData={setResumeData}
-                                    fontFamily={fontFamily}
-                                    fontSize={fontSize}
-                                />
-                            ))} 
-                        </Timeline>              
-                    </div>
-                </Form>
-            </> : null
-        }
-        </>
-    )
-}
+//                                 {fieldState.error && (<FormMessage />)}
+//                             </FormItem>
+//                         )}
+//                     />
+//                         <Timeline className=''>
+//                             {fields.map((field, index) => (
+//                                 <EducationItem 
+//                                     id={field.id}
+//                                     key={field.id} 
+//                                     index={index}
+//                                     form={form}
+//                                     remove={remove}
+//                                     length={fields.length}
+//                                     setIsModalOpen={setIsModalOpen}
+//                                     append={append}
+//                                     colorHex={colorHex}
+//                                     setResumeData={setResumeData}
+//                                     fontFamily={fontFamily}
+//                                     fontSize={fontSize}
+//                                 />
+//                             ))} 
+//                         </Timeline>              
+//                     </div>
+//                 </Form>
+//             </> : null
+//         }
+//         </>
+//     )
+// }
 
-interface EducationItemProps {
-    id: string;
-    form: UseFormReturn<EducationValues>;
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({school, degree, startDate, endDate}: {school: string, degree: string, startDate: string, endDate: string}) => void;
-    colorHex: string|undefined;
-    setResumeData: (data: any) => void;
-    fontFamily: string|undefined;
-    fontSize: string|undefined;
-}
+// interface EducationItemProps {
+//     id: string;
+//     form: UseFormReturn<EducationValues>;
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({school, degree, startDate, endDate}: {school: string, degree: string, startDate: string, endDate: string}) => void;
+//     colorHex: string|undefined;
+//     setResumeData: (data: any) => void;
+//     fontFamily: string|undefined;
+//     fontSize: string|undefined;
+// }
 
-function EducationItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData, fontFamily, fontSize}: EducationItemProps){
+// function EducationItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, setResumeData, fontFamily, fontSize}: EducationItemProps){
 
-    useEffect(() => {
-        document.documentElement.style.setProperty("--primary-color", colorHex as string); // Set the CSS variable dynamically
-    }, [colorHex]); 
+//     useEffect(() => {
+//         document.documentElement.style.setProperty("--primary-color", colorHex as string); // Set the CSS variable dynamically
+//     }, [colorHex]); 
 
-    // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
-{/* <div className="relative  "></div> */}
-    return (
-        <TimelineItem className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
+//     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
+// {/* <div className="relative  "></div> */}
+//     return (
+//         <TimelineItem className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300">
                       
-            <EducationButtons remove={remove} length={length} setIsModalOpen={setIsModalOpen} append={append} index={index} />
-            <TimelineHeader className="dynamic-time-line-header-point-after">
-                <FormField
-                    control={form.control}
-                    name={`educations.${index}.school`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px] block w-full">
-                            <FormLabel className="sr-only">School</FormLabel>
-                            <FormControl>   
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="SCHOOL"
-                                    className=" w-full block text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        display: 'block',  
-                                        color: colorHex,
-                                        fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
-                                        lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
-                                        fontFamily: fontFamily,
-                                        fontWeight: 600,
-                                    }}
-                                />    
+//             <EducationButtons remove={remove} length={length} setIsModalOpen={setIsModalOpen} append={append} index={index} />
+//             <TimelineHeader className="dynamic-time-line-header-point-after">
+//                 <FormField
+//                     control={form.control}
+//                     name={`educations.${index}.school`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px] block w-full">
+//                             <FormLabel className="sr-only">School</FormLabel>
+//                             <FormControl>   
+//                                 <input
+//                                     {...field}
+//                                     type="text"
+//                                     placeholder="SCHOOL"
+//                                     className=" w-full block text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                     style={{
+//                                         display: 'block',  
+//                                         color: colorHex,
+//                                         fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+//                                         lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+//                                         fontFamily: fontFamily,
+//                                         fontWeight: 600,
+//                                     }}
+//                                 />    
                             
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-            </TimelineHeader>
-            <div className="flex flex-row flex-wrap items-center">
-                <FormField
-                    control={form.control}
-                    name={`educations.${index}.degree`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">Degree</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="DEGREE"
-                                    className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
-                                        lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
-                                        fontFamily: fontFamily,
-                                        fontWeight: 600,
-                                    }}
-                                /> 
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />
+//             </TimelineHeader>
+//             <div className="flex flex-row flex-wrap items-center">
+//                 <FormField
+//                     control={form.control}
+//                     name={`educations.${index}.degree`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px]">
+//                             <FormLabel className="sr-only">Degree</FormLabel>
+//                             <FormControl>
+//                                 <input
+//                                     {...field}
+//                                     type="text"
+//                                     placeholder="DEGREE"
+//                                     className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                     style={{
+//                                         fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+//                                         lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+//                                         fontFamily: fontFamily,
+//                                         fontWeight: 600,
+//                                     }}
+//                                 /> 
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />
                             
-                <FormField
-                    control={form.control}
-                    name={`educations.${index}.startDate`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">Start Date</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="from"
-                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
-                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
-                                        fontFamily: fontFamily,
-                                    }}
-                                /> 
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />{" - "}
-                <FormField
-                    control={form.control}
-                    name={`educations.${index}.endDate`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">End Date</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="Until"
-                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
-                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
-                                        fontFamily: fontFamily,
-                                    }}
-                                /> 
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-            </div>
-        </TimelineItem>
-    )
-}
+//                 <FormField
+//                     control={form.control}
+//                     name={`educations.${index}.startDate`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px]">
+//                             <FormLabel className="sr-only">Start Date</FormLabel>
+//                             <FormControl>
+//                                 <input
+//                                     {...field}
+//                                     type="text"
+//                                     placeholder="from"
+//                                     className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+//                                     style={{
+//                                         fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+//                                         lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+//                                         fontFamily: fontFamily,
+//                                     }}
+//                                 /> 
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />{" - "}
+//                 <FormField
+//                     control={form.control}
+//                     name={`educations.${index}.endDate`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px]">
+//                             <FormLabel className="sr-only">End Date</FormLabel>
+//                             <FormControl>
+//                                 <input
+//                                     {...field}
+//                                     type="text"
+//                                     placeholder="Until"
+//                                     className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+//                                     style={{
+//                                         fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+//                                         lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+//                                         fontFamily: fontFamily,
+//                                     }}
+//                                 /> 
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />
+//             </div>
+//         </TimelineItem>
+//     )
+// }
 
-interface EducationButtonsProps {
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({school, degree, startDate, endDate}: {school: string, degree: string, startDate: string, endDate: string}) => void;
-}
-function EducationButtons({setIsModalOpen, remove, index, append, length}: EducationButtonsProps){
-    return (
-        <div className="absolute -top-3.5 right-2 border border-transparent rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 ">
-            <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                        onClick={()=>remove(index)}
-                    >
-                        <MinusIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    >
-                        <ChevronsUpDownIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                <Button 
-                    size={"icon"} 
-                    variant={'destructive'} 
-                    className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    onClick={()=> append({
-                        degree: "",
-                        school: "",
-                        startDate: "",
-                        endDate: "",
-                    })}
-                >
-                    <PlusIcon className="w-5 h-5" />
-                </Button>
-            </div>
-        </div>
-    )
-}
+// interface EducationButtonsProps {
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({school, degree, startDate, endDate}: {school: string, degree: string, startDate: string, endDate: string}) => void;
+// }
+// function EducationButtons({setIsModalOpen, remove, index, append, length}: EducationButtonsProps){
+//     return (
+//         <div className="absolute -top-3.5 right-2 border border-transparent rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 ">
+//             <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                         onClick={()=>remove(index)}
+//                     >
+//                         <MinusIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     >
+//                         <ChevronsUpDownIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 <Button 
+//                     size={"icon"} 
+//                     variant={'destructive'} 
+//                     className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     onClick={()=> append({
+//                         degree: "",
+//                         school: "",
+//                         startDate: "",
+//                         endDate: "",
+//                     })}
+//                 >
+//                     <PlusIcon className="w-5 h-5" />
+//                 </Button>
+//             </div>
+//         </div>
+//     )
+// }
 
-function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
-    const {skills, colorHex, borderStyle, isSkillSection, fontSize, fontFamily} = resumeData;
-    const [isModalOpen, setIsModalOpen] = useState(false);
+// function SkillsSection({resumeData, setResumeData}: ResumeSectionProps){
+//     const {skills, colorHex, borderStyle, isSkillSection, fontSize, fontFamily} = resumeData;
+//     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // if(!skills?.length) return null;
-    const form = useForm<SkillsValues>({
-        resolver: zodResolver(skillsSchema),
-        defaultValues: {
-            skillsSectionName: resumeData.skillsSectionName || "",
-            skills: resumeData.skills?.length ? resumeData?.skills : [{ name: "" }] 
-        }
-    });
+//     // if(!skills?.length) return null;
+//     const form = useForm<SkillsValues>({
+//         resolver: zodResolver(skillsSchema),
+//         defaultValues: {
+//             skillsSectionName: resumeData.skillsSectionName || "",
+//             skills: resumeData.skills?.length ? resumeData?.skills : [{ name: "" }] 
+//         }
+//     });
 
-    useEffect(() => {
-        const subscription = form.watch((values) => {
-            (async () => {
-                const isValid = await form.trigger();
-                if (!isValid) return;
+//     useEffect(() => {
+//         const subscription = form.watch((values) => {
+//             (async () => {
+//                 const isValid = await form.trigger();
+//                 if (!isValid) return;
 
-                setResumeData({
-                    ...resumeData,
-                   skillsSectionName: values.skillsSectionName || "",
-                    skills: Array.isArray(values?.skills)
-                    ? values.skills
-                        .filter((skill): skill is any => !!skill) // Ensure valid entries
-                        .map((skill) => ({
-                            name: skill.name || "",
-                        }))
-                    : [], // Default to empty array if undefined
-                });
-            })();
-        });
-        return () => subscription.unsubscribe();
-    // }, [form, setResumeData]);
-    }, [form, resumeData, setResumeData]);
+//                 setResumeData({
+//                     ...resumeData,
+//                    skillsSectionName: values.skillsSectionName || "",
+//                     skills: Array.isArray(values?.skills)
+//                     ? values.skills
+//                         .filter((skill): skill is any => !!skill) // Ensure valid entries
+//                         .map((skill) => ({
+//                             name: skill.name || "",
+//                         }))
+//                     : [], // Default to empty array if undefined
+//                 });
+//             })();
+//         });
+//         return () => subscription.unsubscribe();
+//     // }, [form, setResumeData]);
+//     }, [form, resumeData, setResumeData]);
         
-    const {fields, append, remove, move}:any = useFieldArray({
-        control: form.control,
-        name: "skills"
-    });
-    return (
-        <>
-        {
-            isSkillSection ?
-            <>
-                <hr 
-                    className="border-2"
-                    style={{
-                        borderColor: colorHex,
-                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                    }}
-                />
-                <div 
-                    className="relative border-2 border-transparent border-dashed rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300 m-0 p-0"
-                    style={{
-                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                    }}
-                >
-                    <Button 
-                        variant={'destructive'} 
-                        size={"sm"}
-                        className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        <Sparkle /> Writing Assistant
-                    </Button>
-                    <Form {...form}>
-                        <div className="break-inside-avoid box-border">
-                            <FormField
-                                control={form.control}
-                                name="skillsSectionName"
-                                render={({ field, fieldState  }) => (
-                                    <FormItem  className="space-y-0 m-0 p-0">
-                                        <FormLabel className="sr-only">Skills Section</FormLabel>
-                                        <FormControl>
-                                            <div className=" rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
-                                                    {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
+//     const {fields, append, remove, move}:any = useFieldArray({
+//         control: form.control,
+//         name: "skills"
+//     });
+//     return (
+//         <>
+//         {
+//             isSkillSection ?
+//             <>
+//                 <hr 
+//                     className="border-2"
+//                     style={{
+//                         borderColor: colorHex,
+//                         marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                     }}
+//                 />
+//                 <div 
+//                     className="relative border-2 border-transparent border-dashed rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300 m-0 p-0"
+//                     style={{
+//                         marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                     }}
+//                 >
+//                     <Button 
+//                         variant={'destructive'} 
+//                         size={"sm"}
+//                         className="absolute -top-3.5 right-2 border rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 px-2 py-0 text-xs font-light h-6"
+//                         onClick={() => setIsModalOpen(true)}
+//                     >
+//                         <Sparkle /> Writing Assistant
+//                     </Button>
+//                     <Form {...form}>
+//                         <div className="break-inside-avoid box-border">
+//                             <FormField
+//                                 control={form.control}
+//                                 name="skillsSectionName"
+//                                 render={({ field, fieldState  }) => (
+//                                     <FormItem  className="space-y-0 m-0 p-0">
+//                                         <FormLabel className="sr-only">Skills Section</FormLabel>
+//                                         <FormControl>
+//                                             <div className=" rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
+//                                                     {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
                                                     
-                                                    <input
-                                                        {...field}
-                                                        type="text"
-                                                        placeholder="SKILLS"
-                                                        className="w-full text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                                        style={{
-                                                            display: "block",
-                                                            width: "100%",
-                                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
-                                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
-                                                            fontFamily: fontFamily,
-                                                        }}
-                                                    />
-                                            </div>
-                                        </FormControl>
+//                                                     <input
+//                                                         {...field}
+//                                                         type="text"
+//                                                         placeholder="SKILLS"
+//                                                         className="w-full text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                                         style={{
+//                                                             display: "block",
+//                                                             width: "100%",
+//                                                             fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+//                                                             lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+//                                                             fontFamily: fontFamily,
+//                                                         }}
+//                                                     />
+//                                             </div>
+//                                         </FormControl>
                                         
-                                        {fieldState.error && (<FormMessage />)}
-                                    </FormItem>
-                                )}
-                            />
-                            <div className='flex flex-row flex-wrap gap-2 w-full'>
-                                {fields.map((field:any, index:number) => (
-                                    <SkillItem
-                                        id={field.id}
-                                        key={field.id} 
-                                        index={index}
-                                        form={form}
-                                        remove={remove}
-                                        length={fields.length}
-                                        setIsModalOpen={setIsModalOpen}
-                                        append={append}
-                                        colorHex={colorHex}
-                                        fontFamily={fontFamily}
-                                        fontSize={fontSize}
-                                    />
-                                ))} 
-                            </div>              
-                        </div>
-                    </Form>
-                </div>
-            </>: null
-        }
-        </>
-    )
-}
+//                                         {fieldState.error && (<FormMessage />)}
+//                                     </FormItem>
+//                                 )}
+//                             />
+//                             <div className='flex flex-row flex-wrap gap-2 w-full'>
+//                                 {fields.map((field:any, index:number) => (
+//                                     <SkillItem
+//                                         id={field.id}
+//                                         key={field.id} 
+//                                         index={index}
+//                                         form={form}
+//                                         remove={remove}
+//                                         length={fields.length}
+//                                         setIsModalOpen={setIsModalOpen}
+//                                         append={append}
+//                                         colorHex={colorHex}
+//                                         fontFamily={fontFamily}
+//                                         fontSize={fontSize}
+//                                     />
+//                                 ))} 
+//                             </div>              
+//                         </div>
+//                     </Form>
+//                 </div>
+//             </>: null
+//         }
+//         </>
+//     )
+// }
 
-interface SkillItemProps {
-    id: string;
-    form: UseFormReturn<SkillsValues>;
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({name}: {name: string}) => void;
-    colorHex: string|undefined;
-    fontFamily: string|undefined;
-    fontSize: string|undefined;
-}
+// interface SkillItemProps {
+//     id: string;
+//     form: UseFormReturn<SkillsValues>;
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({name}: {name: string}) => void;
+//     colorHex: string|undefined;
+//     fontFamily: string|undefined;
+//     fontSize: string|undefined;
+// }
 
-function SkillItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize}: SkillItemProps){
+// function SkillItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize}: SkillItemProps){
 
-    // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
-    const [showButtons, setShowButtons] = useState(false);
-    // const textSkillRef = useRef<HTMLDivElement>(null);
+//     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
+//     const [showButtons, setShowButtons] = useState(false);
+//     // const textSkillRef = useRef<HTMLDivElement>(null);
 
-    // const [width, setWidth] = useState("auto");
+//     // const [width, setWidth] = useState("auto");
 
-    // useEffect(() => {
-    //     if (textSkillRef.current) {
-    //         setWidth(`${textSkillRef.current.offsetWidth + 20}px`);
-    //     }
-    // }, []);
+//     // useEffect(() => {
+//     //     if (textSkillRef.current) {
+//     //         setWidth(`${textSkillRef.current.offsetWidth + 20}px`);
+//     //     }
+//     // }, []);
 
-    return (
-            <div className="w-[24%]">
-                <FormField
-                    control={form.control}
-                    name={`skills.${index}.name`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">Skill</FormLabel>
-                            <FormControl>
-                                <div 
-                                    className="relative p-0 rounded-md transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
-                                    onMouseEnter={() => setShowButtons(true)}
-                                    onMouseLeave={() => setShowButtons(false)}
-                                    onFocus={() => setShowButtons(true)} 
-                                    onBlur={(e) => {
-                                        if (!e.currentTarget.contains(e.relatedTarget)) setShowButtons(false);
-                                    }}
-                                    tabIndex={-1} // Ensures div can be focused
-                                >
+//     return (
+//             <div className="w-[24%]">
+//                 <FormField
+//                     control={form.control}
+//                     name={`skills.${index}.name`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px]">
+//                             <FormLabel className="sr-only">Skill</FormLabel>
+//                             <FormControl>
+//                                 <div 
+//                                     className="relative p-0 rounded-md transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
+//                                     onMouseEnter={() => setShowButtons(true)}
+//                                     onMouseLeave={() => setShowButtons(false)}
+//                                     onFocus={() => setShowButtons(true)} 
+//                                     onBlur={(e) => {
+//                                         if (!e.currentTarget.contains(e.relatedTarget)) setShowButtons(false);
+//                                     }}
+//                                     tabIndex={-1} // Ensures div can be focused
+//                                 >
                       
-                                    <SkillButtons 
-                                        remove={remove} 
-                                        length={length} 
-                                        setIsModalOpen={setIsModalOpen} 
-                                        append={append} 
-                                        index={index} 
-                                        showButtons={showButtons} 
-                                        setShowButtons={setShowButtons}
-                                    />
-                                    <input
-                                        {...field}
-                                        type="text"
-                                        placeholder="Enter skill"
-                                        className="text-md font-medium text-muted-foreground focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                        onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
-                                        onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
-                                        style={{
-                                            width: 'auto',
-                                            minWidth: "50px",
-                                            maxWidth: "100%",
-                                            fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
-                                            lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
-                                            fontFamily: fontFamily,
-                                            fontWeight: 500,
-                                        }}
-                                    /> 
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                </div>
+//                                     <SkillButtons 
+//                                         remove={remove} 
+//                                         length={length} 
+//                                         setIsModalOpen={setIsModalOpen} 
+//                                         append={append} 
+//                                         index={index} 
+//                                         showButtons={showButtons} 
+//                                         setShowButtons={setShowButtons}
+//                                     />
+//                                     <input
+//                                         {...field}
+//                                         type="text"
+//                                         placeholder="Enter skill"
+//                                         className="text-md font-medium text-muted-foreground focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
+//                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
+//                                         style={{
+//                                             width: 'auto',
+//                                             minWidth: "50px",
+//                                             maxWidth: "100%",
+//                                             fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+//                                             lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+//                                             fontFamily: fontFamily,
+//                                             fontWeight: 500,
+//                                         }}
+//                                     /> 
+//                                 </div>
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />
+//                 </div>
 
-    )
-}
+//     )
+// }
 
-interface SkillButtonsProps {
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({name}: {name: string}) => void;
-    showButtons: boolean;
-    setShowButtons: (value: boolean) => void;
-}
-function SkillButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons}: SkillButtonsProps){
-    return (
-        <div 
-            className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
-            onMouseEnter={() => setShowButtons(true)}  // Keep visible when hovering buttons
-            onMouseLeave={() => setShowButtons(false)} // Hide only when leaving buttons
-        >
-            <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
+// interface SkillButtonsProps {
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({name}: {name: string}) => void;
+//     showButtons: boolean;
+//     setShowButtons: (value: boolean) => void;
+// }
+// function SkillButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons}: SkillButtonsProps){
+//     return (
+//         <div 
+//             className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
+//             onMouseEnter={() => setShowButtons(true)}  // Keep visible when hovering buttons
+//             onMouseLeave={() => setShowButtons(false)} // Hide only when leaving buttons
+//         >
+//             <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
                 
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                        onClick={()=>remove(index)}
-                    >
-                        <MinusIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    >
-                        <ChevronsUpDownIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                <Button 
-                    size={"icon"} 
-                    variant={'destructive'} 
-                    className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    onClick={()=> append({
-                        name: "",
-                    })}
-                >
-                    <PlusIcon className="w-5 h-5" />
-                </Button>
-            </div>
-        </div>
-    )
-}
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                         onClick={()=>remove(index)}
+//                     >
+//                         <MinusIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     >
+//                         <ChevronsUpDownIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 <Button 
+//                     size={"icon"} 
+//                     variant={'destructive'} 
+//                     className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     onClick={()=> append({
+//                         name: "",
+//                     })}
+//                 >
+//                     <PlusIcon className="w-5 h-5" />
+//                 </Button>
+//             </div>
+//         </div>
+//     )
+// }
 
-function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
-    const { colorHex, borderStyle, isLanguageSection, fontSize, fontFamily} = resumeData;
-    const [isModalOpen, setIsModalOpen] = useState(false);
+// function LanguageSection({resumeData, setResumeData}: ResumeSectionProps){
+//     const { colorHex, borderStyle, isLanguageSection, fontSize, fontFamily} = resumeData;
+//     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const form = useForm<LanguagesValues>({
-        resolver: zodResolver(languagesSchema),
-        defaultValues: {
-            languagesSectionName: resumeData?.languagesSectionName || "",
-            languages: resumeData.languages?.length ? resumeData?.languages : [{ name: "" }] 
-        }
-    });
+//     const form = useForm<LanguagesValues>({
+//         resolver: zodResolver(languagesSchema),
+//         defaultValues: {
+//             languagesSectionName: resumeData?.languagesSectionName || "",
+//             languages: resumeData.languages?.length ? resumeData?.languages : [{ name: "" }] 
+//         }
+//     });
 
-    useEffect(() => {
-        const subscription = form.watch((values) => {
-            (async () => {
-                const isValid = await form.trigger();
-                if (!isValid) return;
+//     useEffect(() => {
+//         const subscription = form.watch((values) => {
+//             (async () => {
+//                 const isValid = await form.trigger();
+//                 if (!isValid) return;
 
-                setResumeData({
-                    ...resumeData,
-                    languagesSectionName: values.languagesSectionName || "",
-                    languages: Array.isArray(values?.languages)
-                    ? values.languages
-                        .filter((language): language is any => !!language) // Ensure valid entries
-                        .map((language) => ({
-                            name: language.name || "",
-                        }))
-                    : [], // Default to empty array if undefined
-                });
-            })();
-        });
-        return () => subscription.unsubscribe();
-    // }, [form, setResumeData]);
-    }, [form, resumeData, setResumeData]);
+//                 setResumeData({
+//                     ...resumeData,
+//                     languagesSectionName: values.languagesSectionName || "",
+//                     languages: Array.isArray(values?.languages)
+//                     ? values.languages
+//                         .filter((language): language is any => !!language) // Ensure valid entries
+//                         .map((language) => ({
+//                             name: language.name || "",
+//                         }))
+//                     : [], // Default to empty array if undefined
+//                 });
+//             })();
+//         });
+//         return () => subscription.unsubscribe();
+//     // }, [form, setResumeData]);
+//     }, [form, resumeData, setResumeData]);
         
-    const {fields, append, remove, move}:any = useFieldArray({
-        control: form.control,
-        name: "languages"
-    });
-    return (
-        <>
-        {
-            isLanguageSection ?
-            <>
-                <hr 
-                    className="border-2"
-                    style={{
-                        borderColor: colorHex,
-                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                    }}
-                />
-                <div 
-                    className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300"
-                    style={{
-                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                    }}
-                >
-                    <Form {...form}>
-                        <div className="break-inside-avoid">
-                            <FormField
-                                control={form.control}
-                                name="languagesSectionName"
-                                render={({ field, fieldState  }) => (
-                                    <FormItem  className="space-y-0 m-0 p-0">
-                                        <FormLabel className="sr-only">Language Section Name</FormLabel>
-                                        <FormControl>
-                                            <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
-                                                    <input
-                                                        {...field}
-                                                        type="text"
-                                                        placeholder="LANGUAGES"
-                                                        className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                                        style={{
-                                                            display: "block",
-                                                            width: "100%",
-                                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
-                                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
-                                                            fontFamily: fontFamily,
-                                                        }}
-                                                    />
-                                            </div>
-                                        </FormControl>
+//     const {fields, append, remove, move}:any = useFieldArray({
+//         control: form.control,
+//         name: "languages"
+//     });
+//     return (
+//         <>
+//         {
+//             isLanguageSection ?
+//             <>
+//                 <hr 
+//                     className="border-2"
+//                     style={{
+//                         borderColor: colorHex,
+//                         marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                     }}
+//                 />
+//                 <div 
+//                     className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300"
+//                     style={{
+//                         marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                     }}
+//                 >
+//                     <Form {...form}>
+//                         <div className="break-inside-avoid">
+//                             <FormField
+//                                 control={form.control}
+//                                 name="languagesSectionName"
+//                                 render={({ field, fieldState  }) => (
+//                                     <FormItem  className="space-y-0 m-0 p-0">
+//                                         <FormLabel className="sr-only">Language Section Name</FormLabel>
+//                                         <FormControl>
+//                                             <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
+//                                                     <input
+//                                                         {...field}
+//                                                         type="text"
+//                                                         placeholder="LANGUAGES"
+//                                                         className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                                         style={{
+//                                                             display: "block",
+//                                                             width: "100%",
+//                                                             fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+//                                                             lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+//                                                             fontFamily: fontFamily,
+//                                                         }}
+//                                                     />
+//                                             </div>
+//                                         </FormControl>
                                         
-                                        {fieldState.error && (<FormMessage />)}
-                                    </FormItem>
-                                )}
-                            />
-                            <div className='flex flex-row flex-wrap gap-2'>
-                                {fields.map((field:any, index:number) => (
-                                    <LanguageItem
-                                        id={field.id}
-                                        key={field.id} 
-                                        index={index}
-                                        form={form}
-                                        remove={remove}
-                                        length={fields.length}
-                                        setIsModalOpen={setIsModalOpen}
-                                        append={append}
-                                        colorHex={colorHex}
-                                        fontFamily={fontFamily}
-                                        fontSize={fontSize}
-                                    />
-                                ))} 
-                            </div>              
-                        </div>
-                    </Form>
-                </div>
-            </> : null
-        }
-        </>
-    )
-}
+//                                         {fieldState.error && (<FormMessage />)}
+//                                     </FormItem>
+//                                 )}
+//                             />
+//                             <div className='flex flex-row flex-wrap gap-2'>
+//                                 {fields.map((field:any, index:number) => (
+//                                     <LanguageItem
+//                                         id={field.id}
+//                                         key={field.id} 
+//                                         index={index}
+//                                         form={form}
+//                                         remove={remove}
+//                                         length={fields.length}
+//                                         setIsModalOpen={setIsModalOpen}
+//                                         append={append}
+//                                         colorHex={colorHex}
+//                                         fontFamily={fontFamily}
+//                                         fontSize={fontSize}
+//                                     />
+//                                 ))} 
+//                             </div>              
+//                         </div>
+//                     </Form>
+//                 </div>
+//             </> : null
+//         }
+//         </>
+//     )
+// }
 
-interface LanguageItemProps {
-    id: string;
-    form: UseFormReturn<LanguagesValues>;
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({name}: {name: string}) => void;
-    colorHex: string|undefined;
-    fontFamily: string|undefined;
-    fontSize: string|undefined;
-}
+// interface LanguageItemProps {
+//     id: string;
+//     form: UseFormReturn<LanguagesValues>;
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({name}: {name: string}) => void;
+//     colorHex: string|undefined;
+//     fontFamily: string|undefined;
+//     fontSize: string|undefined;
+// }
 
-function LanguageItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize}: LanguageItemProps){
+// function LanguageItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize}: LanguageItemProps){
 
-    // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
-    const [showButtons, setShowButtons] = useState(false);
+//     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
+//     const [showButtons, setShowButtons] = useState(false);
 
-    return (
-        <div className="w-[24%]">
-                <FormField
-                    control={form.control}
-                    name={`languages.${index}.name`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">Language</FormLabel>
-                            <FormControl>
-                                <div 
-                                    className="relative p-0 rounded-md w-full max-w-3xl transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
-                                    onMouseEnter={() => setShowButtons(true)}
-                                    onMouseLeave={() => setShowButtons(false)}
-                                    onFocus={() => setShowButtons(true)} 
-                                    onBlur={(e) => {
-                                        if (!e.currentTarget.contains(e.relatedTarget)) setShowButtons(false);
-                                    }}
-                                    tabIndex={-1} // Ensures div can be focused
-                                >
+//     return (
+//         <div className="w-[24%]">
+//                 <FormField
+//                     control={form.control}
+//                     name={`languages.${index}.name`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px]">
+//                             <FormLabel className="sr-only">Language</FormLabel>
+//                             <FormControl>
+//                                 <div 
+//                                     className="relative p-0 rounded-md w-full max-w-3xl transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
+//                                     onMouseEnter={() => setShowButtons(true)}
+//                                     onMouseLeave={() => setShowButtons(false)}
+//                                     onFocus={() => setShowButtons(true)} 
+//                                     onBlur={(e) => {
+//                                         if (!e.currentTarget.contains(e.relatedTarget)) setShowButtons(false);
+//                                     }}
+//                                     tabIndex={-1} // Ensures div can be focused
+//                                 >
                       
-                                    <LanguageButtons 
-                                        remove={remove} 
-                                        length={length} 
-                                        setIsModalOpen={setIsModalOpen} 
-                                        append={append} 
-                                        index={index} 
-                                        showButtons={showButtons} 
-                                        setShowButtons={setShowButtons}
-                                    />
-                                    <input
-                                        {...field}
-                                        type="text"
-                                        placeholder="Enter language"
-                                        className="text-md font-medium text-muted-foreground focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                        onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
-                                        onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
-                                        style={{
-                                            width: 'auto',
-                                            minWidth: "50px",
-                                            maxWidth: "100%",
-                                            fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
-                                            lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
-                                            fontFamily: fontFamily,
-                                            fontWeight: 500,
-                                        }}
-                                    /> 
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                </div>
+//                                     <LanguageButtons 
+//                                         remove={remove} 
+//                                         length={length} 
+//                                         setIsModalOpen={setIsModalOpen} 
+//                                         append={append} 
+//                                         index={index} 
+//                                         showButtons={showButtons} 
+//                                         setShowButtons={setShowButtons}
+//                                     />
+//                                     <input
+//                                         {...field}
+//                                         type="text"
+//                                         placeholder="Enter language"
+//                                         className="text-md font-medium text-muted-foreground focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
+//                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
+//                                         style={{
+//                                             width: 'auto',
+//                                             minWidth: "50px",
+//                                             maxWidth: "100%",
+//                                             fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+//                                             lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+//                                             fontFamily: fontFamily,
+//                                             fontWeight: 500,
+//                                         }}
+//                                     /> 
+//                                 </div>
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />
+//                 </div>
 
-    )
-}
+//     )
+// }
 
-interface LanguageButtonsProps {
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({name}: {name: string}) => void;
-    showButtons: boolean;
-    setShowButtons: (value: boolean) => void;
-}
-function LanguageButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons}: LanguageButtonsProps){
-    return (
-        <div 
-            className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
-            onMouseEnter={() => setShowButtons(true)}  // Keep visible when hovering buttons
-            onMouseLeave={() => setShowButtons(false)} // Hide only when leaving buttons
-        >
-            <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
+// interface LanguageButtonsProps {
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({name}: {name: string}) => void;
+//     showButtons: boolean;
+//     setShowButtons: (value: boolean) => void;
+// }
+// function LanguageButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons}: LanguageButtonsProps){
+//     return (
+//         <div 
+//             className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
+//             onMouseEnter={() => setShowButtons(true)}  // Keep visible when hovering buttons
+//             onMouseLeave={() => setShowButtons(false)} // Hide only when leaving buttons
+//         >
+//             <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
                 
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                        onClick={()=>remove(index)}
-                    >
-                        <MinusIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    >
-                        <ChevronsUpDownIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                <Button 
-                    size={"icon"} 
-                    variant={'destructive'} 
-                    className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    onClick={()=> append({
-                        name: "",
-                    })}
-                >
-                    <PlusIcon className="w-5 h-5" />
-                </Button>
-            </div>
-        </div>
-    )
-}
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                         onClick={()=>remove(index)}
+//                     >
+//                         <MinusIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     >
+//                         <ChevronsUpDownIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 <Button 
+//                     size={"icon"} 
+//                     variant={'destructive'} 
+//                     className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     onClick={()=> append({
+//                         name: "",
+//                     })}
+//                 >
+//                     <PlusIcon className="w-5 h-5" />
+//                 </Button>
+//             </div>
+//         </div>
+//     )
+// }
 
 
-function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
-    const { colorHex, borderStyle, isInterestSection, fontSize, fontFamily} = resumeData;
-    const [isModalOpen, setIsModalOpen] = useState(false);
+// function HobbiesSection({resumeData, setResumeData}: ResumeSectionProps){
+//     const { colorHex, borderStyle, isInterestSection, fontSize, fontFamily} = resumeData;
+//     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const form = useForm<InterestsValues>({
-        resolver: zodResolver(interestsSchema),
-        defaultValues: {
-            interestsSectionName: resumeData?.interestsSectionName || "",
-            interests: resumeData.interests?.length ? resumeData?.interests : [{ name: "" }] 
-        }
-    });
+//     const form = useForm<InterestsValues>({
+//         resolver: zodResolver(interestsSchema),
+//         defaultValues: {
+//             interestsSectionName: resumeData?.interestsSectionName || "",
+//             interests: resumeData.interests?.length ? resumeData?.interests : [{ name: "" }] 
+//         }
+//     });
 
-    useEffect(() => {
-        const subscription = form.watch((values) => {
-            (async () => {
-                const isValid = await form.trigger();
-                if (!isValid) return;
+//     useEffect(() => {
+//         const subscription = form.watch((values) => {
+//             (async () => {
+//                 const isValid = await form.trigger();
+//                 if (!isValid) return;
 
-                setResumeData({
-                    ...resumeData,
-                    interestsSectionName: values.interestsSectionName || "",
-                    interests: Array.isArray(values?.interests)
-                    ? values.interests
-                        .filter((interest): interest is any => !!interest) // Ensure valid entries
-                        .map((interest) => ({
-                            name: interest.name || "",
-                        }))
-                    : [], // Default to empty array if undefined
-                });
-            })();
-        });
-        return () => subscription.unsubscribe();
-    // }, [form, setResumeData]);
-    }, [form, resumeData, setResumeData]);
+//                 setResumeData({
+//                     ...resumeData,
+//                     interestsSectionName: values.interestsSectionName || "",
+//                     interests: Array.isArray(values?.interests)
+//                     ? values.interests
+//                         .filter((interest): interest is any => !!interest) // Ensure valid entries
+//                         .map((interest) => ({
+//                             name: interest.name || "",
+//                         }))
+//                     : [], // Default to empty array if undefined
+//                 });
+//             })();
+//         });
+//         return () => subscription.unsubscribe();
+//     // }, [form, setResumeData]);
+//     }, [form, resumeData, setResumeData]);
     
-    const {fields, append, remove, move}:any = useFieldArray({
-        control: form.control,
-        name: "interests"
-    });
-    return (
-        <>
-        { 
-        isInterestSection ?
-            <>
-                <hr 
-                    className="border-2"
-                    style={{
-                        borderColor: colorHex,
-                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                    }}
-                />
-                <div 
-                    className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300"
-                    style={{
-                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
-                    }}
-                >
-                    <Form {...form}>
-                        <div className="break-inside-avoid">
-                            <FormField
-                                control={form.control}
-                                name="interestsSectionName"
-                                render={({ field, fieldState  }) => (
-                                    <FormItem  className="space-y-0 m-0 p-0">
-                                        <FormLabel className="sr-only">Insterest Section Name</FormLabel>
-                                        <FormControl>
-                                            <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
-                                                    <input
-                                                        {...field}
-                                                        type="text"
-                                                        placeholder="LANGUAGES"
-                                                        className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                                        style={{
-                                                            display: "block",
-                                                            width: "100%",
-                                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
-                                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
-                                                            fontFamily: fontFamily,
-                                                        }}
-                                                    />
-                                            </div>
-                                        </FormControl>
+//     const {fields, append, remove, move}:any = useFieldArray({
+//         control: form.control,
+//         name: "interests"
+//     });
+//     return (
+//         <>
+//         { 
+//         isInterestSection ?
+//             <>
+//                 <hr 
+//                     className="border-2"
+//                     style={{
+//                         borderColor: colorHex,
+//                         marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                     }}
+//                 />
+//                 <div 
+//                     className="border-2 border-transparent border-dashed p-0 rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300"
+//                     style={{
+//                         marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+//                     }}
+//                 >
+//                     <Form {...form}>
+//                         <div className="break-inside-avoid">
+//                             <FormField
+//                                 control={form.control}
+//                                 name="interestsSectionName"
+//                                 render={({ field, fieldState  }) => (
+//                                     <FormItem  className="space-y-0 m-0 p-0">
+//                                         <FormLabel className="sr-only">Insterest Section Name</FormLabel>
+//                                         <FormControl>
+//                                             <div className="relative rounded-md w-full max-w-3xl transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
+//                                                     <input
+//                                                         {...field}
+//                                                         type="text"
+//                                                         placeholder="LANGUAGES"
+//                                                         className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                                         style={{
+//                                                             display: "block",
+//                                                             width: "100%",
+//                                                             fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+//                                                             lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+//                                                             fontFamily: fontFamily,
+//                                                         }}
+//                                                     />
+//                                             </div>
+//                                         </FormControl>
                                         
-                                        {fieldState.error && (<FormMessage />)}
-                                    </FormItem>
-                                )}
-                            />
-                            <div className='flex flex-row flex-wrap gap-2'>
-                                {fields.map((field:any, index:number) => (
-                                    <HobbiesItem
-                                        id={field.id}
-                                        key={field.id} 
-                                        index={index}
-                                        form={form}
-                                        remove={remove}
-                                        length={fields.length}
-                                        setIsModalOpen={setIsModalOpen}
-                                        append={append}
-                                        colorHex={colorHex}
-                                        fontFamily={fontFamily}
-                                        fontSize={fontSize}
-                                    />
-                                ))} 
-                            </div>              
-                        </div>
-                    </Form>
-                </div>
-            </>
-        : null 
-        }
-        </>
-    )
-}
+//                                         {fieldState.error && (<FormMessage />)}
+//                                     </FormItem>
+//                                 )}
+//                             />
+//                             <div className='flex flex-row flex-wrap gap-2'>
+//                                 {fields.map((field:any, index:number) => (
+//                                     <HobbiesItem
+//                                         id={field.id}
+//                                         key={field.id} 
+//                                         index={index}
+//                                         form={form}
+//                                         remove={remove}
+//                                         length={fields.length}
+//                                         setIsModalOpen={setIsModalOpen}
+//                                         append={append}
+//                                         colorHex={colorHex}
+//                                         fontFamily={fontFamily}
+//                                         fontSize={fontSize}
+//                                     />
+//                                 ))} 
+//                             </div>              
+//                         </div>
+//                     </Form>
+//                 </div>
+//             </>
+//         : null 
+//         }
+//         </>
+//     )
+// }
 
-interface HobbiesItemProps {
-    id: string;
-    form: UseFormReturn<InterestsValues>;
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({name}: {name: string}) => void;
-    colorHex: string|undefined;
-    fontFamily: string|undefined;
-    fontSize: string|undefined;
-}
+// interface HobbiesItemProps {
+//     id: string;
+//     form: UseFormReturn<InterestsValues>;
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({name}: {name: string}) => void;
+//     colorHex: string|undefined;
+//     fontFamily: string|undefined;
+//     fontSize: string|undefined;
+// }
 
-function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize}: HobbiesItemProps){
+// function HobbiesItem({id, form, index, remove, length, setIsModalOpen, append, colorHex, fontFamily, fontSize}: HobbiesItemProps){
 
-    // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
-    const [showButtons, setShowButtons] = useState(false);
+//     // const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
+//     const [showButtons, setShowButtons] = useState(false);
 
-    return (
-        <div className="w-[24%]">
-                <FormField
-                    control={form.control}
-                    name={`interests.${index}.name`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">Skill</FormLabel>
-                            <FormControl>
-                                <div 
-                                    className="relative p-0 rounded-md w-full max-w-3xl transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
-                                    onMouseEnter={() => setShowButtons(true)}
-                                    onMouseLeave={() => setShowButtons(false)}
-                                    onFocus={() => setShowButtons(true)} 
-                                    onBlur={(e) => {
-                                        if (!e.currentTarget.contains(e.relatedTarget)) setShowButtons(false);
-                                    }}
-                                    tabIndex={-1} // Ensures div can be focused
-                                >
+//     return (
+//         <div className="w-[24%]">
+//                 <FormField
+//                     control={form.control}
+//                     name={`interests.${index}.name`}
+//                     render={({field})=>(
+//                         <FormItem className="space-y-[1px]">
+//                             <FormLabel className="sr-only">Skill</FormLabel>
+//                             <FormControl>
+//                                 <div 
+//                                     className="relative p-0 rounded-md w-full max-w-3xl transition-colors duration-300 focus-within:opacity-100 hover:opacity-100 "
+//                                     onMouseEnter={() => setShowButtons(true)}
+//                                     onMouseLeave={() => setShowButtons(false)}
+//                                     onFocus={() => setShowButtons(true)} 
+//                                     onBlur={(e) => {
+//                                         if (!e.currentTarget.contains(e.relatedTarget)) setShowButtons(false);
+//                                     }}
+//                                     tabIndex={-1} // Ensures div can be focused
+//                                 >
                       
-                                    <HobbiesButtons 
-                                        remove={remove} 
-                                        length={length} 
-                                        setIsModalOpen={setIsModalOpen} 
-                                        append={append} 
-                                        index={index} 
-                                        showButtons={showButtons} 
-                                        setShowButtons={setShowButtons}
-                                    />
-                                    <input
-                                        {...field}
-                                        type="text"
-                                        placeholder="Enter language"
-                                        className="text-md font-medium text-muted-foreground focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                        onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
-                                        onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
-                                        style={{
-                                            width: 'auto',
-                                            minWidth: "50px",
-                                            maxWidth: "100%",
-                                            fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
-                                            lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
-                                            fontFamily: fontFamily,
-                                            fontWeight: 500,
-                                        }}
-                                    /> 
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                </div>
+//                                     <HobbiesButtons 
+//                                         remove={remove} 
+//                                         length={length} 
+//                                         setIsModalOpen={setIsModalOpen} 
+//                                         append={append} 
+//                                         index={index} 
+//                                         showButtons={showButtons} 
+//                                         setShowButtons={setShowButtons}
+//                                     />
+//                                     <input
+//                                         {...field}
+//                                         type="text"
+//                                         placeholder="Enter language"
+//                                         className="text-md font-medium text-muted-foreground focus:outline-none bg-slate-200 focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+//                                         onMouseEnter={() => setShowButtons(true)} // Keep buttons visible when hovering input
+//                                         onMouseLeave={() => setShowButtons(false)} // Hide only when leaving input
+//                                         style={{
+//                                             width: 'auto',
+//                                             minWidth: "50px",
+//                                             maxWidth: "100%",
+//                                             fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+//                                             lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+//                                             fontFamily: fontFamily,
+//                                             fontWeight: 500,
+//                                         }}
+//                                     /> 
+//                                 </div>
+//                             </FormControl>
+//                             <FormMessage />
+//                         </FormItem>
+//                     )}
+//                 />
+//                 </div>
 
-    )
-}
+//     )
+// }
 
-interface HobbiesButtonsProps {
-    index: number;
-    remove: (index: number) => void;
-    length: number;
-    setIsModalOpen: (value: boolean) => void;
-    append: ({name}: {name: string}) => void;
-    showButtons: boolean;
-    setShowButtons: (value: boolean) => void;
-}
-function HobbiesButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons}: HobbiesButtonsProps){
-    return (
-        <div 
-            className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
-            onMouseEnter={() => setShowButtons(true)}  // Keep visible when hovering buttons
-            onMouseLeave={() => setShowButtons(false)} // Hide only when leaving buttons
-        >
-            <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
+// interface HobbiesButtonsProps {
+//     index: number;
+//     remove: (index: number) => void;
+//     length: number;
+//     setIsModalOpen: (value: boolean) => void;
+//     append: ({name}: {name: string}) => void;
+//     showButtons: boolean;
+//     setShowButtons: (value: boolean) => void;
+// }
+// function HobbiesButtons({setIsModalOpen, remove, index, append, length, showButtons, setShowButtons}: HobbiesButtonsProps){
+//     return (
+//         <div 
+//             className={`absolute -top-3.5 right-2 border border-transparent rounded-full transition-opacity ${showButtons ? "opacity-100" : "opacity-0"} duration-300 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 `}
+//             onMouseEnter={() => setShowButtons(true)}  // Keep visible when hovering buttons
+//             onMouseLeave={() => setShowButtons(false)} // Hide only when leaving buttons
+//         >
+//             <div className="flex items-center gap-1 hover:outline-none hover:border-transparent hover:bg-transparent hover:text-gray-500 transition-colors">
                 
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                        onClick={()=>remove(index)}
-                    >
-                        <MinusIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                {length > 1 && (
-                    <Button 
-                        size="icon" 
-                        variant={'destructive'} 
-                        className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    >
-                        <ChevronsUpDownIcon className="w-5 h-5" />
-                    </Button>
-                )}
-                <Button 
-                    size={"icon"} 
-                    variant={'destructive'} 
-                    className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
-                    onClick={()=> append({
-                        name: "",
-                    })}
-                >
-                    <PlusIcon className="w-5 h-5" />
-                </Button>
-            </div>
-        </div>
-    )
-}
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                         onClick={()=>remove(index)}
+//                     >
+//                         <MinusIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 {length > 1 && (
+//                     <Button 
+//                         size="icon" 
+//                         variant={'destructive'} 
+//                         className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     >
+//                         <ChevronsUpDownIcon className="w-5 h-5" />
+//                     </Button>
+//                 )}
+//                 <Button 
+//                     size={"icon"} 
+//                     variant={'destructive'} 
+//                     className="rounded-full px-2 py-0 text-xs font-light h-6 w-6" 
+//                     onClick={()=> append({
+//                         name: "",
+//                     })}
+//                 >
+//                     <PlusIcon className="w-5 h-5" />
+//                 </Button>
+//             </div>
+//         </div>
+//     )
+// }

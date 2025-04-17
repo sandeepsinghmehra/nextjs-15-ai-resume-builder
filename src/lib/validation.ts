@@ -55,6 +55,8 @@ export const workExperienceSchema = z.object({
     workExperienceSectionName: optionalString,
     workExperiences: z.array(
         z.object({
+            id: z.string().min(1, "Experience ID is required"),
+            resumeId: z.string().min(1, "Resume ID is required"),
             position: optionalString,
             company: optionalString,
             startDate: optionalString,
@@ -62,7 +64,6 @@ export const workExperienceSchema = z.object({
             description: optionalString,
         })
     )
-    .optional(),
 });
 
 export type WorkExperienceValues = z.infer<typeof workExperienceSchema>;
@@ -73,49 +74,64 @@ export const educationSchema = z.object({
     educationSectionName: optionalString,
     educations: z.array(
         z.object({
+            id: z.string().min(1, "Education ID is required"),
+            resumeId: z.string().min(1, "Resume ID is required"),
             degree: optionalString,
             school: optionalString,
             startDate: optionalString,
             endDate: optionalString,
         })
     )
-    .optional(),
 });
 
 export type EducationValues = z.infer<typeof educationSchema>;
+
+export type Education = NonNullable<z.infer<typeof educationSchema>["educations"]>[number] & { id?: string }; // Add optional id
 
 export const skillsSchema = z.object({
     skillsSectionName: optionalString,
     skills: z.array(
         z.object({
+            id: z.string().min(1, "Skill ID is required"),
+            resumeId: z.string().min(1, "Resume ID is required"),
             name: optionalString,
         })
-    ).optional(),
+    )
 })
 
 export type SkillsValues = z.infer<typeof skillsSchema>;
+
+export type Skill = NonNullable<z.infer<typeof skillsSchema>["skills"]>[number] & { id?: string }; // Add optional id
 
 export const languagesSchema = z.object({
     languagesSectionName: optionalString,
     languages: z.array(
         z.object({
+            id: z.string().min(1, "Language ID is required"),
+            resumeId: z.string().min(1, "Resume ID is required"),
             name: optionalString,
         })
-    ).optional(),
+    )
 })
 
 export type LanguagesValues = z.infer<typeof languagesSchema>;
+
+export type Language = NonNullable<z.infer<typeof languagesSchema>["languages"]>[number] & { id?: string }; // Add optional id
 
 export const interestsSchema = z.object({
     interestsSectionName: optionalString,
     interests: z.array(
         z.object({
+            id: z.string().min(1, "Hobby ID is required"),
+            resumeId: z.string().min(1, "Resume ID is required"),
             name: optionalString,
         })
-    ).optional(),
+    )
 })
 
 export type InterestsValues = z.infer<typeof interestsSchema>;
+
+export type Interest = NonNullable<z.infer<typeof interestsSchema>["interests"]>[number] & { id?: string }; // Add optional id
   
 
 export const summarySchema = z.object({

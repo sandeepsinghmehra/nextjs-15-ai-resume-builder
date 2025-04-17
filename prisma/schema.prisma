@@ -130,6 +130,7 @@ model Skill {
 model Language {
   id       String  @id @default(cuid())
   name     String?
+  level    String?
   resume   Resume  @relation(fields: [resumeId], references: [id], onDelete: Cascade)
   resumeId String
 

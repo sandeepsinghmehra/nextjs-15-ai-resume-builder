@@ -7,8 +7,8 @@ import {formatDate, set} from "date-fns";
 import { BorderStyles } from "@/components/editor/BorderStyleButton";
 import { UploadIcon } from "lucide-react";
 import ClassicTemplate from "@/components/Templates/Classic";
-import SplitTemplate from "@/components/Templates/Split";
-import HybridTemplate from "@/components/Templates/Hybrid";
+// import SplitTemplate from "@/components/Templates/Split";
+// import HybridTemplate from "@/components/Templates/Hybrid";
 
 interface ResumeLayoutTemplateChooserProps {
     resumeData: ResumeValues;
@@ -37,7 +37,7 @@ export default function LayoutChooser({
                 className={className}
             />
         )}
-        {templateName === "split" && (
+        {/* {templateName === "split" && (
             <SplitTemplate
                 resumeData={resumeData}
                 setResumeData={setResumeData}
@@ -50,7 +50,7 @@ export default function LayoutChooser({
                 setResumeData={setResumeData}
                 className="max-w-3xl shadow-md"
             />
-        )}
+        )} */}
     </div>
     );
 }

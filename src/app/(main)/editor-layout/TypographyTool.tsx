@@ -147,7 +147,7 @@ export default function TypographyTool({resumeData, setResumeData, onChange, col
                     <div className={`shadow-none flex flex-row bg-white`}>
                     <Select 
                         onValueChange={(data) => {
-                            console.log("data in valueChange", data);
+                            // console.log("data in valueChange", data);
                             onChange({ fontSize: resumeData.fontSize, fontFamily: data});
                             // setShowPopover(false);
                         }} 
@@ -178,7 +178,7 @@ export default function TypographyTool({resumeData, setResumeData, onChange, col
                     <h6 className="mb-1 text-lg font-medium">Size</h6>
                     <div className={`shadow-none flex flex-row bg-white`}>
                         {fontSizes.map((fontSizeItem:any, i: number) =>{
-                            console.log("fontSize === fontSize.name", fontSize, fontSizeItem.name);
+                            // console.log("fontSize === fontSize.name", fontSize, fontSizeItem.name);
                             return (
                                 <Button
                                     size={'sm'}

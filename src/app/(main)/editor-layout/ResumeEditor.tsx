@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation';
 import { ResumeValues } from '@/lib/validation';
 import { cn, mapToResumeValues } from '@/lib/utils';
@@ -17,46 +17,48 @@ import SectionPicker from './SectionPicker';
 import TypographyTool from './TypographyTool';
 
 interface ResumeEditorProps {
-    resumeToEdit: ResumeServerData | null
+    resumeToEdit: ResumeServerData | null | any
 }
 
 export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
     const searchParams = useSearchParams();
 
     const [resumeData, setResumeData] = useState<ResumeValues>(
-        resumeToEdit ? mapToResumeValues(resumeToEdit) : {
-            firstName: "",
-            workExperienceSectionName: "",
-            workExperiences: [],
-            educations: [],
-            skills: [],
-            languages: [],
-            interests: [],
-            summary: "",
-            summaryName: "",
-            colorHex: "#0693E3",
-            borderStyle: "",
-            layoutStyle: "classic",
-            isPhotoSection: true,
-            isSummarySection: true,
-            isEmailSection: true,
-            isLocationSection: true,
-            isPhoneSection: true,
-            isJobTitleSection: true,
-            isLinkedinSection: false,
-            isGithubSection: false,
-            isWebsiteSection: false,
-            isWorkSection: true,
-            isEducationSection: true,
-            isSkillSection: true,
-            isLanguageSection: false,
-            isInterestSection: false,
-            isSocialLinkSection: false,  
-            isKeyachivementSection: false,
-            fontFamily: "",
-            fontSize: "",
-            personalDetailName: "",
-        }
+        // resumeToEdit ? 
+        mapToResumeValues(resumeToEdit) 
+        // : {
+        //     firstName: "",
+        //     workExperienceSectionName: "",
+        //     workExperiences: [],
+        //     educations: [],
+        //     skills: [],
+        //     languages: [],
+        //     interests: [],
+        //     summary: "",
+        //     summaryName: "",
+        //     colorHex: "#0693E3",
+        //     borderStyle: "",
+        //     layoutStyle: "classic",
+        //     isPhotoSection: true,
+        //     isSummarySection: true,
+        //     isEmailSection: true,
+        //     isLocationSection: true,
+        //     isPhoneSection: true,
+        //     isJobTitleSection: true,
+        //     isLinkedinSection: false,
+        //     isGithubSection: false,
+        //     isWebsiteSection: false,
+        //     isWorkSection: true,
+        //     isEducationSection: true,
+        //     isSkillSection: true,
+        //     isLanguageSection: false,
+        //     isInterestSection: false,
+        //     isSocialLinkSection: false,  
+        //     isKeyachivementSection: false,
+        //     fontFamily: "",
+        //     fontSize: "",
+        //     personalDetailName: "",
+        // }
     );
 
     const [showSmResumePreview, setShowSmResumePreview] = useState<boolean>(false);
@@ -74,6 +76,17 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
 
     useUnloadWarning();
     // console.log("resumeData", resumeData);
+
+    useEffect(() => {
+        const resumeIdInUrl = searchParams.get('resumeId');
+        if (!resumeIdInUrl && resumeToEdit?.id) {
+            const newParams = new URLSearchParams(searchParams.toString());
+            newParams.set('resumeId', resumeToEdit.id);
+            window.history.replaceState(
+                null, "", `?${newParams.toString()}`
+            );
+        }
+    }, [resumeToEdit]);
     return (
         <div className='flex grow flex-col' style={{background: resumeData.colorHex}}>
             {/* {isSaving && (
