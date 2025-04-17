@@ -67,12 +67,12 @@ export default function Home() {
           src={resumePreview}
           alt="Resume preview 1"
           fill
-          className={`absolute left-0 top-0 transform rounded-lg object-cover shadow-xl transition-all duration-700 ease-out ${ // Adjusted duration/easing
+          className={`absolute left-0 top-0 transform object-cover shadow-xl transition-all duration-700 ease-out ${ // Adjusted duration/easing
             isLoaded ? '' : '-translate-y-full opacity-0' // Initial state for load animation
           } ${ 
             isResume1OnTop
               ? "z-10 rotate-[2deg] scale-100" 
-              : "z-0 rotate-[4deg] translate-x-2 translate-y-2 scale-95 opacity-90" 
+              : "z-0 rotate-[2deg] translate-x-2 translate-y-2 scale-95 opacity-90" 
           }`}
           style={{ objectPosition: "top" }}
         />
@@ -81,12 +81,12 @@ export default function Home() {
           src={resumePreview2}
           alt="Resume preview 2"
           fill
-          className={`absolute left-0 top-0 transform rounded-lg object-cover shadow-xl transition-all duration-700 ease-out ${ // Adjusted duration/easing
+          className={`absolute left-0 top-0 transform object-cover shadow-xl transition-all duration-700 ease-out ${ // Adjusted duration/easing
              isLoaded ? '' : 'translate-y-full opacity-0' // Initial state for load animation
           } ${
             !isResume1OnTop
               ? "z-10 rotate-[2deg] scale-100" 
-              : "z-0 rotate-[4deg] translate-x-2 translate-y-2 scale-95 opacity-90" 
+              : "z-0 rotate-[2deg] translate-x-2 translate-y-2 scale-95 opacity-90" 
           }`}
           style={{ objectPosition: "top" }}
         />
