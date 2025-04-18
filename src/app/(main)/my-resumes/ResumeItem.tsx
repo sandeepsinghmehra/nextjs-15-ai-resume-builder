@@ -97,13 +97,13 @@ function MoreMenu({
                         <Trash2 className={"size-4"} />
                         Delete
                     </DropdownMenuItem>
-                    <DropdownMenuItem
+                    {/* <DropdownMenuItem
                         className="flex items-center gap-2"
                         onClick={onPrintClick}
                     >
                         <Printer className={"size-4"} />
                         Print Resume
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                 </DropdownMenuContent>
             </DropdownMenu>
             <DeleteConfirmationDialog

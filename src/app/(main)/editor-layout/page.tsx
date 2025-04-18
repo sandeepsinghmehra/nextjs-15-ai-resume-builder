@@ -3,7 +3,8 @@ import ResumeEditor from "./ResumeEditor"
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { resumeDataInclude } from "@/lib/types";
-import { createEmptyResume } from "./actions";
+import { canCreateResume } from "@/lib/permissions";
+import { getUserSubscriptionLevel } from "@/lib/subscription";
 
 interface PageProps {
   searchParams: Promise<{resumeId?: string}>
@@ -28,10 +29,19 @@ export default async function Page({searchParams}: PageProps) {
     },
     include: resumeDataInclude 
   });
+  const [totalCount, subscriptionLevel] = await Promise.all([
+    prisma.resume.count({
+      where: {
+        userId
+      }
+    }),
+    getUserSubscriptionLevel(userId)
+  ]);
   
   return (
     <ResumeEditor 
       resumeToEdit={resumeToEdit}
+      canDownload={canCreateResume(subscriptionLevel, totalCount)}
     />
   )
 }

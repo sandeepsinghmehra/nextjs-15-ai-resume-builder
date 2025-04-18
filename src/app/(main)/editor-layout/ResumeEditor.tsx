@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation';
 import { ResumeValues } from '@/lib/validation';
 import { cn, mapToResumeValues } from '@/lib/utils';
@@ -15,14 +15,20 @@ import BorderStyleButton from './BorderStyleButton';
 import LayoutChooser from './LayoutChooser';
 import SectionPicker from './SectionPicker';
 import TypographyTool from './TypographyTool';
+import { useReactToPrint } from 'react-to-print';
+import { Download } from 'lucide-react';
+import usePremiumModal from '@/hooks/usePremiumModal';
 
 interface ResumeEditorProps {
-    resumeToEdit: ResumeServerData | null | any
+    resumeToEdit: ResumeServerData | null | any;
+    canDownload: boolean;
 }
 
-export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
+export default function ResumeEditor({resumeToEdit, canDownload}: ResumeEditorProps) {
     const searchParams = useSearchParams();
-
+    const premiumModal = usePremiumModal();
+    const contentRef = useRef<HTMLDivElement>(null);
+    
     const [resumeData, setResumeData] = useState<ResumeValues>(
         // resumeToEdit ? 
         mapToResumeValues(resumeToEdit) 
@@ -67,7 +73,20 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
 
     useUnloadWarning(hasUnsavedChanges);
 
-
+    const reactToPrintFn = () => {
+        
+        if (!canDownload) {
+            premiumModal.setOpen(true);
+            return;
+        }
+        handleReactToPrintFn();
+    }
+    const handleReactToPrintFn =
+        useReactToPrint({
+            contentRef,
+            documentTitle: resumeToEdit.title || "Resume"
+        });
+    
     function setStep(key: string){
         const newSearchParam = new URLSearchParams(searchParams)
         newSearchParam.set("step", key);
@@ -134,6 +153,15 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
                                 borderStyle={resumeData.borderStyle}
                                 onChange={(borderStyle) => setResumeData({...resumeData, borderStyle: borderStyle})}
                             />
+                            <Button
+                                variant={"outline"}
+                                size={'sm'}
+                                title={"Download Resume"}
+                                onClick={()=>reactToPrintFn()}
+                            >
+                                <Download  />
+                                Download
+                            </Button>
                         </div>
                     </span>
                 )}
@@ -144,6 +172,7 @@ export default function ResumeEditor({resumeToEdit}: ResumeEditorProps) {
                                 <LayoutChooser
                                     resumeData={resumeData}
                                     setResumeData={setResumeData}
+                                    contentRef={contentRef}
                                     templateName={resumeData.layoutStyle}
                                     className="shadow-sm transition-shadow group-hover:shadow-lg max-w-3xl"
                                 />
