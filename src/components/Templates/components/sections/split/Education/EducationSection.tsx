@@ -239,80 +239,83 @@ function EducationItem({
                 />
             </TimelineHeader>
             <div className="flex flex-row flex-wrap items-center">
-                <FormField
-                    control={form.control}
-                    name={`educations.${index}.degree`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">Degree</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    value={field.value ?? ""}
-                                    type="text"
-                                    placeholder="DEGREE"
-                                    className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
-                                        lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
-                                        fontFamily: fontFamily,
-                                        fontWeight: 600,
-                                    }}
-                                /> 
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                            
-                <FormField
-                    control={form.control}
-                    name={`educations.${index}.startDate`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">Start Date</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    value={field.value ?? ""}
-                                    type="text"
-                                    placeholder="from"
-                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
-                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
-                                        fontFamily: fontFamily,
-                                    }}
-                                /> 
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />{" - "}
-                <FormField
-                    control={form.control}
-                    name={`educations.${index}.endDate`}
-                    render={({field})=>(
-                        <FormItem className="space-y-[1px]">
-                            <FormLabel className="sr-only">End Date</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    value={field.value ?? ""}
-                                    type="text"
-                                    placeholder="Until"
-                                    className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
-                                    style={{
-                                        fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
-                                        lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
-                                        fontFamily: fontFamily,
-                                    }}
-                                /> 
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <div className="w-4/5 flex flex-row items-center justify-start">
+                    <FormField
+                        control={form.control}
+                        name={`educations.${index}.degree`}
+                        render={({field})=>(
+                            <FormItem className="space-y-[1px]">
+                                <FormLabel className="sr-only">Degree</FormLabel>
+                                <FormControl>
+                                    <input
+                                        {...field}
+                                        value={field.value ?? ""}
+                                        type="text"
+                                        placeholder="DEGREE"
+                                        className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-0 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        style={{
+                                            fontSize: `${fontSize === 'big'?'17px': fontSize==='medium'? '16px': '15px'}`,
+                                            lineHeight: `${fontSize === 'big'?'26px': fontSize==='medium'? '22px': '18px'}`,
+                                            fontFamily: fontFamily,
+                                            fontWeight: 600,
+                                        }}
+                                    /> 
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <div className="w-1/5 flex flex-row items-end justify-end">           
+                    <FormField
+                        control={form.control}
+                        name={`educations.${index}.startDate`}
+                        render={({field})=>(
+                            <FormItem className="space-y-[1px]">
+                                <FormLabel className="sr-only">Start Date</FormLabel>
+                                <FormControl>
+                                    <input
+                                        {...field}
+                                        value={field.value ?? ""}
+                                        type="text"
+                                        placeholder="from"
+                                        className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                        style={{
+                                            fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+                                            lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+                                            fontFamily: fontFamily,
+                                        }}
+                                    /> 
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />{" - "}
+                    <FormField
+                        control={form.control}
+                        name={`educations.${index}.endDate`}
+                        render={({field})=>(
+                            <FormItem className="space-y-[1px]">
+                                <FormLabel className="sr-only">End Date</FormLabel>
+                                <FormControl>
+                                    <input
+                                        {...field}
+                                        value={field.value ?? ""}
+                                        type="text"
+                                        placeholder="Until"
+                                        className="w-20 text-center text-xs font-light text-muted-foreground focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-1 border border-transparent rounded-md m-0 dark:bg-white"
+                                        style={{
+                                            fontSize: `${fontSize === 'big'?'12px': fontSize==='medium'? '11px': '10px'}`,
+                                            lineHeight: `${fontSize === 'big'?'18px': fontSize==='medium'? '16px': '14px'}`,
+                                            fontFamily: fontFamily,
+                                        }}
+                                    /> 
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
             </div>
         </TimelineItem>
     )

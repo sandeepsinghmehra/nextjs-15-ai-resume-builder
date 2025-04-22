@@ -42,6 +42,6 @@ export default function BorderStyleButton({
         title="Change border style"
         onClick={handleClick}
         >
-            <Icon className="size-5" />
+            <Icon className="size-5" /> Image Radius
         </Button>
 }

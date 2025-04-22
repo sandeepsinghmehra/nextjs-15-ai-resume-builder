@@ -42,6 +42,7 @@ export default function LayoutChooser({
                 resumeData={resumeData}
                 setResumeData={setResumeData}
                 className="max-w-3xl shadow-md"
+                contentRef={contentRef}
             />
         )}
         {templateName === "hybrid" && (
@@ -49,6 +50,7 @@ export default function LayoutChooser({
                 resumeData={resumeData}
                 setResumeData={setResumeData}
                 className="max-w-3xl shadow-md"
+                contentRef={contentRef}
             />
         )}
     </div>

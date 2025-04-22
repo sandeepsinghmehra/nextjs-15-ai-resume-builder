@@ -304,7 +304,7 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
                                             {...field}
                                             type="text"
                                             placeholder="About Me"
-                                            className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                            className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                             style={{
                                                 // color: colorHex,
                                                 display: "block",
@@ -322,7 +322,7 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
                             name="summary"
                             render={({field})=>(
                                 <FormItem className="space-y-0 m-0 p-0">
-                                    <FormLabel className="sr-only">Professional Summary</FormLabel>
+                                    <FormLabel className="sr-only ">Professional Summary</FormLabel>
                                     <FormControl className="m-0 p-0">       
                                         <div className="relative border-2 border-transparent border-dashed rounded-md w-full max-w-3xl group transition-colors duration-300 hover:border-gray-300 m-0 p-0 pb-0 flex box-border h-auto">
                                             {/* Writing Assistant Button (Hidden by Default, Shown on Hover/Focus) */}
@@ -446,7 +446,7 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                         {...field}
                                         type="text"
                                         placeholder="Personal Details"
-                                        className="text-lg font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         style={{
                                             // color: colorHex,
                                             display: "block",
