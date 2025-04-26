@@ -163,7 +163,7 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                                         {...field}
                                         type="text"
                                         placeholder="Your Role"
-                                        className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1.5 px-3 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className="text-md uppercase font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1.5 px-3 border border-transparent rounded-md m-0 dark:bg-white"
                                         style={{
                                             fontSize: `${fontSize === 'big'?'24px': fontSize==='medium'? '20px': '16px'}`,
                                             lineHeight: `${fontSize === 'big'?'32px': fontSize==='medium'? '28px': '24px'}`,

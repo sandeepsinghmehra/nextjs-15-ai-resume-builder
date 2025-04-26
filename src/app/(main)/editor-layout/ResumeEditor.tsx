@@ -149,10 +149,13 @@ export default function ResumeEditor({resumeToEdit, canDownload}: ResumeEditorPr
                                 )}
                                 color={resumeData.colorHex}
                             />
-                            <BorderStyleButton
-                                borderStyle={resumeData.borderStyle}
-                                onChange={(borderStyle) => setResumeData({...resumeData, borderStyle: borderStyle})}
-                            />
+                            {
+                                resumeData.isPhotoSection ? (
+                                    <BorderStyleButton
+                                        borderStyle={resumeData.borderStyle}
+                                        onChange={(borderStyle) => setResumeData({...resumeData, borderStyle: borderStyle})}
+                                    />
+                                ): null}
                             <Button
                                 variant={"outline"}
                                 size={'sm'}

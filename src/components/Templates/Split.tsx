@@ -235,7 +235,7 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                                         {...field}
                                         type="text"
                                         placeholder="Your Role"
-                                        className="text-md font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1.5 px-3 border border-transparent rounded-md m-0 dark:bg-white"
+                                        className="text-md uppercase font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1.5 px-3 border border-transparent rounded-md m-0 dark:bg-white"
                                         style={{
                                             fontSize: `${fontSize === 'big'?'24px': fontSize==='medium'? '20px': '16px'}`,
                                             lineHeight: `${fontSize === 'big'?'32px': fontSize==='medium'? '28px': '24px'}`,
@@ -243,7 +243,6 @@ function PersonalInfoHeader({resumeData, setResumeData}: ResumeSectionProps){
                                             fontWeight: 500
                                         }}
                                     />
-                                    {/* <Input {...field} placeholder="Fisrt Name" /> */}
                                 </FormControl>
                                 <FormMessage />
                             </FormItem> 
@@ -346,7 +345,7 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
                                                 }}
                                                 placeholder="Enter your professional summary"
                                                 // rows={1}
-                                                className="w-full min-h-[30px] text-lg font-light focus:outline-none focus:bg-gray-200 hover:bg-gray-200 transition-colors py-0.5 px-1.5 border border-transparent rounded-md resize-none overflow-hidden bg-white dark:bg-white dark:focus:bg-slate-200 dark:hover:bg-slate-200 m-0"
+                                                className="w-full min-h-[30px] text-justify text-lg font-light focus:outline-none focus:bg-gray-200 hover:bg-gray-200 transition-colors py-0.5 px-1.5 border border-transparent rounded-md resize-none overflow-hidden bg-white dark:bg-white dark:focus:bg-slate-200 dark:hover:bg-slate-200 m-0"
                                                 onInput={(e) => {
                                                     const target = e.target as HTMLTextAreaElement;
                                                     target.style.height = "auto"; // Reset height first
