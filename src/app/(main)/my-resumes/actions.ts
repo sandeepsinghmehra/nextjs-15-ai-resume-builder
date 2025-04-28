@@ -1,6 +1,8 @@
 "use server"
 
 import prisma from "@/lib/prisma";
+import { getUserSubscriptionLevel } from "@/lib/subscription";
+import { resumeDataInclude } from "@/lib/types";
 import { auth } from "@clerk/nextjs/server"
 import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
@@ -33,3 +35,17 @@ export async function deleteResume(id:string) {
 
     revalidatePath("/resumes");
 }
+
+export async function getUserResumes(userId: string) {
+    const [resumes, totalCount, subscriptionLevel] = await Promise.all([
+      prisma.resume.findMany({
+        where: { userId },
+        orderBy: { updatedAt: "desc" },
+        include: resumeDataInclude,
+      }),
+      prisma.resume.count({ where: { userId } }),
+      getUserSubscriptionLevel(userId),
+    ]);
+  
+    return { resumes, totalCount, subscriptionLevel };
+  }

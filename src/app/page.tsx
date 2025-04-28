@@ -6,15 +6,11 @@ import resumePreview from "@/assets/resume-preview.png";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react"; // Import useState and useEffect
+import { Suspense, useState, useEffect } from "react"; // Import useState and useEffect
 
 export default function Home() {
   const [isResume1OnTop, setIsResume1OnTop] = useState(true); // State to track top image
   const [isLoaded, setIsLoaded] = useState(false); // State for load animation
-
-  const toggleImageOrder = () => {
-    // setIsResume1OnTop(!isResume1OnTop); // Keep state but remove toggle on click
-  };
 
   const handleMouseEnter = () => {
     setIsResume1OnTop(false); // Show resume 2 on hover
@@ -62,6 +58,7 @@ export default function Home() {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
+         <Suspense fallback={<div className="h-full w-full bg-gray-200 animate-pulse rounded-md" />}>
         {/* Image 1 */}
         <Image
           src={resumePreview}
@@ -90,6 +87,7 @@ export default function Home() {
           }`}
           style={{ objectPosition: "top" }}
         />
+        </Suspense>
       </div>
     </main>
   );
