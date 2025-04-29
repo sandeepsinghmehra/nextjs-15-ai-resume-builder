@@ -305,9 +305,11 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
                                             placeholder="About Me"
                                             className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                             style={{
-                                                // color: colorHex,
                                                 display: "block",
                                                 width: "100%",
+                                                fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+                                                lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+                                                fontFamily: fontFamily,
                                             }}
                                         />
                                     </FormControl>
@@ -375,7 +377,17 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
 }
 
 function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
-    const { colorHex, isLocationSection, isEmailSection, isPhoneSection, isLinkedinSection, isWebsiteSection, isGithubSection } = resumeData;
+    const { 
+        colorHex, 
+        isLocationSection, 
+        isEmailSection, 
+        isPhoneSection, 
+        isLinkedinSection, 
+        isWebsiteSection, 
+        isGithubSection,  
+        fontFamily,
+        fontSize,
+    } = resumeData;
     const form = useForm<PersonalInfoValues>({
         resolver: zodResolver(personalInfoSchema),
         defaultValues: {
@@ -386,13 +398,13 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
         }
     });
 
-    const textCityRef = useRef<HTMLDivElement>(null);
-    const textEmailRef = useRef<HTMLDivElement>(null);
-    const textPhoneRef = useRef<HTMLDivElement>(null);
+    // const textCityRef = useRef<HTMLDivElement>(null);
+    // const textEmailRef = useRef<HTMLDivElement>(null);
+    // const textPhoneRef = useRef<HTMLDivElement>(null);
 
-    const [locationWidth, setLocationWidth] = useState("auto");
-    const [emailWidth, setEmailWidth] = useState("auto");
-    const [phoneWidth, setPhoneWidth] = useState("auto");
+    // const [locationWidth, setLocationWidth] = useState("auto");
+    // const [emailWidth, setEmailWidth] = useState("auto");
+    // const [phoneWidth, setPhoneWidth] = useState("auto");
     
     useEffect(() => {
         const {unsubscribe} = form.watch(async (values:any) => {
@@ -405,23 +417,23 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
 
     
 
-    useEffect(() => {
-        if (textCityRef.current) {
-            setLocationWidth(`${textCityRef.current.offsetWidth + 20}px`);
-        }
-    }, [resumeData.location]);
+    // useEffect(() => {
+    //     if (textCityRef.current) {
+    //         setLocationWidth(`${textCityRef.current.offsetWidth + 20}px`);
+    //     }
+    // }, [resumeData.location]);
 
-    useEffect(() => {
-        if (textEmailRef.current) {
-            setEmailWidth(`${textEmailRef.current.offsetWidth + 20}px`);
-        }
-    }, [resumeData.email]);
+    // useEffect(() => {
+    //     if (textEmailRef.current) {
+    //         setEmailWidth(`${textEmailRef.current.offsetWidth + 20}px`);
+    //     }
+    // }, [resumeData.email]);
     
-    useEffect(() => {
-        if (textPhoneRef.current) {
-            setPhoneWidth(`${textPhoneRef.current.offsetWidth + 20}px`);
-        }
-    }, [resumeData.phone]);
+    // useEffect(() => {
+    //     if (textPhoneRef.current) {
+    //         setPhoneWidth(`${textPhoneRef.current.offsetWidth + 20}px`);
+    //     }
+    // }, [resumeData.phone]);
 
 
     return (
@@ -433,12 +445,17 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                 }}
             /> */}
             <Form {...form}>
-                <div className="space-y-3 break-inside-avoid">
-                <FormField
+                <div 
+                    className="space-y-0 break-inside-avoid"
+                    style={{
+                        marginTop:  `${fontSize === 'big'?'24px': fontSize === 'medium'? '12px': '6px'}`,
+                    }}
+                >
+                    <FormField
                         control={form.control}
                         name="personalDetailName"
                         render={({ field, fieldState  }) => (
-                            <FormItem>
+                            <FormItem className="m-0 p-0 space-y-0">
                                 <FormLabel className="sr-only">Personal Details</FormLabel>
                                 <FormControl>
                                     <input
@@ -447,9 +464,11 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                         placeholder="Personal Details"
                                         className="text-lg uppercase font-semibold focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md m-0 dark:bg-white"
                                         style={{
-                                            // color: colorHex,
                                             display: "block",
                                             width: "100%",
+                                            fontSize: `${fontSize === 'big'?'18px': fontSize==='medium'? '17px': '16px'}`,
+                                            lineHeight: `${fontSize === 'big'?'28px': fontSize==='medium'? '24px': '20px'}`,
+                                            fontFamily: fontFamily,
                                         }}
                                     />
                                 </FormControl>
@@ -459,35 +478,57 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                         )}
                     />
                     
-                    <div className="flex flex-wrap flex-row items-center space-y-1">
+                    <div className="flex flex-col gap-0">
                         {isLocationSection ?
-                            <div className="flex justify-start items-center gap-1">
-                                <MapPinIcon color={'#fff'} fill={colorHex} className="size-7" />
+                            <div className="flex justify-start items-center gap-1 w-full">
+                                <MapPinIcon 
+                                    color={'#fff'} 
+                                    fill={colorHex} 
+                                    className={"size-7"} 
+                                    style={{
+                                        width: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                        height: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                    }}
+                                />
                                 {/* Location Field */}
-                                <div className="relative flex">
-                                    <span
+                                <div className="relative flex grow space-y-0 ">
+                                    {/* <span
                                         ref={textCityRef}
                                         className="absolute opacity-0 pointer-events-none whitespace-pre"
                                     >
                                         {resumeData.location || "Your Location"}
-                                    </span>
+                                    </span> */}
                                     <FormField
                                         control={form.control}
                                         name="location"
                                         render={({ field, fieldState  }) => (
-                                        <FormItem>
+                                        <FormItem className="space-y-0 m-0 p-0" style={{width: "100%"}}>
                                             <FormLabel className="sr-only">Location</FormLabel>
-                                            <FormControl>
-                                                <input
+                                            <FormControl className="m-0 p-0 flex box-border h-auto">
+                                                <textarea
                                                     {...field}
-                                                    type="text"
-                                                    placeholder="Your Location"
-                                                    className="text-sm font-medium focus:outline-none focus:bg-slate-200 hover:bg-gray-200 transition-colors py-1 px-3 border border-transparent rounded-md m-0 dark:bg-white"
-                                                    style={{
-                                                        width: locationWidth,
-                                                        minWidth: "100px",
-                                                        maxWidth: "100%",
+                                                    ref={(el:any) => {
+                                                        if (el) {
+                                                            el.style.height = "16px"; // Reset height first
+                                                            el.style.height = `${el.scrollHeight}px`; // Set new height
+                                                        }
                                                     }}
+                                                    placeholder="Your Location"
+                                                    className="w-full min-h-[16px] text-md font-light focus:outline-none focus:bg-gray-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md resize-none overflow-hidden bg-white dark:bg-white dark:focus:bg-slate-200 dark:hover:bg-slate-200 m-0"
+                                                    onInput={(e:any) => {
+                                                        const target = e.target as HTMLTextAreaElement;
+                                                        target.style.height = "auto"; // Reset height first
+                                                        target.style.height = `${target.scrollHeight}px `; // Set new height
+                                                    }}
+                                                    style={{
+                                                        margin: "0px !important", 
+                                                        marginBottom: "0px !important",
+                                                        maxWidth: "100%",
+                                                        fontSize: `${fontSize === 'big'?'14px': fontSize === 'medium'? '13px': '12px'}`,
+                                                        lineHeight: `${fontSize === 'big'?'20px': fontSize === 'medium'? '19px': '18px'}`,
+                                                        fontFamily: fontFamily,
+                                                    }}
+                                                    spellCheck={true}
                                                 />
                                                 
                                             </FormControl>
@@ -498,26 +539,35 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                 </div>
                             </div>
                         : null } 
-                        {isEmailSection ?<div className="flex justify-start items-center gap-1">
+                        {isEmailSection ?<div className="flex justify-start items-center gap-1 w-full">
                             
-                            <MailIcon absoluteStrokeWidth color={'#fff'} fill={colorHex} className="size-7" />
+                            <MailIcon 
+                                absoluteStrokeWidth 
+                                color={'#fff'} 
+                                fill={colorHex} 
+                                className="size-7" 
+                                style={{
+                                    width: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                    height: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                }}
+                            />
                             {/* Email Field */}
-                            <div className="relative flex">
-                                <span
+                            <div className="relative flex grow space-y-0 m-0 p-0">
+                                {/* <span
                                     ref={textEmailRef}
                                     className="absolute opacity-0 pointer-events-none whitespace-pre"
                                 >
                                     {resumeData.email || "Your Email"}
-                                </span>
+                                </span> */}
 
                                 <FormField
                                     control={form.control}
                                     name="email"
                                     render={({ field, fieldState  }) => (
-                                    <FormItem>
+                                    <FormItem className="space-y-0 m-0 p-0" style={{width: "100%"}}>
                                         <FormLabel className="sr-only">Email</FormLabel>
-                                        <FormControl>
-                                            <input
+                                        <FormControl className="m-0 p-0 flex box-border h-auto">
+                                            {/* <input
                                                 {...field}
                                                 type="text"
                                                 placeholder="Your Email"
@@ -528,7 +578,33 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                     maxWidth: "100%",
                                                     marginTop: "0px"
                                                 }}
-                                            />
+                                            /> */}
+
+                                                <textarea
+                                                    {...field}
+                                                    ref={(el:any) => {
+                                                        if (el) {
+                                                            el.style.height = "16px"; // Reset height first
+                                                            el.style.height = `${el.scrollHeight}px`; // Set new height
+                                                        }
+                                                    }}
+                                                    placeholder="Your Email"
+                                                    className="w-full min-h-[16px] text-md font-light focus:outline-none focus:bg-gray-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md resize-none overflow-hidden bg-white dark:bg-white dark:focus:bg-slate-200 dark:hover:bg-slate-200 m-0"
+                                                    onInput={(e:any) => {
+                                                        const target = e.target as HTMLTextAreaElement;
+                                                        target.style.height = "auto"; // Reset height first
+                                                        target.style.height = `${target.scrollHeight}px `; // Set new height
+                                                    }}
+                                                    style={{
+                                                        margin: "0px !important", 
+                                                        marginBottom: "0px !important",
+                                                        fontSize: `${fontSize === 'big'?'14px': fontSize === 'medium'? '13px': '12px'}`,
+                                                        lineHeight: `${fontSize === 'big'?'20px': fontSize === 'medium'? '19px': '18px'}`,
+                                                        fontFamily: fontFamily,
+                                                        maxWidth: "100%",
+                                                    }}
+                                                    spellCheck={true}
+                                                />
                                             
                                         </FormControl>
                                         {fieldState.error && (<FormMessage />)}
@@ -538,26 +614,35 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                             </div>
                         </div>: null}
                         {isPhoneSection ? 
-                        <div className="flex justify-start items-center gap-1">
+                        <div className="flex justify-start items-center gap-1 w-full">
 
-                            <PhoneIcon absoluteStrokeWidth color={'#fff'} fill={colorHex} className="size-7" />
+                            <PhoneIcon 
+                                absoluteStrokeWidth 
+                                color={'#fff'} 
+                                fill={colorHex} 
+                                className="size-7" 
+                                style={{
+                                    width: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                    height: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                }}
+                            />
                             {/* Phone Field */}
-                            <div className="relative flex">
-                                <span
+                            <div className="relative flex grow space-y-0 m-0 p-0">
+                                {/* <span
                                     ref={textPhoneRef}
                                     className="absolute opacity-0 pointer-events-none whitespace-pre"
                                 >
                                     {resumeData.phone || "Phone Number"}
-                                </span>
+                                </span> */}
 
                                 <FormField
                                     control={form.control}
                                     name="phone"
                                     render={({ field, fieldState  }) => (
-                                    <FormItem>
+                                    <FormItem className="space-y-0 m-0 p-0" style={{width: "100%"}}>
                                         <FormLabel className="sr-only">Phone Number</FormLabel>
-                                        <FormControl>
-                                            <input
+                                        <FormControl className="m-0 p-0 flex box-border h-auto">
+                                            {/* <input
                                                 {...field}
                                                 type="text"
                                                 placeholder="Your Email"
@@ -568,7 +653,33 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                     maxWidth: "100%",
                                                     marginTop: "0px"
                                                 }}
-                                            />
+                                            /> */}
+
+                                                <textarea
+                                                    {...field}
+                                                    ref={(el:any) => {
+                                                        if (el) {
+                                                            el.style.height = "16px"; // Reset height first
+                                                            el.style.height = `${el.scrollHeight}px`; // Set new height
+                                                        }
+                                                    }}
+                                                    placeholder="Your Number"
+                                                    className="w-full min-h-[16px] text-md font-light focus:outline-none focus:bg-gray-200 hover:bg-gray-200 transition-colors py-1 px-2 border border-transparent rounded-md resize-none overflow-hidden bg-white dark:bg-white dark:focus:bg-slate-200 dark:hover:bg-slate-200 m-0"
+                                                    onInput={(e:any) => {
+                                                        const target = e.target as HTMLTextAreaElement;
+                                                        target.style.height = "auto"; // Reset height first
+                                                        target.style.height = `${target.scrollHeight}px `; // Set new height
+                                                    }}
+                                                    style={{
+                                                        margin: "0px !important", 
+                                                        marginBottom: "0px !important",
+                                                        fontSize: `${fontSize === 'big'?'14px': fontSize === 'medium'? '13px': '12px'}`,
+                                                        lineHeight: `${fontSize === 'big'?'20px': fontSize === 'medium'? '19px': '18px'}`,
+                                                        fontFamily: fontFamily,
+                                                        maxWidth: "100%",
+                                                    }}
+                                                    spellCheck={true}
+                                                />
                                             
                                         </FormControl>
                                         {fieldState.error && (<FormMessage />)}

@@ -332,7 +332,17 @@ function SummarySection({resumeData, setResumeData}: ResumeSectionProps){
 }
 
 function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
-    const { colorHex, isLocationSection, isEmailSection, isPhoneSection, isLinkedinSection, isWebsiteSection, isGithubSection } = resumeData;
+    const { 
+        colorHex, 
+        isLocationSection, 
+        isEmailSection, 
+        isPhoneSection, 
+        isLinkedinSection, 
+        isWebsiteSection, 
+        isGithubSection,
+        fontFamily,
+        fontSize,
+    } = resumeData;
     const form = useForm<PersonalInfoValues>({
         resolver: zodResolver(personalInfoSchema),
         defaultValues: {
@@ -394,7 +404,15 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                     <div className="flex flex-wrap flex-row items-center space-y-1">
                         {isLocationSection ?
                             <div className="flex justify-start items-center gap-1">
-                                <MapPinIcon color={'#fff'} fill={colorHex} className="size-7" />
+                                <MapPinIcon 
+                                    color={'#fff'} 
+                                    fill={colorHex} 
+                                    className="size-7" 
+                                    style={{
+                                        width: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                        height: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                    }}
+                                />
                                 {/* Location Field */}
                                 <div className="relative flex">
                                     <span
@@ -419,6 +437,9 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                         width: locationWidth,
                                                         minWidth: "100px",
                                                         maxWidth: "100%",
+                                                        fontSize: `${fontSize === 'big'?'14px': fontSize === 'medium'? '13px': '12px'}`,
+                                                        lineHeight: `${fontSize === 'big'?'20px': fontSize === 'medium'? '19px': '18px'}`,
+                                                        fontFamily: fontFamily,
                                                     }}
                                                 />
                                                 
@@ -432,7 +453,16 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                         : null } 
                         {isEmailSection ?<div className="flex justify-start items-center gap-1">
                             
-                            <MailIcon absoluteStrokeWidth color={'#fff'} fill={colorHex} className="size-7" />
+                            <MailIcon 
+                                absoluteStrokeWidth 
+                                color={'#fff'} 
+                                fill={colorHex} 
+                                className="size-7"
+                                style={{
+                                    width: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                    height: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                }}
+                            />
                             {/* Email Field */}
                             <div className="relative flex">
                                 <span
@@ -458,7 +488,10 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                     width: emailWidth,
                                                     minWidth: "100px",
                                                     maxWidth: "100%",
-                                                    marginTop: "0px"
+                                                    marginTop: "0px",
+                                                    fontSize: `${fontSize === 'big'?'14px': fontSize === 'medium'? '13px': '12px'}`,
+                                                    lineHeight: `${fontSize === 'big'?'20px': fontSize === 'medium'? '19px': '18px'}`,
+                                                    fontFamily: fontFamily,
                                                 }}
                                             />
                                             
@@ -472,7 +505,16 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                         {isPhoneSection ? 
                         <div className="flex justify-start items-center gap-1">
 
-                            <PhoneIcon absoluteStrokeWidth color={'#fff'} fill={colorHex} className="size-7" />
+                            <PhoneIcon 
+                                absoluteStrokeWidth 
+                                color={'#fff'} 
+                                fill={colorHex} 
+                                className="size-7" 
+                                style={{
+                                    width: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                    height: `${fontSize === 'big'?'28px': fontSize === 'medium'? '24px': '20px'}`,
+                                }}
+                            />
                             {/* Phone Field */}
                             <div className="relative flex">
                                 <span
@@ -498,7 +540,10 @@ function ProfileUI({resumeData, setResumeData}: ResumeSectionProps) {
                                                     width: phoneWidth,
                                                     minWidth: "100px",
                                                     maxWidth: "100%",
-                                                    marginTop: "0px"
+                                                    marginTop: "0px",
+                                                    fontSize: `${fontSize === 'big'?'14px': fontSize === 'medium'? '13px': '12px'}`,
+                                                    lineHeight: `${fontSize === 'big'?'20px': fontSize === 'medium'? '19px': '18px'}`,
+                                                    fontFamily: fontFamily,
                                                 }}
                                             />
                                             
