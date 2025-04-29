@@ -28,7 +28,7 @@ export default function Navbar() {
                     </span>
                 </Link>
                 <div className="flex items-center gap-3">
-                    <ModeToggle />
+                    {/* <ModeToggle /> */}
                     <UserButton
                         appearance={{
                             baseTheme: theme === "dark" ? dark : undefined,

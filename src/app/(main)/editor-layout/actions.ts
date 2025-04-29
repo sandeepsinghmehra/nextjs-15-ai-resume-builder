@@ -357,10 +357,11 @@ export async function createEmptyResume(userId:string) {
                 }
             },
         },
-        include: resumeDataInclude
+        include: resumeDataInclude,
+        // select: { id: true }
     });
 
     // console.log("newResume", newResume);
-
-    return newResume;
+    return newResume
+    // return { id: newResume.id };
 }
